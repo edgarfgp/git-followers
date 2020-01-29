@@ -8,19 +8,18 @@
 
 import UIKit
 
-class GFAlertVC: UIViewController {
+class FGAlert: UIViewController {
     
-    let containerView = UIView()
-    let titleLabel = FGTitleLabel(textAligment: .center, fontSize: 20)
-    let messageLabel = FGBodyLabel(textAligment: .center)
-    let actionButton = FGButton(backgroundColor: .systemPink, text: "Ok")
+    private lazy var containerView = UIView()
+    private lazy var titleLabel = FGTitleLabel(textAligment: .center, fontSize: 20)
+    private lazy var messageLabel = FGBodyLabel(textAligment: .center)
+    private lazy var actionButton = FGButton(backgroundColor: .systemPink, text: "Ok")
     
     var alertTitle: String?
     var message: String?
     var buttonTitle: String?
     
-    let padding: CGFloat = 20
-    
+    private let padding: CGFloat = 20
     
     init(title: String, message: String, buttonTitle: String) {
         super.init(nibName: nil, bundle: nil)
@@ -29,11 +28,9 @@ class GFAlertVC: UIViewController {
         self.buttonTitle = buttonTitle
     }
     
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +40,9 @@ class GFAlertVC: UIViewController {
         configureActionButton()
         configureMessageLabel()
     }
+}
+
+extension FGAlert {
     
     func configureContainerView() {
         view.addSubview(containerView)
