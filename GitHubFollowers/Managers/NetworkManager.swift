@@ -15,7 +15,7 @@ class NetworkManager {
     private init(){}
     
     func getFollowers(for userName: String, page: Int, completed: @escaping  (Result<[Follower], FGError>) -> Void) {
-        let endPoint = baseURL + "\(userName)/followers?=per_page=10&page=\(page)"
+        let endPoint = baseURL + "\(userName)/followers?=per_page=100&page=\(page)"
         
         guard let url = URL(string: endPoint) else {
             completed(.failure(.invalidUserName))
