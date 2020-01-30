@@ -19,6 +19,7 @@
 		68678C1623E2301A009EEA10 /* Follower.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68678C1523E2301A009EEA10 /* Follower.swift */; };
 		68678C1823E23073009EEA10 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68678C1723E23073009EEA10 /* User.swift */; };
 		68678C1B23E237FD009EEA10 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68678C1A23E237FD009EEA10 /* NetworkManager.swift */; };
+		6880DDF523E2D0AA007B64BC /* ErrorMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6880DDF423E2D0AA007B64BC /* ErrorMessage.swift */; };
 		689D659E23E0CC6F007F32E1 /* FGTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689D659D23E0CC6F007F32E1 /* FGTitleLabel.swift */; };
 		689D65A023E0CF87007F32E1 /* FGBodyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689D659F23E0CF87007F32E1 /* FGBodyLabel.swift */; };
 		689D65A223E0D092007F32E1 /* FGAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689D65A123E0D092007F32E1 /* FGAlert.swift */; };
@@ -40,6 +41,7 @@
 		68678C1523E2301A009EEA10 /* Follower.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Follower.swift; sourceTree = "<group>"; };
 		68678C1723E23073009EEA10 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		68678C1A23E237FD009EEA10 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		6880DDF423E2D0AA007B64BC /* ErrorMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessage.swift; sourceTree = "<group>"; };
 		689D659D23E0CC6F007F32E1 /* FGTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGTitleLabel.swift; sourceTree = "<group>"; };
 		689D659F23E0CF87007F32E1 /* FGBodyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGBodyLabel.swift; sourceTree = "<group>"; };
 		689D65A123E0D092007F32E1 /* FGAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGAlert.swift; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 		682EDBE923DE0DF300423ACC /* GitHubFollowers */ = {
 			isa = PBXGroup;
 			children = (
+				6880DDF323E2D08E007B64BC /* Utilities */,
 				68678C1923E237E2009EEA10 /* Managers */,
 				68678C1423E22FCC009EEA10 /* Models */,
 				68678C1123E22B4B009EEA10 /* CustomViews */,
@@ -143,6 +146,14 @@
 				68678C1A23E237FD009EEA10 /* NetworkManager.swift */,
 			);
 			path = Managers;
+			sourceTree = "<group>";
+		};
+		6880DDF323E2D08E007B64BC /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				6880DDF423E2D0AA007B64BC /* ErrorMessage.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -223,6 +234,7 @@
 				689D65A223E0D092007F32E1 /* FGAlert.swift in Sources */,
 				6851923C23DF80E90015B2FA /* FollowerListVC.swift in Sources */,
 				689D659E23E0CC6F007F32E1 /* FGTitleLabel.swift in Sources */,
+				6880DDF523E2D0AA007B64BC /* ErrorMessage.swift in Sources */,
 				68678C1623E2301A009EEA10 /* Follower.swift in Sources */,
 				68336CB823DF185300D69E64 /* SearchVC.swift in Sources */,
 				68678C1B23E237FD009EEA10 /* NetworkManager.swift in Sources */,

@@ -20,7 +20,7 @@ class FollowerListVC: UIViewController {
         
         NetworkManager.shared.getFollowers(for: userName, page: 1) { (followers, errorMesage) in
             guard let followers = followers else {
-                self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: errorMesage!, buttonTilte: "Ok")
+                self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: errorMesage!.rawValue, buttonTilte: "Ok")
                 return
             }
             
