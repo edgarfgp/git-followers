@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum ErrorMessage : String {
+enum FGError : String, Error {
     
     case invalidUserName  = "This username created a invalid request"
     case unableToComplte =  "Unable to complete your reauest. Plase check your connection"
