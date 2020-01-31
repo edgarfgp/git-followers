@@ -8,7 +8,10 @@
 
 import UIKit
 
+fileprivate var contentView : UIView!
+
 extension UIViewController {
+    
     func presentFGAlertOnMainThread(title: String, message: String, buttonTilte: String){
         DispatchQueue.main.async {
             let alertVC = FGAlert(title: title, message: message, buttonTitle: buttonTilte)
@@ -16,5 +19,40 @@ extension UIViewController {
             alertVC.modalTransitionStyle = .crossDissolve
             self.present(alertVC, animated: true)
         }
+    }
+    
+    func showLoadingView() {
+        contentView = UIView(frame: view.bounds)
+        view.addSubview(contentView)
+        
+        contentView.backgroundColor = .systemBackground
+        contentView.alpha = 0
+        
+        UIView.animate(withDuration: 0.25) { contentView.alpha = 0.8 }
+        
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        contentView.addSubview(activityIndicator)
+        
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        
+        activityIndicator.startAnimating()
+    }
+    
+    func dissmissLoadingView(){
+        DispatchQueue.main.async {
+            contentView.removeFromSuperview()
+            contentView = nil
+        }
+    }
+    
+    func showEmptySatteView(with message: String, in view: UIView){
+        let emptyStateView = FGEmptyView(message: message)
+        emptyStateView.frame = view.bounds
+        view.addSubview(emptyStateView)
     }
 }

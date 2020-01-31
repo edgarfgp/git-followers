@@ -6,18 +6,22 @@
 //  Copyright © 2020 Edgar Gonzalez Pena. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 class NetworkManager {
+    
     static let shared = NetworkManager()
-    let baseURL = "https://api.github.com/users/"
+    
+    private let baseURL = "https://api.github.com/users/"
+    
+    let cache = NSCache<NSString, UIImage>()
     
     private init(){}
     
     func getFollowers(for userName: String, page: Int, completed: @escaping  (Result<[Follower], FGError>) -> Void) {
-        let endPoint = baseURL + "\(userName)/followers?=per_page=100&page=\(page)"
+        let userName = baseURL + "\(userName)/followers?per_page=100&page=\(page)"
         
-        guard let url = URL(string: endPoint) else {
+        guard let url = URL(string: userName) else {
             completed(.failure(.invalidUserName))
             
             return
