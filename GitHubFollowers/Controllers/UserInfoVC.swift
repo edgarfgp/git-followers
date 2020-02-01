@@ -9,7 +9,18 @@
 import UIKit
 
 class UserInfoVC: UIViewController {
-
+    
+    private var username: String
+    
+    init(for userName: String){
+        self.username = userName
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -18,6 +29,19 @@ class UserInfoVC: UIViewController {
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
         
         navigationItem.rightBarButtonItem = doneButton
+        
+        NetworkManager.shared.getUserInfo(for: username) { [weak self] result in
+            
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let user) :
+                print(user)
+            
+            case .failure(let error) :
+                self.presentFGAlertOnMainThread(title: "Error trying to get Userinfo", message: error.rawValue, buttonTilte: "Ok")
+            }
+        }
     }
     
     @objc func dismissVC(){

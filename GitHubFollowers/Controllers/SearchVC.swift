@@ -53,8 +53,7 @@ extension SearchVC {
             
         }
         
-        let foloowerListVC = FollowerListVC()
-        foloowerListVC.userName = userNameTextFiled.text
+        let foloowerListVC = FollowerListVC(userName: userNameTextFiled.text!)
         foloowerListVC.title = userNameTextFiled.text
         navigationController?.pushViewController(foloowerListVC, animated: true)
         userNameTextFiled.resignFirstResponder()
