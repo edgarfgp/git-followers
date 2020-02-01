@@ -6,4 +6,8 @@
 //  Copyright © 2020 Edgar Gonzalez Pena. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
+enum SFSymbols {
+    static let location = "mappin.and.ellipse"
+}

@@ -19,9 +19,11 @@ class FGBodyLabel: UILabel {
        fatalError("init(coder:) has not been implemented")
     }
    
-    init(textAligment: NSTextAlignment) {
-       super.init(frame: .zero)
-       self.textAlignment = textAlignment
+    init(textAligment: NSTextAlignment, numberOfLines: Int = 1) {
+        super.init(frame: .zero)
+        self.textAlignment = textAlignment
+        self.numberOfLines = numberOfLines
+        
        configure()
     }
    

@@ -14,7 +14,7 @@ extension UIViewController {
     
     func presentFGAlertOnMainThread(title: String, message: String, buttonTilte: String){
         DispatchQueue.main.async {
-            let alertVC = FGAlert(title: title, message: message, buttonTitle: buttonTilte)
+            let alertVC = FGAlertVC(title: title, message: message, buttonTitle: buttonTilte)
             alertVC.modalPresentationStyle = .overFullScreen
             alertVC.modalTransitionStyle = .crossDissolve
             self.present(alertVC, animated: true)

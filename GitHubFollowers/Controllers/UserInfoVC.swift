@@ -12,6 +12,18 @@ class UserInfoVC: UIViewController {
     
     private var username: String
     
+    private let headerView = UIView()
+    private let itemViewOne = UIView()
+    private let itemViewTwo = UIView()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        configureViewController()
+        layoutUI()
+        getUserInfo()
+    }
+    
     init(for userName: String){
         self.username = userName
         super.init(nibName: nil, bundle: nil)
@@ -20,24 +32,60 @@ class UserInfoVC: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+}
 
-        view.backgroundColor = .systemBackground
+extension UserInfoVC {
+    
+    private func configureViewController() {
+       view.backgroundColor = .systemBackground
+       let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
+       navigationItem.rightBarButtonItem = doneButton
+   }
+    
+    private func layoutUI(){
         
-        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
+        view.addSubviews(headerView, itemViewOne, itemViewTwo)
         
-        navigationItem.rightBarButtonItem = doneButton
+        itemViewOne.backgroundColor = .systemPink
+        itemViewTwo.backgroundColor = .systemBlue
         
+        let padding : CGFloat = 20
+                
+        NSLayoutConstraint.activate([
+            
+            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: padding),
+            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
+            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            headerView.heightAnchor.constraint(equalToConstant: 180),
+            
+            itemViewOne.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: padding),
+            itemViewOne.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
+            itemViewOne.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            itemViewOne.heightAnchor.constraint(equalToConstant: 140),
+            
+            itemViewTwo.topAnchor.constraint(equalTo: itemViewOne.bottomAnchor, constant: padding),
+            itemViewTwo.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
+            itemViewTwo.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            itemViewTwo.heightAnchor.constraint(equalToConstant: 140),
+            
+        ])
+    }
+    
+    func add(childVC: UIViewController, to containerView: UIView) {
+        addChild(childVC)
+        containerView.addSubview(childVC.view)
+        childVC.view.frame = containerView.bounds
+        childVC.didMove(toParent: self)
+    }
+    
+    private func getUserInfo() {
         NetworkManager.shared.getUserInfo(for: username) { [weak self] result in
-            
             guard let self = self else { return }
-            
             switch result {
             case .success(let user) :
-                print(user)
-            
+                DispatchQueue.main.async {
+                    self.add(childVC: FGUserInfoHeaderVC(user: user), to: self.headerView)
+                }
             case .failure(let error) :
                 self.presentFGAlertOnMainThread(title: "Error trying to get Userinfo", message: error.rawValue, buttonTilte: "Ok")
             }
@@ -45,7 +93,6 @@ class UserInfoVC: UIViewController {
     }
     
     @objc func dismissVC(){
-        dismiss(animated: true)
-    }
-
+           dismiss(animated: true)
+       }
 }

@@ -6,4 +6,15 @@
 //  Copyright © 2020 Edgar Gonzalez Pena. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
+extension UIView {
+
+    func addSubviews(_ views: UIView...) {
+        views.forEach {
+            addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+    }
+
+}
