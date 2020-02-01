@@ -12,9 +12,10 @@ class UserInfoVC: UIViewController {
     
     private var username: String
     
-    private let headerView = UIView()
-    private let itemViewOne = UIView()
-    private let itemViewTwo = UIView()
+    private lazy var headerView = UIView()
+    private lazy var itemViewOne = UIView()
+    private lazy var itemViewTwo = UIView()
+    private lazy var datelabel = FGBodyLabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +45,7 @@ extension UserInfoVC {
     
     private func layoutUI(){
         
-        view.addSubviews(headerView, itemViewOne, itemViewTwo)
+        view.addSubviews(headerView, itemViewOne, itemViewTwo, datelabel)
         
         let padding : CGFloat = 20
                 
@@ -65,6 +66,10 @@ extension UserInfoVC {
             itemViewTwo.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
             itemViewTwo.heightAnchor.constraint(equalToConstant: 140),
             
+            datelabel.topAnchor.constraint(equalTo: itemViewTwo.bottomAnchor, constant: padding),
+            datelabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            datelabel.heightAnchor.constraint(equalToConstant: 18)
+            
         ])
     }
     
@@ -84,6 +89,7 @@ extension UserInfoVC {
                     self.add(childVC: FGUserInfoHeaderVC(user: user), to: self.headerView)
                     self.add(childVC: FGReposItemInfoVc(user: user), to: self.itemViewOne)
                     self.add(childVC: FGFollowersItemInfoVc(user: user), to: self.itemViewTwo)
+                    self.datelabel.text = "Github Since \(user.createdAt.convertToDisplayFormat())"
                 }
             case .failure(let error) :
                 self.presentFGAlertOnMainThread(title: "Error trying to get Userinfo", message: error.rawValue, buttonTilte: "Ok")
