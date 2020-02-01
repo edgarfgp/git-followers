@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FGAlert: UIViewController {
+class FGAlertVC: UIViewController {
     
     private lazy var containerView = UIView()
     private lazy var titleLabel = FGTitleLabel(textAligment: .center, fontSize: 20)
@@ -42,7 +42,7 @@ class FGAlert: UIViewController {
     }
 }
 
-extension FGAlert {
+extension FGAlertVC {
     
     func configureContainerView() {
         view.addSubview(containerView)
