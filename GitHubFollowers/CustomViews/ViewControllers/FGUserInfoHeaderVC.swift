@@ -33,8 +33,6 @@ class FGUserInfoHeaderVC: UIViewController {
         addSubViews()
         configureUI()
         configureUIElements()
-
-        // Do any additional setup after loading the view.
     }
 }
 
@@ -51,7 +49,7 @@ extension FGUserInfoHeaderVC {
         locationLabel.text = user.location ?? "Unkwown lcoation"
         bioLabel.text = user.bio ?? "No bio available"
         
-        locationImageView.image = UIImage(systemName: SFSymbols.location)
+        locationImageView.image =  SFSymbols.location
         locationImageView.tintColor = .secondaryLabel
     }
     

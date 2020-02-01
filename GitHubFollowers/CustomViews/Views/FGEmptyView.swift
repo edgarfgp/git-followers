@@ -29,8 +29,8 @@ class FGEmptyView: UIView {
     }
     
     private func configure() {
-        addSubview(messagelabel)
-        addSubview(logoImageView)
+        
+        addSubviews(messagelabel, logoImageView)
         
         messagelabel.numberOfLines = 3
         messagelabel.textColor = .secondaryLabel

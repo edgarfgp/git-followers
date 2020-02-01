@@ -46,9 +46,6 @@ extension UserInfoVC {
         
         view.addSubviews(headerView, itemViewOne, itemViewTwo)
         
-        itemViewOne.backgroundColor = .systemPink
-        itemViewTwo.backgroundColor = .systemBlue
-        
         let padding : CGFloat = 20
                 
         NSLayoutConstraint.activate([
@@ -85,6 +82,8 @@ extension UserInfoVC {
             case .success(let user) :
                 DispatchQueue.main.async {
                     self.add(childVC: FGUserInfoHeaderVC(user: user), to: self.headerView)
+                    self.add(childVC: FGReposItemInfoVc(user: user), to: self.itemViewOne)
+                    self.add(childVC: FGFollowersItemInfoVc(user: user), to: self.itemViewTwo)
                 }
             case .failure(let error) :
                 self.presentFGAlertOnMainThread(title: "Error trying to get Userinfo", message: error.rawValue, buttonTilte: "Ok")
