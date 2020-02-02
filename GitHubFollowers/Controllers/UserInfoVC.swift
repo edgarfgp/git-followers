@@ -8,9 +8,16 @@
 
 import UIKit
 
+protocol UserInfoVCDelgate : class  {
+    func didTapGitProfile(for user: User)
+    func didtapFollowers(for user: User)
+}
+
 class UserInfoVC: UIViewController {
     
     private var username: String
+    
+    weak var followrLstDelegate : FollowerListVCdelegate!
     
     private lazy var headerView = UIView()
     private lazy var itemViewOne = UIView()
@@ -32,6 +39,31 @@ class UserInfoVC: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension UserInfoVC : UserInfoVCDelgate {
+    
+    func didTapGitProfile(for user: User) {
+        
+        guard let url = URL(string: user.htmlUrl) else {
+            presentFGAlertOnMainThread(title: "Invalid URL", message: "The usrl attached to this user is invalid ", buttonTilte: "OK")
+            return
+        }
+        
+        presentSafariVC(with: url)
+    }
+    
+    func didtapFollowers(for user: User) {
+        
+        guard user.followers != 0 else {
+            presentFGAlertOnMainThread(title: "No folowers", message: "This user does not have followers.", buttonTilte: "OK")
+            return
+        }
+        
+        followrLstDelegate?.didRequestFollowers(username: user.login)
+        
+        dismissVC()
     }
 }
 
@@ -85,16 +117,19 @@ extension UserInfoVC {
             guard let self = self else { return }
             switch result {
             case .success(let user) :
-                DispatchQueue.main.async {
-                    self.add(childVC: FGUserInfoHeaderVC(user: user), to: self.headerView)
-                    self.add(childVC: FGReposItemInfoVc(user: user), to: self.itemViewOne)
-                    self.add(childVC: FGFollowersItemInfoVc(user: user), to: self.itemViewTwo)
-                    self.datelabel.text = "Github Since \(user.createdAt.convertToDisplayFormat())"
-                }
+                DispatchQueue.main.async { self.configureElements(with: user, delegate: self) }
             case .failure(let error) :
                 self.presentFGAlertOnMainThread(title: "Error trying to get Userinfo", message: error.rawValue, buttonTilte: "Ok")
             }
         }
+    }
+    
+    private func configureElements(with user: User, delegate: UserInfoVCDelgate){
+        
+        self.add(childVC: FGUserInfoHeaderVC(user: user), to: self.headerView)
+        self.add(childVC: FGReposItemInfoVc(user: user, delegate: self), to: self.itemViewOne)
+        self.add(childVC: FGFollowersItemInfoVc(user: user, delegate: self), to: self.itemViewTwo)
+        self.datelabel.text = "Github Since \(user.createdAt.convertToDisplayFormat())"
     }
     
     @objc func dismissVC(){

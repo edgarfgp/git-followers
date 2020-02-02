@@ -41,7 +41,7 @@ extension SearchVC {
         view.addGestureRecognizer(tap)
     }
     
-    @objc func pushFolowerListVc() {
+    @objc private func pushFolowerListVc() {
         
         guard isUserNameEntered  else {
             presentFGAlertOnMainThread(
