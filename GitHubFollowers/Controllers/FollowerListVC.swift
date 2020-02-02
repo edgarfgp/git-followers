@@ -83,7 +83,13 @@ extension FollowerListVC {
     private func configureViewController() {
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addFavouriteTapped))
     }
+    
+    @objc private func addFavouriteTapped () {
+        
+    }
+    
     
     private func configureSearchController() {
         let searchController = UISearchController()
