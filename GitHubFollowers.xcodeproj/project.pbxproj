@@ -17,6 +17,8 @@
 		682EDBED23DE0DF300423ACC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682EDBEC23DE0DF300423ACC /* SceneDelegate.swift */; };
 		682EDBF423DE0DF400423ACC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 682EDBF323DE0DF400423ACC /* Assets.xcassets */; };
 		682EDBF723DE0DF400423ACC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 682EDBF523DE0DF400423ACC /* LaunchScreen.storyboard */; };
+		683054D623EB4FDC009F1FA2 /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683054D523EB4FDC009F1FA2 /* PersistenceManager.swift */; };
+		683054D823EB6FC6009F1FA2 /* FavoriteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 683054D723EB6FC6009F1FA2 /* FavoriteCell.swift */; };
 		68336CB823DF185300D69E64 /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68336CB723DF185300D69E64 /* SearchVC.swift */; };
 		68336CBA23DF188F00D69E64 /* FavouriteListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68336CB923DF188F00D69E64 /* FavouriteListVC.swift */; };
 		6851923823DF69C50015B2FA /* FGButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6851923723DF69C50015B2FA /* FGButton.swift */; };
@@ -54,6 +56,8 @@
 		682EDBF323DE0DF400423ACC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		682EDBF623DE0DF400423ACC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		682EDBF823DE0DF400423ACC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		683054D523EB4FDC009F1FA2 /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
+		683054D723EB6FC6009F1FA2 /* FavoriteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCell.swift; sourceTree = "<group>"; };
 		68336CB723DF185300D69E64 /* SearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVC.swift; sourceTree = "<group>"; };
 		68336CB923DF188F00D69E64 /* FavouriteListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteListVC.swift; sourceTree = "<group>"; };
 		6851923723DF69C50015B2FA /* FGButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGButton.swift; sourceTree = "<group>"; };
@@ -190,6 +194,7 @@
 			isa = PBXGroup;
 			children = (
 				68678C1A23E237FD009EEA10 /* NetworkManager.swift */,
+				683054D523EB4FDC009F1FA2 /* PersistenceManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -236,6 +241,7 @@
 			isa = PBXGroup;
 			children = (
 				6880DDF623E31194007B64BC /* FollowerCell.swift */,
+				683054D723EB6FC6009F1FA2 /* FavoriteCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -347,6 +353,8 @@
 				689491A423E5CB44008E293B /* UIView.swift in Sources */,
 				68011B6F23E609E1006DA806 /* ItemInfoVC.swift in Sources */,
 				689D65A223E0D092007F32E1 /* FGAlertVC.swift in Sources */,
+				683054D623EB4FDC009F1FA2 /* PersistenceManager.swift in Sources */,
+				683054D823EB6FC6009F1FA2 /* FavoriteCell.swift in Sources */,
 				6851923C23DF80E90015B2FA /* FollowerListVC.swift in Sources */,
 				689491A223E5C73F008E293B /* FGSecondaryTitleLabel.swift in Sources */,
 				6880DDF723E31194007B64BC /* FollowerCell.swift in Sources */,
