@@ -10,7 +10,7 @@ import UIKit
 
 class FGAvatarImageView: UIImageView {
     
-    private let placeHolderImage = UIImage(named: "avatar-placeholder")
+    private let placeHolderImage = Images.placeholder
     
     private let cache = NetworkManager.shared.cache
     

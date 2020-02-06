@@ -16,5 +16,4 @@ extension UIView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
     }
-    
 }

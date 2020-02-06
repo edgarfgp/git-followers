@@ -86,7 +86,7 @@ extension UserInfoVC {
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: padding),
             headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
             headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
-            headerView.heightAnchor.constraint(equalToConstant: 180),
+            headerView.heightAnchor.constraint(equalToConstant: 210),
             
             itemViewOne.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: padding),
             itemViewOne.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
@@ -100,7 +100,7 @@ extension UserInfoVC {
             
             datelabel.topAnchor.constraint(equalTo: itemViewTwo.bottomAnchor, constant: padding),
             datelabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            datelabel.heightAnchor.constraint(equalToConstant: 18)
+            datelabel.heightAnchor.constraint(equalToConstant: 50)
             
         ])
     }
