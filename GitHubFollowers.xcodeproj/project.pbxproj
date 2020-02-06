@@ -12,6 +12,7 @@
 		68011B7123E61207006DA806 /* FGReposItemInfoVc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68011B7023E61207006DA806 /* FGReposItemInfoVc.swift */; };
 		68011B7323E615A9006DA806 /* FGFollowersItemInfoVc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68011B7223E615A9006DA806 /* FGFollowersItemInfoVc.swift */; };
 		68011B7623E62EBF006DA806 /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68011B7523E62EBF006DA806 /* Date+Ext.swift */; };
+		681C0A8A23ECC9D600DA7631 /* UITableView+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 681C0A8923ECC9D600DA7631 /* UITableView+Ext.swift */; };
 		682EDBEB23DE0DF300423ACC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682EDBEA23DE0DF300423ACC /* AppDelegate.swift */; };
 		682EDBED23DE0DF300423ACC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682EDBEC23DE0DF300423ACC /* SceneDelegate.swift */; };
 		682EDBF423DE0DF400423ACC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 682EDBF323DE0DF400423ACC /* Assets.xcassets */; };
@@ -50,6 +51,7 @@
 		68011B7023E61207006DA806 /* FGReposItemInfoVc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGReposItemInfoVc.swift; sourceTree = "<group>"; };
 		68011B7223E615A9006DA806 /* FGFollowersItemInfoVc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGFollowersItemInfoVc.swift; sourceTree = "<group>"; };
 		68011B7523E62EBF006DA806 /* Date+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
+		681C0A8923ECC9D600DA7631 /* UITableView+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Ext.swift"; sourceTree = "<group>"; };
 		682EDBE723DE0DF300423ACC /* GitHubFollowers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitHubFollowers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		682EDBEA23DE0DF300423ACC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		682EDBEC23DE0DF300423ACC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -142,6 +144,7 @@
 				689D65A323E0EF98007F32E1 /* UIViewController.swift */,
 				689491A323E5CB44008E293B /* UIView.swift */,
 				68011B7523E62EBF006DA806 /* Date+Ext.swift */,
+				681C0A8923ECC9D600DA7631 /* UITableView+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -363,6 +366,7 @@
 				68011B7123E61207006DA806 /* FGReposItemInfoVc.swift in Sources */,
 				68B8B56E23E389F100FBA782 /* UIHelper.swift in Sources */,
 				689491A423E5CB44008E293B /* UIView.swift in Sources */,
+				681C0A8A23ECC9D600DA7631 /* UITableView+Ext.swift in Sources */,
 				68011B6F23E609E1006DA806 /* ItemInfoVC.swift in Sources */,
 				689D65A223E0D092007F32E1 /* FGAlertVC.swift in Sources */,
 				683054D623EB4FDC009F1FA2 /* PersistenceManager.swift in Sources */,
