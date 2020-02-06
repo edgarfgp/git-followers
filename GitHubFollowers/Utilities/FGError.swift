@@ -16,6 +16,4 @@ enum FGError : String, Error {
     case invalidData = "The data recieved from the server is invalid. Please try again"
     case unableToFavourite = "There was an error favouriting this user. Please try again"
     case alreadyInfavourites = "You already favotited this user"
-    
-    
 }

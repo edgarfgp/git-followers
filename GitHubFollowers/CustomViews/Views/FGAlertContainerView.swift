@@ -1,18 +1,14 @@
 //
-//  FGAvatarImageView.swift
+//  FGAlertContainerView.swift
 //  GitHubFollowers
 //
-//  Created by Edgar Gonzalez Pena on 30/01/2020.
+//  Created by Edgar Gonzalez Pena on 06/02/2020.
 //  Copyright © 2020 Edgar Gonzalez Pena. All rights reserved.
 //
 
 import UIKit
 
-class FGAvatarImageView: UIImageView {
-    
-    private let placeHolderImage = UIImage(named: "avatar-placeholder")
-    
-    private let cache = NetworkManager.shared.cache
+class FGAlertContainerView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -23,10 +19,11 @@ class FGAvatarImageView: UIImageView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private  func configure(){
-        layer.cornerRadius = 10
-        clipsToBounds = true
-        image = placeHolderImage
+    private func configure() {
+        backgroundColor = .systemBackground
+        layer.cornerRadius = 16
+        layer.borderWidth = 2
+        layer.borderColor = UIColor.white.cgColor
         translatesAutoresizingMaskIntoConstraints = false
     }
 }

@@ -9,7 +9,7 @@
 import UIKit
 
 class FGUserInfoHeaderVC: UIViewController {
-
+    
     private lazy var avatarImageView  = FGAvatarImageView(frame: .zero)
     private lazy var userNameLabel = FGTitleLabel(textAligment: .left, fontSize: 34)
     private lazy var namelabel = FGSecondaryTitleLabel(fontSize: 18)
@@ -43,7 +43,11 @@ extension FGUserInfoHeaderVC {
     }
     
     private func configureUIElements() {
-        avatarImageView.downloadImage(from: user.avatarUrl)
+        NetworkManager.shared.downloadImage(from: user.avatarUrl) { [weak self] image in
+            DispatchQueue.main.async {
+                self?.avatarImageView.image = image
+            }
+        }
         userNameLabel.text = user.login
         namelabel.text = user.name ?? ""
         locationLabel.text = user.location ?? "Unkwown lcoation"

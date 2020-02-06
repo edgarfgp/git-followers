@@ -9,7 +9,7 @@
 import UIKit
 
 class FGButton: UIButton {
-
+    
     // This is not needed because we are not using storyboard
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -20,12 +20,10 @@ class FGButton: UIButton {
         configure()
     }
     
-    init(backgroundColor: UIColor, text: String) {
-        super.init(frame: .zero)
+    convenience init(backgroundColor: UIColor, text: String) {
+        self.init(frame: .zero)
         self.backgroundColor = backgroundColor
         self.setTitle(text, for: .normal)
-        configure()
-        
     }
     
     private func configure(){
@@ -39,5 +37,4 @@ class FGButton: UIButton {
         self.backgroundColor = backgroundColor
         self.setTitle(title, for: .normal)
     }
-    
 }

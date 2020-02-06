@@ -12,7 +12,6 @@
 		68011B7123E61207006DA806 /* FGReposItemInfoVc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68011B7023E61207006DA806 /* FGReposItemInfoVc.swift */; };
 		68011B7323E615A9006DA806 /* FGFollowersItemInfoVc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68011B7223E615A9006DA806 /* FGFollowersItemInfoVc.swift */; };
 		68011B7623E62EBF006DA806 /* Date+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68011B7523E62EBF006DA806 /* Date+Ext.swift */; };
-		68011B7823E62EFA006DA806 /* String+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68011B7723E62EFA006DA806 /* String+Ext.swift */; };
 		682EDBEB23DE0DF300423ACC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682EDBEA23DE0DF300423ACC /* AppDelegate.swift */; };
 		682EDBED23DE0DF300423ACC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 682EDBEC23DE0DF300423ACC /* SceneDelegate.swift */; };
 		682EDBF423DE0DF400423ACC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 682EDBF323DE0DF400423ACC /* Assets.xcassets */; };
@@ -35,6 +34,8 @@
 		689491A223E5C73F008E293B /* FGSecondaryTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689491A123E5C73F008E293B /* FGSecondaryTitleLabel.swift */; };
 		689491A423E5CB44008E293B /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689491A323E5CB44008E293B /* UIView.swift */; };
 		689491A623E5D49F008E293B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689491A523E5D49F008E293B /* Constants.swift */; };
+		689598B823EC577800FB4151 /* FGTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689598B723EC577800FB4151 /* FGTabBarController.swift */; };
+		689598BA23EC6D6300FB4151 /* FGAlertContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689598B923EC6D6300FB4151 /* FGAlertContainerView.swift */; };
 		689D659E23E0CC6F007F32E1 /* FGTitleLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689D659D23E0CC6F007F32E1 /* FGTitleLabel.swift */; };
 		689D65A023E0CF87007F32E1 /* FGBodyLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689D659F23E0CF87007F32E1 /* FGBodyLabel.swift */; };
 		689D65A223E0D092007F32E1 /* FGAlertVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 689D65A123E0D092007F32E1 /* FGAlertVC.swift */; };
@@ -49,7 +50,6 @@
 		68011B7023E61207006DA806 /* FGReposItemInfoVc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGReposItemInfoVc.swift; sourceTree = "<group>"; };
 		68011B7223E615A9006DA806 /* FGFollowersItemInfoVc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGFollowersItemInfoVc.swift; sourceTree = "<group>"; };
 		68011B7523E62EBF006DA806 /* Date+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Ext.swift"; sourceTree = "<group>"; };
-		68011B7723E62EFA006DA806 /* String+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Ext.swift"; sourceTree = "<group>"; };
 		682EDBE723DE0DF300423ACC /* GitHubFollowers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitHubFollowers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		682EDBEA23DE0DF300423ACC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		682EDBEC23DE0DF300423ACC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -74,6 +74,8 @@
 		689491A123E5C73F008E293B /* FGSecondaryTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGSecondaryTitleLabel.swift; sourceTree = "<group>"; };
 		689491A323E5CB44008E293B /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		689491A523E5D49F008E293B /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		689598B723EC577800FB4151 /* FGTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGTabBarController.swift; sourceTree = "<group>"; };
+		689598B923EC6D6300FB4151 /* FGAlertContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGAlertContainerView.swift; sourceTree = "<group>"; };
 		689D659D23E0CC6F007F32E1 /* FGTitleLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGTitleLabel.swift; sourceTree = "<group>"; };
 		689D659F23E0CF87007F32E1 /* FGBodyLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGBodyLabel.swift; sourceTree = "<group>"; };
 		689D65A123E0D092007F32E1 /* FGAlertVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGAlertVC.swift; sourceTree = "<group>"; };
@@ -140,7 +142,6 @@
 				689D65A323E0EF98007F32E1 /* UIViewController.swift */,
 				689491A323E5CB44008E293B /* UIView.swift */,
 				68011B7523E62EBF006DA806 /* Date+Ext.swift */,
-				68011B7723E62EFA006DA806 /* String+Ext.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -222,6 +223,7 @@
 		6894919B23E5C689008E293B /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				689598B623EC54F900FB4151 /* TabBar */,
 				68011B7423E61651006DA806 /* ItemInfoVC */,
 				689D65A123E0D092007F32E1 /* FGAlertVC.swift */,
 				6894919823E5C607008E293B /* FGUserInfoHeaderVC.swift */,
@@ -251,6 +253,7 @@
 			children = (
 				68D0578523E4E8BB00C28FA4 /* FGEmptyView.swift */,
 				68011B6C23E6016B006DA806 /* FGItemInfoView.swift */,
+				689598B923EC6D6300FB4151 /* FGAlertContainerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -269,6 +272,14 @@
 				6851923923DF6EF00015B2FA /* FGTextField.swift */,
 			);
 			path = TextFieds;
+			sourceTree = "<group>";
+		};
+		689598B623EC54F900FB4151 /* TabBar */ = {
+			isa = PBXGroup;
+			children = (
+				689598B723EC577800FB4151 /* FGTabBarController.swift */,
+			);
+			path = TabBar;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -343,6 +354,7 @@
 			files = (
 				68678C1823E23073009EEA10 /* User.swift in Sources */,
 				68336CBA23DF188F00D69E64 /* FavouriteListVC.swift in Sources */,
+				689598BA23EC6D6300FB4151 /* FGAlertContainerView.swift in Sources */,
 				6851923A23DF6EF00015B2FA /* FGTextField.swift in Sources */,
 				6851923823DF69C50015B2FA /* FGButton.swift in Sources */,
 				68011B6D23E6016B006DA806 /* FGItemInfoView.swift in Sources */,
@@ -361,11 +373,11 @@
 				689D659E23E0CC6F007F32E1 /* FGTitleLabel.swift in Sources */,
 				6880DDF523E2D0AA007B64BC /* FGError.swift in Sources */,
 				68678C1623E2301A009EEA10 /* Follower.swift in Sources */,
-				68011B7823E62EFA006DA806 /* String+Ext.swift in Sources */,
 				6894919723E5A176008E293B /* UserInfoVC.swift in Sources */,
 				6880DDF923E31261007B64BC /* FGAvatarImageView.swift in Sources */,
 				68D0578623E4E8BB00C28FA4 /* FGEmptyView.swift in Sources */,
 				68336CB823DF185300D69E64 /* SearchVC.swift in Sources */,
+				689598B823EC577800FB4151 /* FGTabBarController.swift in Sources */,
 				68678C1B23E237FD009EEA10 /* NetworkManager.swift in Sources */,
 				68011B7623E62EBF006DA806 /* Date+Ext.swift in Sources */,
 				689D65A023E0CF87007F32E1 /* FGBodyLabel.swift in Sources */,

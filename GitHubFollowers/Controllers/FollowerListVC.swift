@@ -29,6 +29,7 @@ class FollowerListVC: UIViewController, FollowerListVCdelegate {
     init(userName: String) {
         self.userName = userName
         super.init(nibName: nil, bundle: nil)
+        self.title = userName
     }
     
     required init?(coder: NSCoder) {
@@ -117,8 +118,6 @@ class FollowerListVC: UIViewController, FollowerListVCdelegate {
                     
                     self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
                     
-                    
-                    
                 }
                 
             case .failure(let error):
@@ -162,7 +161,7 @@ class FollowerListVC: UIViewController, FollowerListVCdelegate {
                 }
                 
                 self.updateData(on: followers)
-
+                
             case .failure(let error) :
                 self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTilte: "Ok")
             }

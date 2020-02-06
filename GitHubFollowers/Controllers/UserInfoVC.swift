@@ -26,7 +26,7 @@ class UserInfoVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         configureViewController()
         layoutUI()
         getUserInfo()
@@ -70,17 +70,17 @@ extension UserInfoVC : UserInfoVCDelgate {
 extension UserInfoVC {
     
     private func configureViewController() {
-       view.backgroundColor = .systemBackground
-       let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
-       navigationItem.rightBarButtonItem = doneButton
-   }
+        view.backgroundColor = .systemBackground
+        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
+        navigationItem.rightBarButtonItem = doneButton
+    }
     
     private func layoutUI(){
         
         view.addSubviews(headerView, itemViewOne, itemViewTwo, datelabel)
         
         let padding : CGFloat = 20
-                
+        
         NSLayoutConstraint.activate([
             
             headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: padding),
@@ -129,10 +129,10 @@ extension UserInfoVC {
         self.add(childVC: FGUserInfoHeaderVC(user: user), to: self.headerView)
         self.add(childVC: FGReposItemInfoVc(user: user, delegate: self), to: self.itemViewOne)
         self.add(childVC: FGFollowersItemInfoVc(user: user, delegate: self), to: self.itemViewTwo)
-        self.datelabel.text = "Github Since \(user.createdAt.convertToDisplayFormat())"
+        self.datelabel.text = "Github Since \(user.createdAt.convertToMonthYearFormat())"
     }
     
     @objc func dismissVC(){
-           dismiss(animated: true)
-       }
+        dismiss(animated: true)
+    }
 }

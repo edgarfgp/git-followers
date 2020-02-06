@@ -52,7 +52,7 @@ class ItemInfoVC: UIViewController {
     }
     
     private func configureActionButton() {
-           actionButton.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
+        actionButton.addTarget(self, action: #selector(actionButtonTapped), for: .touchUpInside)
     }
     
     @objc internal func actionButtonTapped () {}

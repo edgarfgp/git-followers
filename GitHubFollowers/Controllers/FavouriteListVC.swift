@@ -13,7 +13,7 @@ class FavouriteListVC: UIViewController {
     let tableView = UITableView()
     
     var favorites : [Follower] = []
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViewController()
@@ -21,7 +21,7 @@ class FavouriteListVC: UIViewController {
     }
     
     private func configureViewController() {
-         view.backgroundColor = .systemBackground
+        view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
     }
     
@@ -83,7 +83,6 @@ extension FavouriteListVC : UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let favourite = favorites[indexPath.row]
         let destinationVC = FollowerListVC(userName: favourite.login)
-        destinationVC.title = favourite.login
         
         navigationController?.pushViewController(destinationVC, animated: true)
     }
@@ -92,7 +91,7 @@ extension FavouriteListVC : UITableViewDataSource, UITableViewDelegate {
         guard editingStyle == .delete else {
             return
         }
-
+        
         let favourite = favorites[indexPath.row]
         favorites.remove(at: indexPath.row)
         tableView.deleteRows(at: [indexPath], with: .left)

@@ -9,7 +9,7 @@
 import UIKit
 
 class FGEmptyView: UIView {
-
+    
     let messagelabel = FGTitleLabel(textAligment: .center, fontSize: 28)
     let logoImageView = UIImageView()
     
@@ -23,7 +23,7 @@ class FGEmptyView: UIView {
         messagelabel.text = message
         configure()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -50,5 +50,5 @@ class FGEmptyView: UIView {
             logoImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 40),
         ])
     }
-
+    
 }
