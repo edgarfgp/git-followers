@@ -8,6 +8,11 @@
 
 import UIKit
 
+protocol UserInfoVCDelgate : class  {
+    func didTapGitProfile(for user: User)
+    func didtapFollowers(for user: User)
+}
+
 class ItemInfoVC: UIViewController {
     
     lazy var stackView       = UIStackView()
@@ -17,11 +22,8 @@ class ItemInfoVC: UIViewController {
     
     var user: User!
     
-    weak var userInfoVCDelegate :  UserInfoVCDelgate!
-    
-    init(user: User, delegate: UserInfoVCDelgate) {
+    init(user: User) {
         self.user = user
-        userInfoVCDelegate = delegate
         super.init(nibName: nil, bundle: nil)
     }
     
