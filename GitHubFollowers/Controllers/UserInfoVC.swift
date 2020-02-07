@@ -10,19 +10,23 @@ import UIKit
 
 class UserInfoVC: UIViewController {
     
-    private var username: String
-    
-    weak var followrLstDelegate : FollowerListVCdelegate!
+    let scrollView = UIScrollView()
+    let contextView = UIView()
     
     private lazy var headerView = UIView()
     private lazy var itemViewOne = UIView()
     private lazy var itemViewTwo = UIView()
     private lazy var datelabel = FGBodyLabel()
     
+    weak var followrLstDelegate : FollowerListVCdelegate!
+    private var username: String
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configureViewController()
+        configureScrollView()
         layoutUI()
         getUserInfo()
     }
@@ -34,6 +38,19 @@ class UserInfoVC: UIViewController {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func configureScrollView() {
+        view.addSubview(scrollView)
+        scrollView.addSubview(contextView)
+        scrollView.pinToEdges(of: view)
+        contextView.pinToEdges(of: scrollView)
+        
+        NSLayoutConstraint.activate([
+            contextView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            contextView.heightAnchor.constraint(equalToConstant: 600)
+        ])
+    
     }
     
     private func configureViewController() {
@@ -64,25 +81,25 @@ class UserInfoVC: UIViewController {
     
     private func layoutUI(){
         
-        view.addSubviews(headerView, itemViewOne, itemViewTwo, datelabel)
+        contextView.addSubviews(headerView, itemViewOne, itemViewTwo, datelabel)
         
         let padding : CGFloat = 20
         
         NSLayoutConstraint.activate([
             
-            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: padding),
-            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
-            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            headerView.topAnchor.constraint(equalTo: contextView.safeAreaLayoutGuide.topAnchor, constant: padding),
+            headerView.leadingAnchor.constraint(equalTo: contextView.leadingAnchor, constant: padding),
+            headerView.trailingAnchor.constraint(equalTo: contextView.trailingAnchor, constant: -padding),
             headerView.heightAnchor.constraint(equalToConstant: 210),
             
             itemViewOne.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: padding),
-            itemViewOne.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
-            itemViewOne.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            itemViewOne.leadingAnchor.constraint(equalTo: contextView.leadingAnchor, constant: padding),
+            itemViewOne.trailingAnchor.constraint(equalTo: contextView.trailingAnchor, constant: -padding),
             itemViewOne.heightAnchor.constraint(equalToConstant: 140),
             
             itemViewTwo.topAnchor.constraint(equalTo: itemViewOne.bottomAnchor, constant: padding),
-            itemViewTwo.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: padding),
-            itemViewTwo.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -padding),
+            itemViewTwo.leadingAnchor.constraint(equalTo: contextView.leadingAnchor, constant: padding),
+            itemViewTwo.trailingAnchor.constraint(equalTo: contextView.trailingAnchor, constant: -padding),
             itemViewTwo.heightAnchor.constraint(equalToConstant: 140),
             
             datelabel.topAnchor.constraint(equalTo: itemViewTwo.bottomAnchor, constant: padding),
@@ -125,7 +142,7 @@ extension UserInfoVC : FGFollowersItemInfoVcDelgate {
             return
         }
         
-        followrLstDelegate?.didRequestFollowers(username: user.login)
+        followrLstDelegate.didRequestFollowers(username: user.login)
         
         dismissVC()
     }
