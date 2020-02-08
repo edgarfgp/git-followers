@@ -12,24 +12,22 @@ protocol FollowerListVCdelegate : class {
     func didRequestFollowers(username: String)
 }
 
-class FollowerListVC: UIViewController, FollowerListVCdelegate {
+class FollowerListVC: UICollectionViewController, FollowerListVCdelegate {
     
-    private var page : Int = 1
-    private var hasMoreFollowers = true
-    private var isSearching = false
-    private var isLoadingMoreFollowers = false
+    private lazy var page : Int = 1
+    private lazy var hasMoreFollowers = true
+    private lazy var isSearching = false
+    private lazy var isLoadingMoreFollowers = false
     private var userName : String
-    private var followers: [Follower] = []
-    private var filteredFolowers : [Follower] = []
-    private var collectionView : UICollectionView!
+    private lazy var followers: [Follower] = []
+    private lazy var filteredFolowers : [Follower] = []
     private var dataSource : UICollectionViewDiffableDataSource<Section, Follower>!
     
     enum Section { case main }
     
-    
     init(userName: String) {
         self.userName = userName
-        super.init(nibName: nil, bundle: nil)
+        super.init(collectionViewLayout : UICollectionViewFlowLayout())
         self.title = userName
     }
     
@@ -50,6 +48,29 @@ class FollowerListVC: UIViewController, FollowerListVCdelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(false, animated: true)
+    }
+    
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+        
+        if offsetY > contentHeight - height {
+            guard hasMoreFollowers, !isLoadingMoreFollowers else { return }
+            page += 1
+            getFollowers(userName: userName, page: page)
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let activeArray = isSearching ? filteredFolowers : followers
+        let follower = activeArray[indexPath.item]
+        
+        let destinationVc = UserInfoVC(for: follower.login)
+        destinationVc.followrLstDelegate = self
+        let navControler = UINavigationController(rootViewController: destinationVc)
+        present(navControler, animated: true, completion: nil)
     }
     
     private func configureCollectionView() {
@@ -169,33 +190,6 @@ class FollowerListVC: UIViewController, FollowerListVCdelegate {
             self.isLoadingMoreFollowers = false
         }
     }
-}
-
-extension FollowerListVC : UICollectionViewDelegate {
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        
-        let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height
-        let height = scrollView.frame.size.height
-        
-        if offsetY > contentHeight - height {
-            guard hasMoreFollowers, !isLoadingMoreFollowers else { return }
-            page += 1
-            getFollowers(userName: userName, page: page)
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let activeArray = isSearching ? filteredFolowers : followers
-        let follower = activeArray[indexPath.item]
-        
-        let destinationVc = UserInfoVC(for: follower.login)
-        destinationVc.followrLstDelegate = self
-        let navControler = UINavigationController(rootViewController: destinationVc)
-        present(navControler, animated: true, completion: nil)
-    }
-    
 }
 
 extension FollowerListVC : UISearchResultsUpdating, UISearchBarDelegate {

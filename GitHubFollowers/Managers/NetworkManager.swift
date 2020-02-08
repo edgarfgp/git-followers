@@ -27,7 +27,7 @@ class NetworkManager {
             return
         }
         
-        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
             
             if let _ = error {
                 completed(.failure(.unableToComplte))
@@ -54,9 +54,8 @@ class NetworkManager {
                 completed(.failure(.invalidData))
             }
             
-        }
+        }.resume()
         
-        task.resume()
     }
     
     
@@ -69,7 +68,7 @@ class NetworkManager {
             return
         }
         
-        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
             
             if let _ = error {
                 completed(.failure(.unableToComplte))
@@ -97,9 +96,7 @@ class NetworkManager {
                 completed(.failure(.invalidData))
             }
             
-        }
-        
-        task.resume()
+        }.resume()
     }
     
     func downloadImage(from urlString: String, completed: @escaping(UIImage?) -> Void) {
