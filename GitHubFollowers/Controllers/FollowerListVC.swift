@@ -75,8 +75,6 @@ class FollowerListVC: UICollectionViewController, FollowerListVCdelegate {
     
     private func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: UiHelper.createThreeColumnFlowLayout(in: view) )
-        view.addSubview(collectionView)
-        collectionView.delegate = self
         collectionView.backgroundColor = .systemBackground
         collectionView.register(FollowerCell.self, forCellWithReuseIdentifier: FollowerCell.reuseID)
     }
@@ -85,7 +83,7 @@ class FollowerListVC: UICollectionViewController, FollowerListVCdelegate {
         dataSource = UICollectionViewDiffableDataSource<Section, Follower>(collectionView: collectionView, cellProvider: {
             (collectionView, indexPath, follower) -> UICollectionViewCell? in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FollowerCell.reuseID, for: indexPath) as! FollowerCell
-            cell.set(follower: follower)
+            cell.setFollower(follower: follower)
             return cell
         })
     }
@@ -103,7 +101,7 @@ class FollowerListVC: UICollectionViewController, FollowerListVCdelegate {
     private func configureViewController() {
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addFavouriteTapped))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addFavoriteTapped))
     }
     
     func didRequestFollowers(username: String) {
@@ -117,7 +115,7 @@ class FollowerListVC: UICollectionViewController, FollowerListVCdelegate {
         getFollowers(userName: userName, page: page)
     }
     
-    @objc private func addFavouriteTapped () {
+    @objc private func addFavoriteTapped () {
         
         showLoadingView()
         

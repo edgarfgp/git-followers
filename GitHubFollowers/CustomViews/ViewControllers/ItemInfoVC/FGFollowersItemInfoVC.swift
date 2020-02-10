@@ -13,7 +13,7 @@ protocol FGFollowersItemInfoVcDelgate : class  {
     func didtapFollowers(for user: User)
 }
 
-class FGFollowersItemInfoVc: ItemInfoVC {
+class FGFollowersItemInfoVC: ItemInfoVC {
     
     weak var delegate :  FGFollowersItemInfoVcDelgate!
     

@@ -1,5 +1,5 @@
 //
-//  FavouriteListViewController.swift
+//  FavoriteListViewController.swift
 //  GitHubFollowers
 //
 //  Created by Edgar Gonzalez Pena on 27/01/2020.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FavouriteListVC: UIViewController {
+class FavoriteListVC: UIViewController {
     
     let tableView = UITableView()
     
@@ -42,7 +42,7 @@ class FavouriteListVC: UIViewController {
     
     private func getFavotites () {
         
-        PersistenceManager.retrieveFavourites { [weak self] result in
+        PersistenceManager.retrieveFavorites { [weak self] result in
             
             guard let self = self else { return }
             
@@ -50,7 +50,7 @@ class FavouriteListVC: UIViewController {
                 
             case.success(let favorites):
                 if favorites.isEmpty {
-                    self.showEmptySatteView(with: "No favourites", in: self.view)
+                    self.showEmptySatteView(with: "No favorites", in: self.view)
                     self.tableView.bringSubviewToFront(self.view)
                 }
                 
@@ -68,27 +68,28 @@ class FavouriteListVC: UIViewController {
     }
 }
 
-extension FavouriteListVC : UITableViewDataSource, UITableViewDelegate {
+extension FavoriteListVC : UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return favorites.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FavoriteCell.reuseID) as! FavoriteCell
-        let favourite = favorites[indexPath.row]
-        cell.set(favorite: favourite)
+        let favorite = favorites[indexPath.row]
+        cell.setFavorite(favorite: favorite)
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let favourite = favorites[indexPath.row]
-        let destinationVC = FollowerListVC(userName: favourite.login)
+        let favorite = favorites[indexPath.row]
+        let destinationVC = FollowerListVC(userName: favorite.login)
         
         navigationController?.pushViewController(destinationVC, animated: true)
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
         guard editingStyle == .delete else {
             return
         }

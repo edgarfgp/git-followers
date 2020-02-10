@@ -12,7 +12,7 @@ class SearchVC: UIViewController {
     
     private lazy var logoImageView = UIImageView()
     
-    private lazy var userNameTextFiled = FGTextField()
+    private lazy var userNameTextFiled = UITextField(placeholder: "Enter a valid User")
     
     private lazy var callToActionButton = FGButton(backgroundColor: .systemGreen, text: "Get Followers")
     

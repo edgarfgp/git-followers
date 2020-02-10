@@ -10,17 +10,15 @@ import UIKit
 
 class UserInfoVC: UIViewController {
     
-    let scrollView = UIScrollView()
-    let contextView = UIView()
+    private let scrollView = UIScrollView()
+    private let contextView = UIView()
+    private let headerView = UIView()
+    private let itemViewOne = UIView()
+    private let itemViewTwo = UIView()
+    private let datelabel = FGBodyLabel()
     
-    private lazy var headerView = UIView()
-    private lazy var itemViewOne = UIView()
-    private lazy var itemViewTwo = UIView()
-    private lazy var datelabel = FGBodyLabel()
-    
-    weak var followrLstDelegate : FollowerListVCdelegate!
     private var username: String
-
+    weak var followrLstDelegate : FollowerListVCdelegate!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -74,8 +72,8 @@ class UserInfoVC: UIViewController {
     private func configureElements(with user: User){
         
         self.add(childVC: FGUserInfoHeaderVC(user: user), to: self.headerView)
-        self.add(childVC: FGReposItemInfoVc(user: user, delegate: self), to: self.itemViewOne)
-        self.add(childVC: FGFollowersItemInfoVc(user: user, delegate: self), to: self.itemViewTwo)
+        self.add(childVC: FGReposItemInfoVC(user: user, delegate: self), to: self.itemViewOne)
+        self.add(childVC: FGFollowersItemInfoVC(user: user, delegate: self), to: self.itemViewTwo)
         self.datelabel.text = "Github Since \(user.createdAt.convertToMonthYearFormat())"
     }
     
@@ -131,7 +129,6 @@ extension UserInfoVC : FGReposItemInfoVcDelgate {
         
         presentSafariVC(with: url)
     }
-    
 }
 
 extension UserInfoVC : FGFollowersItemInfoVcDelgate {
@@ -146,5 +143,4 @@ extension UserInfoVC : FGFollowersItemInfoVcDelgate {
         
         dismissVC()
     }
-    
 }

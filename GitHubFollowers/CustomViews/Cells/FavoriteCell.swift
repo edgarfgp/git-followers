@@ -12,10 +12,10 @@ import UIKit
 class FavoriteCell: UITableViewCell {
     
     static let reuseID = "FavoriteCell"
-    let padding: CGFloat = 12
+    private let padding: CGFloat = 12
     
-    let avatarImageView = FGAvatarImageView(frame: .zero)
-    let userNameLabel = FGTitleLabel(textAligment: .left, fontSize: 26)
+    private let avatarImageView = FGAvatarImageView(frame: .zero)
+    private let userNameLabel = FGTitleLabel(textAligment: .left, fontSize: 26)
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -44,7 +44,7 @@ class FavoriteCell: UITableViewCell {
         ])
     }
     
-    func set(favorite: Follower){
+    func setFavorite(favorite: Follower){
         userNameLabel.text = favorite.login
         NetworkManager.shared.downloadImage(from: favorite.avatarUrl) { [weak self] image in
             DispatchQueue.main.async {

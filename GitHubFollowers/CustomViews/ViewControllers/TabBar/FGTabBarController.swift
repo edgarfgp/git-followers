@@ -15,7 +15,7 @@ class FGTabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         UITabBar.appearance().tintColor = .systemGreen
-        viewControllers = [createSearchViewController() , createFavouriteViewController()]
+        viewControllers = [createSearchViewController() , createFavoriteViewController()]
     }
     
     func createSearchViewController () -> UINavigationController {
@@ -26,12 +26,12 @@ class FGTabBarViewController: UITabBarController {
         return UINavigationController(rootViewController: searchVC)
     }
     
-    func createFavouriteViewController () -> UINavigationController {
-        let favouriteVC = FavouriteListVC()
-        favouriteVC.title = "Favourites"
-        favouriteVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites , tag: 1)
+    func createFavoriteViewController () -> UINavigationController {
+        let favoriteVC = FavoriteListVC()
+        favoriteVC.title = "Favorites"
+        favoriteVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites , tag: 1)
         
-        return UINavigationController(rootViewController: favouriteVC)
+        return UINavigationController(rootViewController: favoriteVC)
     }
     
     func creteTabBar() -> UITabBarController {

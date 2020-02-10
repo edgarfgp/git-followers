@@ -1,25 +1,18 @@
 //
-//  FollowersTextField.swift
+//  UITextField+Ext.swift
 //  GitHubFollowers
 //
-//  Created by Edgar Gonzalez Pena on 27/01/2020.
+//  Created by Edgar Gonzalez Pena on 10/02/2020.
 //  Copyright © 2020 Edgar Gonzalez Pena. All rights reserved.
 //
 
 import UIKit
 
-class FGTextField: UITextField {
+
+extension UITextField {
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configure()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func configure(){
+    convenience init(placeholder: String) {
+        self.init(frame: .zero)
         translatesAutoresizingMaskIntoConstraints = false
         layer.cornerRadius = 10
         layer.borderWidth = 2
@@ -34,6 +27,6 @@ class FGTextField: UITextField {
         autocorrectionType = .no
         returnKeyType = .go
         clearButtonMode = .whileEditing
-        placeholder = "Enter a username"
+        self.placeholder = placeholder
     }
 }

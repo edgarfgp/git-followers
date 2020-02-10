@@ -12,7 +12,7 @@ protocol FGReposItemInfoVcDelgate : class  {
     func didTapGitProfile(for user: User)
 }
 
-class FGReposItemInfoVc: ItemInfoVC {
+class FGReposItemInfoVC: ItemInfoVC {
     
      weak var delegate :  FGReposItemInfoVcDelgate!
     
