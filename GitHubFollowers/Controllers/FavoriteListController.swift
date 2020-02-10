@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FavoriteListVC: UIViewController {
+class FavoriteListController: UIViewController {
     
     let tableView = UITableView()
     
@@ -42,7 +42,7 @@ class FavoriteListVC: UIViewController {
     
     private func getFavotites () {
         
-        PersistenceManager.retrieveFavorites { [weak self] result in
+        PersistenceService.retrieveFavorites { [weak self] result in
             
             guard let self = self else { return }
             
@@ -68,7 +68,7 @@ class FavoriteListVC: UIViewController {
     }
 }
 
-extension FavoriteListVC : UITableViewDataSource, UITableViewDelegate {
+extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return favorites.count
     }
@@ -83,7 +83,7 @@ extension FavoriteListVC : UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let favorite = favorites[indexPath.row]
-        let destinationVC = FollowerListVC(userName: favorite.login)
+        let destinationVC = FollowerListController(userName: favorite.login)
         
         navigationController?.pushViewController(destinationVC, animated: true)
     }
@@ -94,7 +94,7 @@ extension FavoriteListVC : UITableViewDataSource, UITableViewDelegate {
             return
         }
         
-        PersistenceManager.update(favorite: favorites[indexPath.row], actionType: .removing) { [weak self]error in
+        PersistenceService.update(favorite: favorites[indexPath.row], actionType: .removing) { [weak self]error in
             
             guard let self = self else { return }
             

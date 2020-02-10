@@ -43,7 +43,7 @@ extension FGUserInfoHeaderVC {
     }
     
     private func configureUIElements() {
-        NetworkManager.shared.downloadImage(from: user.avatarUrl) { [weak self] image in
+        GitHubService.shared.downloadImage(from: user.avatarUrl) { [weak self] image in
             DispatchQueue.main.async {
                 self?.avatarImageView.image = image
             }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SearchVC: UIViewController {
+class SearchController: UIViewController {
     
     private lazy var logoImageView = UIImageView()
     
@@ -52,7 +52,7 @@ class SearchVC: UIViewController {
         
         userNameTextFiled.resignFirstResponder()
         
-        let foloowerListVC = FollowerListVC(userName: userNameTextFiled.text ?? "")
+        let foloowerListVC = FollowerListController(userName: userNameTextFiled.text ?? "")
         navigationController?.pushViewController(foloowerListVC, animated: true)
         userNameTextFiled.resignFirstResponder()
     }
@@ -95,7 +95,7 @@ class SearchVC: UIViewController {
     }
 }
 
-extension SearchVC : UITextFieldDelegate {
+extension SearchController : UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         pushFolowerListVc()
         return true

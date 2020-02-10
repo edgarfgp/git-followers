@@ -12,7 +12,7 @@ protocol FollowerListVCdelegate : class {
     func didRequestFollowers(username: String)
 }
 
-class FollowerListVC: UICollectionViewController, FollowerListVCdelegate {
+class FollowerListController: UICollectionViewController, FollowerListVCdelegate {
     
     private lazy var page : Int = 1
     private lazy var hasMoreFollowers = true
@@ -67,7 +67,7 @@ class FollowerListVC: UICollectionViewController, FollowerListVCdelegate {
         let activeArray = isSearching ? filteredFolowers : followers
         let follower = activeArray[indexPath.item]
         
-        let destinationVc = UserInfoVC(for: follower.login)
+        let destinationVc = UserInfoController(for: follower.login)
         destinationVc.followrLstDelegate = self
         let navControler = UINavigationController(rootViewController: destinationVc)
         present(navControler, animated: true, completion: nil)
@@ -119,7 +119,7 @@ class FollowerListVC: UICollectionViewController, FollowerListVCdelegate {
         
         showLoadingView()
         
-        NetworkManager.shared.getUserInfo(for: userName) { [weak self] result in
+        GitHubService.shared.getUserInfo(for: userName) { [weak self] result in
             guard let self = self else { return }
             
             self.dissmissLoadingView()
@@ -128,7 +128,7 @@ class FollowerListVC: UICollectionViewController, FollowerListVCdelegate {
             case .success(let user):
                 
                 let favorite = Follower(login: user.login, avatarUrl: user.avatarUrl)
-                PersistenceManager.update(favorite: favorite, actionType: PersistenceActionType.adding) { [weak self] error in
+                PersistenceService.update(favorite: favorite, actionType: PersistenceActionType.adding) { [weak self] error in
                     guard let self = self else { return }
                     
                     guard let error = error else {
@@ -162,7 +162,7 @@ class FollowerListVC: UICollectionViewController, FollowerListVCdelegate {
         showLoadingView()
         
         isLoadingMoreFollowers = true
-        NetworkManager.shared.getFollowers(for: userName, page: page) { [weak self] result in
+        GitHubService.shared.getFollowers(for: userName, page: page) { [weak self] result in
             
             guard let self = self else { return }
             self.dissmissLoadingView()
@@ -190,7 +190,7 @@ class FollowerListVC: UICollectionViewController, FollowerListVCdelegate {
     }
 }
 
-extension FollowerListVC : UISearchResultsUpdating, UISearchBarDelegate {
+extension FollowerListController : UISearchResultsUpdating, UISearchBarDelegate {
     
     func updateSearchResults(for searchController: UISearchController) {
         guard let filter  = searchController.searchBar.text, !filter.isEmpty else {

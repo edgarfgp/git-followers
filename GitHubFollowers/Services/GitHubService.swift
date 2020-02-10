@@ -8,9 +8,9 @@
 
 import UIKit
 
-class NetworkManager {
+class GitHubService {
     
-    static let shared = NetworkManager()
+    static let shared = GitHubService()
     
     private let baseURL = "https://api.github.com/users/"
     

@@ -8,7 +8,9 @@
 
 import UIKit
 
-class UserInfoVC: UIViewController {
+class UserInfoController: UIViewController {
+    
+    private let padding : CGFloat = 20
     
     private let scrollView = UIScrollView()
     private let contextView = UIView()
@@ -58,7 +60,8 @@ class UserInfoVC: UIViewController {
     }
     
     private func getUserInfo() {
-        NetworkManager.shared.getUserInfo(for: username) { [weak self] result in
+        GitHubService.shared.getUserInfo(for: username) { [weak self] result in
+            
             guard let self = self else { return }
             switch result {
             case .success(let user) :
@@ -81,8 +84,6 @@ class UserInfoVC: UIViewController {
         
         contextView.addSubviews(headerView, itemViewOne, itemViewTwo, datelabel)
         
-        let padding : CGFloat = 20
-        
         NSLayoutConstraint.activate([
             
             headerView.topAnchor.constraint(equalTo: contextView.safeAreaLayoutGuide.topAnchor, constant: padding),
@@ -103,7 +104,6 @@ class UserInfoVC: UIViewController {
             datelabel.topAnchor.constraint(equalTo: itemViewTwo.bottomAnchor, constant: padding),
             datelabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             datelabel.heightAnchor.constraint(equalToConstant: 50)
-            
         ])
     }
     
@@ -119,7 +119,7 @@ class UserInfoVC: UIViewController {
     }
 }
 
-extension UserInfoVC : FGReposItemInfoVcDelgate {
+extension UserInfoController : FGReposItemInfoVcDelgate {
     func didTapGitProfile(for user: User) {
         
         guard let url = URL(string: user.htmlUrl) else {
@@ -131,7 +131,7 @@ extension UserInfoVC : FGReposItemInfoVcDelgate {
     }
 }
 
-extension UserInfoVC : FGFollowersItemInfoVcDelgate {
+extension UserInfoController : FGFollowersItemInfoVcDelgate {
     func didtapFollowers(for user: User) {
         
         guard user.followers != 0 else {

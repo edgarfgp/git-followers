@@ -19,7 +19,7 @@ class FGTabBarViewController: UITabBarController {
     }
     
     func createSearchViewController () -> UINavigationController {
-        let searchVC = SearchVC()
+        let searchVC = SearchController()
         searchVC.title = "Search"
         searchVC.tabBarItem = UITabBarItem(tabBarSystemItem: .search , tag: 0)
         
@@ -27,7 +27,7 @@ class FGTabBarViewController: UITabBarController {
     }
     
     func createFavoriteViewController () -> UINavigationController {
-        let favoriteVC = FavoriteListVC()
+        let favoriteVC = FavoriteListController()
         favoriteVC.title = "Favorites"
         favoriteVC.tabBarItem = UITabBarItem(tabBarSystemItem: .favorites , tag: 1)
         

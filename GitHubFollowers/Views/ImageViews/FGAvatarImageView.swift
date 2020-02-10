@@ -12,7 +12,7 @@ class FGAvatarImageView: UIImageView {
     
     private let placeHolderImage = Images.placeholder
     
-    private let cache = NetworkManager.shared.cache
+    private let cache = GitHubService.shared.cache
     
     override init(frame: CGRect) {
         super.init(frame: frame)
