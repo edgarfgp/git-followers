@@ -10,10 +10,10 @@ import UIKit
 
 class ItemInfoVC: UIViewController {
     
-    lazy var stackView       = UIStackView()
-    lazy var itemInfoViewOne = FGItemInfoView()
-    lazy var itemInfoViewTwo = FGItemInfoView()
-    lazy var actionButton    = FGButton()
+    private lazy var stackView       = UIStackView()
+    internal var itemInfoViewOne = FGItemInfoView()
+    internal lazy var itemInfoViewTwo = FGItemInfoView()
+    internal lazy var actionButton    = FGButton()
     
     var user: User?
     

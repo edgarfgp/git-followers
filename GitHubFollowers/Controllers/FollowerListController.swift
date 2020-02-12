@@ -8,23 +8,35 @@
 
 import UIKit
 
+enum Section { case main }
+
 class FollowerListController: UICollectionViewController {
     
     private lazy var page : Int = 1
     private lazy var hasMoreFollowers = true
     private lazy var isSearching = false
     private lazy var isLoadingMoreFollowers = false
-    private var userName : String
+    lazy var userName : String = ""
+    
     private lazy var followers: [Follower] = []
     private lazy var filteredFolowers : [Follower] = []
-    private var dataSource : UICollectionViewDiffableDataSource<Section, Follower>!
     
-    enum Section { case main }
+    private lazy var dataSource : UICollectionViewDiffableDataSource<Section, Follower> = {
+        
+        let dataSource = UICollectionViewDiffableDataSource<Section, Follower>(collectionView: collectionView, cellProvider: {
+            (collectionView, indexPath, follower) -> UICollectionViewCell? in
+            
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FollowerCell.reuseID, for: indexPath) as! FollowerCell
+            cell.setFollower(follower: follower)
+            return cell
+        })
+        
+        return dataSource
+    }()
     
-    init(userName: String) {
-        self.userName = userName
+    init() {
         super.init(collectionViewLayout : UICollectionViewFlowLayout())
-        self.title = userName
+       
     }
     
     required init?(coder: NSCoder) {
@@ -34,10 +46,11 @@ class FollowerListController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.title = userName
+        
         configureViewController()
         configureCollectionView()
         getFollowers(userName: userName, page: page)
-        configureDataSource()
         configureSearchController()
     }
     
@@ -63,7 +76,8 @@ class FollowerListController: UICollectionViewController {
         let activeArray = isSearching ? filteredFolowers : followers
         let follower = activeArray[indexPath.item]
         
-        let destinationController = UserInfoController(for: follower.login)
+        let destinationController = UserInfoController()
+        destinationController.username = follower.login
         
         destinationController.didRequestFollowers = { [weak self] name in
             
@@ -80,22 +94,13 @@ class FollowerListController: UICollectionViewController {
         }
         
         let navControler = UINavigationController(rootViewController: destinationController)
-        present(navControler, animated: true, completion: nil)
+        present(navControler, animated: true)
     }
     
     private func configureCollectionView() {
         collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: UiHelper.createThreeColumnFlowLayout(in: view) )
         collectionView.backgroundColor = .systemBackground
         collectionView.register(FollowerCell.self, forCellWithReuseIdentifier: FollowerCell.reuseID)
-    }
-    
-    private func configureDataSource () {
-        dataSource = UICollectionViewDiffableDataSource<Section, Follower>(collectionView: collectionView, cellProvider: {
-            (collectionView, indexPath, follower) -> UICollectionViewCell? in
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FollowerCell.reuseID, for: indexPath) as! FollowerCell
-            cell.setFollower(follower: follower)
-            return cell
-        })
     }
     
     private func updateData(on followers: [Follower]) {

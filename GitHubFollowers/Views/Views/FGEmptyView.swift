@@ -10,8 +10,8 @@ import UIKit
 
 class FGEmptyView: UIView {
     
-    let messagelabel = FGTitleLabel(textAligment: .center, fontSize: 28)
-    let logoImageView = UIImageView()
+    private lazy var messagelabel = FGTitleLabel(textAligment: .center, fontSize: 28)
+    private lazy var logoImageView = UIImageView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -26,8 +26,6 @@ class FGEmptyView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    
     
     private func configure() {
         

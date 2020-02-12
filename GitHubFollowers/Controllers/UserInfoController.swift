@@ -19,7 +19,7 @@ class UserInfoController: UIViewController {
     private let itemViewTwo = UIView()
     private let datelabel = FGBodyLabel()
     
-    private var username: String
+    lazy var username: String = ""
     
     var didRequestFollowers: ((String) -> Void)?
     
@@ -30,15 +30,6 @@ class UserInfoController: UIViewController {
         configureScrollView()
         layoutUI()
         getUserInfo()
-    }
-    
-    init(for userName: String){
-        self.username = userName
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     private func configureScrollView() {

@@ -10,9 +10,9 @@ import UIKit
 
 class FavoriteListController: UIViewController {
     
-    let tableView = UITableView()
+    private lazy var tableView = UITableView()
     
-    var favorites : [Follower] = []
+    private lazy var favorites : [Follower] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,14 +51,13 @@ class FavoriteListController: UIViewController {
             case.success(let favorites):
                 if favorites.isEmpty {
                     self.showEmptySatteView(with: "No favorites", in: self.view)
-                    self.tableView.bringSubviewToFront(self.view)
-                }
-                
-                self.favorites = favorites
-                
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                    self.view.bringSubviewToFront(self.tableView)
+                }else{
+                    self.favorites = favorites
+                    
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                        self.view.bringSubviewToFront(self.tableView)
+                    }
                 }
                 
             case.failure(let error):
@@ -83,7 +82,8 @@ extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let favorite = favorites[indexPath.row]
-        let destinationVC = FollowerListController(userName: favorite.login)
+        let destinationVC = FollowerListController()
+        destinationVC.userName = favorite.login
         
         navigationController?.pushViewController(destinationVC, animated: true)
     }
@@ -107,5 +107,10 @@ extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
             
             self.presentFGAlertOnMainThread(title: "Unable to remove", message: error.rawValue, buttonTilte: "Ok")
         }
+        
+        if favorites.isEmpty {
+            self.showEmptySatteView(with: "No favorites", in: self.view)
+        }
     }
+
 }

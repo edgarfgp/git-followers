@@ -12,10 +12,10 @@ import UIKit
 class FavoriteCell: UITableViewCell {
     
     static let reuseID = "FavoriteCell"
-    private let padding: CGFloat = 12
+    private lazy var padding: CGFloat = 12
     
-    private let avatarImageView = FGAvatarImageView(frame: .zero)
-    private let userNameLabel = FGTitleLabel(textAligment: .left, fontSize: 26)
+    private lazy var avatarImageView = FGAvatarImageView(frame: .zero)
+    private lazy var userNameLabel = FGTitleLabel(textAligment: .left, fontSize: 26)
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

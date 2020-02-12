@@ -10,7 +10,6 @@ import UIKit
 
 class FGButton: UIButton {
     
-    // This is not needed because we are not using storyboard
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

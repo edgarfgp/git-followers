@@ -52,7 +52,12 @@ class SearchController: UIViewController {
         
         userNameTextFiled.resignFirstResponder()
         
-        let foloowerListVC = FollowerListController(userName: userNameTextFiled.text ?? "")
+        let foloowerListVC = FollowerListController()
+        
+        if let text = userNameTextFiled.text {
+            foloowerListVC.userName = text
+        }
+        
         navigationController?.pushViewController(foloowerListVC, animated: true)
         userNameTextFiled.resignFirstResponder()
     }

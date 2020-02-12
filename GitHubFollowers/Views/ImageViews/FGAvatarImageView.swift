@@ -10,10 +10,8 @@ import UIKit
 
 class FGAvatarImageView: UIImageView {
     
-    private let placeHolderImage = Images.placeholder
-    
-    private let cache = GitHubService.shared.cache
-    
+    private lazy var placeHolderImage = Images.placeholder
+        
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
