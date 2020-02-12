@@ -8,24 +8,9 @@
 
 import UIKit
 
-protocol FGFollowersItemInfoVcDelgate : class  {
-    
-    func didtapFollowers(for user: User)
-}
-
 class FGFollowersItemInfoVC: ItemInfoVC {
     
-    weak var delegate :  FGFollowersItemInfoVcDelgate!
-    
-    init(user: User, delegate: FGFollowersItemInfoVcDelgate) {
-        self.delegate = delegate
-        super.init(user: user)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
+    var didtapFollowers: ((User) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,12 +18,18 @@ class FGFollowersItemInfoVC: ItemInfoVC {
     }
     
     private func configureItems() {
-        itemInfoViewOne.set(itemInfoType: .followers, withCount: user.followers)
-        itemInfoViewTwo.set(itemInfoType: .following, withCount: user.following)
+        
+        if let user = user {
+            itemInfoViewOne.set(itemInfoType: .followers, withCount: user.followers)
+            itemInfoViewTwo.set(itemInfoType: .following, withCount: user.following)
+        }
+        
         actionButton.set(backgroundColor: .systemGreen, title: "Get followers")
     }
     
     override func actionButtonTapped() {
-        delegate.didtapFollowers(for: user)
+        if let user = user {
+            didtapFollowers?(user)
+        }
     }
 }

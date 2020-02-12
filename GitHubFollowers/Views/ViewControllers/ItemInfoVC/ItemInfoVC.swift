@@ -8,8 +8,6 @@
 
 import UIKit
 
-
-
 class ItemInfoVC: UIViewController {
     
     lazy var stackView       = UIStackView()
@@ -17,7 +15,7 @@ class ItemInfoVC: UIViewController {
     lazy var itemInfoViewTwo = FGItemInfoView()
     lazy var actionButton    = FGButton()
     
-    var user: User!
+    var user: User?
     
     init(user: User) {
         self.user = user
@@ -55,7 +53,6 @@ class ItemInfoVC: UIViewController {
     }
     
     @objc internal func actionButtonTapped () {}
-    
     
     private func layoutUI() {
         view.addSubviews(stackView, actionButton)

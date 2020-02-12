@@ -51,7 +51,7 @@ class UserInfoController: UIViewController {
             contextView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             contextView.heightAnchor.constraint(equalToConstant: 600)
         ])
-    
+        
     }
     
     private func configureViewController() {
@@ -76,8 +76,38 @@ class UserInfoController: UIViewController {
     private func configureElements(with user: User){
         
         self.add(childVC: FGUserInfoHeaderVC(user: user), to: self.headerView)
-        self.add(childVC: FGReposItemInfoVC(user: user, delegate: self), to: self.itemViewOne)
-        self.add(childVC: FGFollowersItemInfoVC(user: user, delegate: self), to: self.itemViewTwo)
+        
+        let reposItemsController = FGReposItemInfoVC(user: user)
+        
+        reposItemsController.didTapGitProfile = { [weak self] user in
+            
+            guard let self = self else { return }
+            guard let url = URL(string: user.htmlUrl) else {
+                self.presentFGAlertOnMainThread(title: "Invalid URL", message: "The usrl attached to this user is invalid ", buttonTilte: "OK")
+                return
+            }
+            
+            self.presentSafariVC(with: url)
+        }
+        
+        let followersItemInfoController = FGFollowersItemInfoVC(user: user)
+        
+        followersItemInfoController.didtapFollowers = { [weak self] user in
+            guard let self = self else { return }
+            
+            guard user.followers != 0 else {
+                self.presentFGAlertOnMainThread(title: "No folowers", message: "This user does not have followers.", buttonTilte: "OK")
+                return
+            }
+            
+            self.didRequestFollowers?(user.login)
+            
+            self.dismissVC()
+            
+        }
+        
+        self.add(childVC: reposItemsController, to: self.itemViewOne)
+        self.add(childVC: followersItemInfoController, to: self.itemViewTwo)
         self.datelabel.text = "Github Since \(user.createdAt.convertToMonthYearFormat())"
     }
     
@@ -117,31 +147,5 @@ class UserInfoController: UIViewController {
     
     @objc func dismissVC(){
         dismiss(animated: true)
-    }
-}
-
-extension UserInfoController : FGReposItemInfoVcDelgate {
-    func didTapGitProfile(for user: User) {
-        
-        guard let url = URL(string: user.htmlUrl) else {
-            presentFGAlertOnMainThread(title: "Invalid URL", message: "The usrl attached to this user is invalid ", buttonTilte: "OK")
-            return
-        }
-        
-        presentSafariVC(with: url)
-    }
-}
-
-extension UserInfoController : FGFollowersItemInfoVcDelgate {
-    func didtapFollowers(for user: User) {
-        
-        guard user.followers != 0 else {
-            presentFGAlertOnMainThread(title: "No folowers", message: "This user does not have followers.", buttonTilte: "OK")
-            return
-        }
-        
-        didRequestFollowers?(user.login)
-        
-        dismissVC()
     }
 }

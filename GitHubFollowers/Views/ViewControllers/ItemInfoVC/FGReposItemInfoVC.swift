@@ -8,35 +8,28 @@
 
 import UIKit
 
-protocol FGReposItemInfoVcDelgate : class  {
-    func didTapGitProfile(for user: User)
-}
 
 class FGReposItemInfoVC: ItemInfoVC {
     
-     weak var delegate :  FGReposItemInfoVcDelgate!
+    var didTapGitProfile: ((User) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureItems()
     }
     
-    init(user: User, delegate: FGReposItemInfoVcDelgate) {
-        self.delegate = delegate
-        super.init(user: user)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     private func configureItems() {
-        itemInfoViewOne.set(itemInfoType: .repo, withCount: user.publicRepos)
-        itemInfoViewTwo.set(itemInfoType: .gists, withCount: user.publicGists)
-        actionButton.set(backgroundColor: .systemPurple, title: "Github Profile")
+        if let user = user {
+            
+            itemInfoViewOne.set(itemInfoType: .repo, withCount: user.publicRepos)
+            itemInfoViewTwo.set(itemInfoType: .gists, withCount: user.publicGists)
+            actionButton.set(backgroundColor: .systemPurple, title: "Github Profile")
+        }
     }
     
     override func actionButtonTapped() {
-        delegate?.didTapGitProfile(for: user)
+        if let user = user {
+             didTapGitProfile?(user)
+        }
     }
 }
