@@ -8,11 +8,7 @@
 
 import UIKit
 
-protocol FollowerListVCdelegate : class {
-    func didRequestFollowers(username: String)
-}
-
-class FollowerListController: UICollectionViewController, FollowerListVCdelegate {
+class FollowerListController: UICollectionViewController {
     
     private lazy var page : Int = 1
     private lazy var hasMoreFollowers = true
@@ -67,9 +63,23 @@ class FollowerListController: UICollectionViewController, FollowerListVCdelegate
         let activeArray = isSearching ? filteredFolowers : followers
         let follower = activeArray[indexPath.item]
         
-        let destinationVc = UserInfoController(for: follower.login)
-        destinationVc.followrLstDelegate = self
-        let navControler = UINavigationController(rootViewController: destinationVc)
+        let destinationController = UserInfoController(for: follower.login)
+        
+        destinationController.didRequestFollowers = { [weak self] name in
+            
+            guard let self = self else { return }
+            
+            self.userName = name
+            self.title = self.userName
+            self.page = 1
+            self.followers.removeAll()
+            self.filteredFolowers.removeAll()
+            self.collectionView.setContentOffset(.zero, animated: true)
+            self.getFollowers(userName: self.userName, page: self.page)
+            
+        }
+        
+        let navControler = UINavigationController(rootViewController: destinationController)
         present(navControler, animated: true, completion: nil)
     }
     
@@ -102,17 +112,6 @@ class FollowerListController: UICollectionViewController, FollowerListVCdelegate
         view.backgroundColor = .systemBackground
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addFavoriteTapped))
-    }
-    
-    func didRequestFollowers(username: String) {
-        self.userName = username
-        title = userName
-        page = 1
-        followers.removeAll()
-        filteredFolowers.removeAll()
-        collectionView.setContentOffset(.zero, animated: true)
-        
-        getFollowers(userName: userName, page: page)
     }
     
     @objc private func addFavoriteTapped () {

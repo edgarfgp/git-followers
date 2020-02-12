@@ -20,7 +20,8 @@ class UserInfoController: UIViewController {
     private let datelabel = FGBodyLabel()
     
     private var username: String
-    weak var followrLstDelegate : FollowerListVCdelegate!
+    
+    var didRequestFollowers: ((String) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -139,7 +140,7 @@ extension UserInfoController : FGFollowersItemInfoVcDelgate {
             return
         }
         
-        followrLstDelegate.didRequestFollowers(username: user.login)
+        didRequestFollowers?(user.login)
         
         dismissVC()
     }
