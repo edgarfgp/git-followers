@@ -8,10 +8,7 @@
 
 import UIKit
 
-protocol UserInfoVCDelgate : class  {
-    func didTapGitProfile(for user: User)
-    func didtapFollowers(for user: User)
-}
+
 
 class ItemInfoVC: UIViewController {
     
