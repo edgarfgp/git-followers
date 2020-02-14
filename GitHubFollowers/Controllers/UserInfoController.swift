@@ -19,7 +19,9 @@ class UserInfoController: UIViewController {
     private let itemViewTwo = UIView()
     private let datelabel = FGBodyLabel()
     
-    lazy var username: String = ""
+    lazy var username: String = {
+        return ""
+    }()
     
     var didRequestFollowers: ((String) -> Void)?
     
@@ -39,8 +41,7 @@ class UserInfoController: UIViewController {
         contextView.pinToEdges(of: scrollView)
         
         NSLayoutConstraint.activate([
-            contextView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            contextView.heightAnchor.constraint(equalToConstant: 600)
+            contextView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         ])
         
     }
@@ -125,7 +126,8 @@ class UserInfoController: UIViewController {
             
             datelabel.topAnchor.constraint(equalTo: itemViewTwo.bottomAnchor, constant: padding),
             datelabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            datelabel.heightAnchor.constraint(equalToConstant: 50)
+            datelabel.heightAnchor.constraint(equalToConstant: 50),
+            datelabel.bottomAnchor.constraint(equalTo: contextView.bottomAnchor)
         ])
     }
     
