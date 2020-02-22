@@ -194,7 +194,7 @@ class FollowerListController: UICollectionViewController {
     }
 }
 
-extension FollowerListController : UISearchResultsUpdating, UISearchBarDelegate {
+extension FollowerListController : UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
         guard let filter  = searchController.searchBar.text, !filter.isEmpty else {
