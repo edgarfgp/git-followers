@@ -72,7 +72,6 @@ class UserInfoController: UIViewController {
         let reposItemsController = FGReposItemInfoVC(user: user)
         
         reposItemsController.didTapGitProfile = { [weak self] user in
-            
             guard let self = self else { return }
             guard let url = URL(string: user.htmlUrl) else {
                 self.presentFGAlertOnMainThread(title: "Invalid URL", message: "The usrl attached to this user is invalid ", buttonTilte: "OK")

@@ -18,18 +18,14 @@ class FGFollowersItemInfoVC: ItemInfoVC {
     }
     
     private func configureItems() {
-        
-        if let user = user {
-            itemInfoViewOne.set(itemInfoType: .followers, withCount: user.followers)
-            itemInfoViewTwo.set(itemInfoType: .following, withCount: user.following)
-        }
-        
+        guard let user = user else { return }
+        itemInfoViewOne.set(itemInfoType: .followers, withCount: user.followers)
+        itemInfoViewTwo.set(itemInfoType: .following, withCount: user.following)
         actionButton.set(backgroundColor: .systemGreen, title: "Get followers")
     }
     
     override func actionButtonTapped() {
-        if let user = user {
-            didtapFollowers?(user)
-        }
+        guard let user = user else { return }
+        didtapFollowers?(user)
     }
 }

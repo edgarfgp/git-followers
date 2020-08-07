@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 class FGReposItemInfoVC: ItemInfoVC {
     
     var didTapGitProfile: ((User) -> Void)?
@@ -19,17 +18,14 @@ class FGReposItemInfoVC: ItemInfoVC {
     }
     
     private func configureItems() {
-        if let user = user {
-            
-            itemInfoViewOne.set(itemInfoType: .repo, withCount: user.publicRepos)
-            itemInfoViewTwo.set(itemInfoType: .gists, withCount: user.publicGists)
-            actionButton.set(backgroundColor: .systemPurple, title: "Github Profile")
-        }
+        guard let user = user else { return }
+        itemInfoViewOne.set(itemInfoType: .repo, withCount: user.publicRepos)
+        itemInfoViewTwo.set(itemInfoType: .gists, withCount: user.publicGists)
+        actionButton.set(backgroundColor: .systemPurple, title: "Github Profile")
     }
     
     override func actionButtonTapped() {
-        if let user = user {
-             didTapGitProfile?(user)
-        }
+        guard let user = user else { return }
+        didTapGitProfile?(user)
     }
 }

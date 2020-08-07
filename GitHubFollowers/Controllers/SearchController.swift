@@ -16,7 +16,7 @@ class SearchController: UIViewController {
     
     private lazy var callToActionButton = FGButton(backgroundColor: .systemGreen, text: "Get Followers")
     
-    private var isUserNameEntered : Bool { return !userNameTextFiled.text!.isEmpty }
+    private var viewModel = SearchViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,7 +31,7 @@ class SearchController: UIViewController {
     override func viewWillAppear(_ animated: Bool){
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
-        userNameTextFiled.text = ""
+        userNameTextFiled.text = viewModel.username
     }
     
     func createDissmissTapRecognizer(){
@@ -40,26 +40,24 @@ class SearchController: UIViewController {
     }
     
     @objc private func pushFolowerListVc() {
-        
-        guard isUserNameEntered  else {
-            presentFGAlertOnMainThread(
+        guard let userName = self.userNameTextFiled.text else { return }
+        viewModel.validationCompletionHandler { (status, message) in
+            if status {
+                self.userNameTextFiled.resignFirstResponder()
+                let foloowerListVC = FollowerListController()
+                foloowerListVC.userName = userName
+                self.navigationController?.pushViewController(foloowerListVC, animated: true)
+                self.userNameTextFiled.resignFirstResponder()
+                
+            }else{
+                self.presentFGAlertOnMainThread(
                 title: "Empty Username",
-                message: "Please enter a username . We need to know who to look for 😀",
+                message: message,
                 buttonTilte: "Ok")
-            
-            return
+            }
         }
         
-        userNameTextFiled.resignFirstResponder()
-        
-        let foloowerListVC = FollowerListController()
-        
-        if let text = userNameTextFiled.text {
-            foloowerListVC.userName = text
-        }
-        
-        navigationController?.pushViewController(foloowerListVC, animated: true)
-        userNameTextFiled.resignFirstResponder()
+        viewModel.validateUserName(for: userName)
     }
     
     private func configureLogiImageView() {
