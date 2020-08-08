@@ -21,6 +21,8 @@ class FollowerListController: UICollectionViewController {
     private lazy var followers: [Follower] = []
     private lazy var filteredFolowers : [Follower] = []
     
+    private var viewModel = FollowerListViewModel(gitHubService: GitHubService.shared, persistenceService: PersistenceService.shared)
+    
     private lazy var dataSource : UICollectionViewDiffableDataSource<Section, Follower> = {
         
         let dataSource = UICollectionViewDiffableDataSource<Section, Follower>(collectionView: collectionView, cellProvider: {
@@ -80,9 +82,9 @@ class FollowerListController: UICollectionViewController {
         destinationController.username = follower.login
         
         destinationController.didRequestFollowers = { [weak self] name in
-            
+
             guard let self = self else { return }
-            
+
             self.userName = name
             self.title = self.userName
             self.page = 1
@@ -90,7 +92,7 @@ class FollowerListController: UICollectionViewController {
             self.filteredFolowers.removeAll()
             self.collectionView.setContentOffset(.zero, animated: true)
             self.getFollowers(userName: self.userName, page: self.page)
-            
+
         }
         
         let navControler = UINavigationController(rootViewController: destinationController)
@@ -123,33 +125,20 @@ class FollowerListController: UICollectionViewController {
         
         showLoadingView()
         
-        GitHubService.shared.getUserInfo(for: userName) { [weak self] result in
+        viewModel.fetchFollowerInfoCallback = {  [weak self] (follower, error) in
             guard let self = self else { return }
-            
             self.dissmissLoadingView()
             
-            switch result {
-            case .success(let user):
+            guard let error = error else {
+                guard let follower = follower else { return }
+                self.presentFGAlertOnMainThread(title: "Success", message: "You have added \(follower.login) as favorite 🎉", buttonTilte: "Ok")
+                return
                 
-                let favorite = Follower(login: user.login, avatarUrl: user.avatarUrl)
-                PersistenceService.update(favorite: favorite, actionType: PersistenceActionType.adding) { [weak self] error in
-                    guard let self = self else { return }
-                    
-                    guard let error = error else {
-                        self.presentFGAlertOnMainThread(title: "Success", message: "You have added a favorite 🎉", buttonTilte: "Ok")
-                        return
-                    }
-                    
-                    self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
-                    
-                }
-                
-            case .failure(let error):
-                self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
             }
-            
-            
+            self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
         }
+        
+        viewModel.fetchFollowerInfo(userName: userName)
         
     }
     
@@ -166,31 +155,38 @@ class FollowerListController: UICollectionViewController {
         showLoadingView()
         
         isLoadingMoreFollowers = true
-        GitHubService.shared.getFollowers(for: userName, page: page) { [weak self] result in
-            
+        
+        viewModel.fetchFollowersCallback = { [weak self](followers, error) in
             guard let self = self else { return }
+            
             self.dissmissLoadingView()
             
-            switch result {
-            case .success(let followers) :
-                if followers.count < 100 { self.hasMoreFollowers = false }
+            guard let error = error else {
+                guard let followers = followers else { return }
+                if followers.count > 100 { self.hasMoreFollowers = false }
                 self.followers.append(contentsOf: followers)
                 
-                if self.followers.isEmpty {
+                if followers.isEmpty {
                     let message = "This users does not have follower 🥺. Go follow them 😀"
-                    DispatchQueue.main.async {
-                        self.showEmptySatteView(with: message, in: self.view)
-                        return
-                    }
+                        DispatchQueue.main.async {
+                            self.showEmptySatteView(with: message, in: self.view)
+                            return
+                        }
                 }
                 
                 self.updateData(on: followers)
                 
-            case .failure(let error) :
-                self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTilte: "Ok")
+                self.isLoadingMoreFollowers = false
+    
+                return
             }
+            
+            self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTilte: "Ok")
+            
             self.isLoadingMoreFollowers = false
         }
+        
+        viewModel.fetchUserFollowers(username: userName, page: page)
     }
 }
 

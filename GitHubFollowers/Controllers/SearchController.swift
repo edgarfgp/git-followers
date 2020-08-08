@@ -31,7 +31,7 @@ class SearchController: UIViewController {
     override func viewWillAppear(_ animated: Bool){
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
-        userNameTextFiled.text = viewModel.username
+        userNameTextFiled.text = ""
     }
     
     func createDissmissTapRecognizer(){
@@ -41,7 +41,7 @@ class SearchController: UIViewController {
     
     @objc private func pushFolowerListVc() {
         guard let userName = self.userNameTextFiled.text else { return }
-        viewModel.validationCompletionHandler { (status, message) in
+        viewModel.validationCallBack = { (status, message) in
             if status {
                 self.userNameTextFiled.resignFirstResponder()
                 let foloowerListVC = FollowerListController()

@@ -14,6 +14,8 @@ class FavoriteListController: UIViewController {
     
     private lazy var favorites : [Follower] = []
     
+    var viewModel = FavoriteListViewModel(persistenceService: PersistenceService.shared)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureViewController()
@@ -42,13 +44,11 @@ class FavoriteListController: UIViewController {
     
     private func getFavotites () {
         
-        PersistenceService.retrieveFavorites { [weak self] result in
-            
+        viewModel.getFavoritesCallback = { [weak self] favorites , error in
             guard let self = self else { return }
             
-            switch result {
-                
-            case.success(let favorites):
+            guard let error = error else {
+                guard let favorites = favorites else { return }
                 if favorites.isEmpty {
                     self.showEmptySatteView(with: "No favorites", in: self.view)
                 }else{
@@ -59,11 +59,13 @@ class FavoriteListController: UIViewController {
                         self.view.bringSubviewToFront(self.tableView)
                     }
                 }
-                
-            case.failure(let error):
-                self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
+                return
             }
+            self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
+            
         }
+        
+        viewModel.getFavorites()
     }
 }
 
@@ -94,23 +96,21 @@ extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
             return
         }
         
-        PersistenceService.update(favorite: favorites[indexPath.row], actionType: .removing) { [weak self]error in
-            
+        viewModel.updateFavoritesCallback = { [weak self] message in
             guard let self = self else { return }
-            
-            guard let error = error else  {
-                
+            guard let message = message else {
                 self.favorites.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .left)
                 return
             }
             
-            self.presentFGAlertOnMainThread(title: "Unable to remove", message: error.rawValue, buttonTilte: "Ok")
+            self.presentFGAlertOnMainThread(title: "Unable to remove", message: message, buttonTilte: "Ok")
         }
+        
+        viewModel.updateFavoriteList(favorite: favorites[indexPath.row])
         
         if favorites.isEmpty {
             self.showEmptySatteView(with: "No favorites", in: self.view)
         }
     }
-
 }

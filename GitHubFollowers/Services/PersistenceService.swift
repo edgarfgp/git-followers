@@ -13,15 +13,19 @@ enum PersistenceActionType {
     case adding
 }
 
-enum PersistenceService {
+class PersistenceService {
     
-    static private let defaults = UserDefaults.standard
+    static let shared = PersistenceService()
+    
+    private let defaults = UserDefaults.standard
     
     enum Keys {
         static let favorites = "favorites"
     }
     
-    static func update(favorite: Follower, actionType: PersistenceActionType, completed: @escaping (FGError?) -> Void){
+    private init() {}
+    
+    func update(favorite: Follower, actionType: PersistenceActionType, completed: @escaping (FGError?) -> Void){
         retrieveFavorites { result in
             
             switch result {
@@ -41,7 +45,7 @@ enum PersistenceService {
                     retriecedFavorites.removeAll { $0.login == favorite.login}
                 }
                 
-                completed(save(favorites: retriecedFavorites))
+                completed(self.save(favorites: retriecedFavorites))
                 
             case .failure(let error):
                 completed(error)
@@ -49,7 +53,7 @@ enum PersistenceService {
         }
     }
     
-    static func retrieveFavorites(completed: @escaping (Result<[Follower], FGError>) -> Void) {
+    func retrieveFavorites(completed: @escaping (Result<[Follower], FGError>) -> Void) {
         
         guard let favoritesData = defaults.object(forKey: Keys.favorites) as? Data else {
             completed(.success([]))
@@ -65,7 +69,7 @@ enum PersistenceService {
         }
     }
     
-    static func save(favorites: [Follower]) -> FGError? {
+    func save(favorites: [Follower]) -> FGError? {
         
         do{
             let encoder = JSONEncoder()

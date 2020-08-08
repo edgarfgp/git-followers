@@ -18,6 +18,7 @@ class UserInfoController: UIViewController {
     private let itemViewOne = UIView()
     private let itemViewTwo = UIView()
     private let datelabel = FGBodyLabel()
+    var viewModel = UserInfoViewModel(GitHubService.shared)
     
     lazy var username: String = {
         return ""
@@ -53,16 +54,18 @@ class UserInfoController: UIViewController {
     }
     
     private func getUserInfo() {
-        GitHubService.shared.getUserInfo(for: username) { [weak self] result in
-            
+        
+        viewModel.fetchUserInfoCallback = { [weak self] (user, error) in
             guard let self = self else { return }
-            switch result {
-            case .success(let user) :
-                DispatchQueue.main.async { self.configureElements(with: user) }
-            case .failure(let error) :
+            guard let user = user else {
+                guard let error = error else { return }
                 self.presentFGAlertOnMainThread(title: "Error trying to get Userinfo", message: error.rawValue, buttonTilte: "Ok")
+                return
             }
+            DispatchQueue.main.async { self.configureElements(with: user) }
         }
+        
+        viewModel.fetchUserInfoData(username: username)
     }
     
     private func configureElements(with user: User){
