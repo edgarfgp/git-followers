@@ -9,12 +9,15 @@
 import XCTest
 @testable import GitHubFollowers
 
-class GitHubFollowersTests: XCTestCase {
+class SearchViewModelTests: XCTestCase {
     
     func testUserNameIsInitializeToEmty(){
         let viewModel = SearchViewModel()
         
-        //XCTAssertEqual(viewModel.username, nil)
+        viewModel.validationCallBack = { status , message in
+            XCTAssertTrue(status)
+        }
+        
+        viewModel.validateUserName(for: "edgarfgp")
     }
-
 }

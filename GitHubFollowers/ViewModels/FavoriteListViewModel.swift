@@ -10,6 +10,8 @@ import Foundation
 
 class FavoriteListViewModel {
     
+    lazy var favorites : [Follower] = []
+    
     var persistenceService : PersistenceService
     
     typealias FetchFollowersCallback = (_ follower : [Follower]?, _ error : FGError?) -> Void
@@ -27,6 +29,7 @@ class FavoriteListViewModel {
             guard let self = self else { return }
             switch result {
             case.success(let favorites):
+                self.favorites = favorites
                 self.getFavoritesCallback?(favorites, nil)
             case.failure(let error):
                 self.getFavoritesCallback?(nil, error)

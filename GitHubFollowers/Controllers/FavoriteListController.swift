@@ -11,9 +11,7 @@ import UIKit
 class FavoriteListController: UIViewController {
     
     private lazy var tableView = UITableView()
-    
-    private lazy var favorites : [Follower] = []
-    
+        
     var viewModel = FavoriteListViewModel(persistenceService: PersistenceService.shared)
     
     override func viewDidLoad() {
@@ -52,8 +50,6 @@ class FavoriteListController: UIViewController {
                 if favorites.isEmpty {
                     self.showEmptySatteView(with: "No favorites", in: self.view)
                 }else{
-                    self.favorites = favorites
-                    
                     DispatchQueue.main.async {
                         self.tableView.reloadData()
                         self.view.bringSubviewToFront(self.tableView)
@@ -71,19 +67,19 @@ class FavoriteListController: UIViewController {
 
 extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return favorites.count
+        return viewModel.favorites.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FavoriteCell.reuseID) as! FavoriteCell
-        let favorite = favorites[indexPath.row]
+        let favorite = viewModel.favorites[indexPath.row]
         cell.setFavorite(favorite: favorite)
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let favorite = favorites[indexPath.row]
+        let favorite = viewModel.favorites[indexPath.row]
         let destinationVC = FollowerListController()
         destinationVC.userName = favorite.login
         
@@ -92,14 +88,12 @@ extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         
-        guard editingStyle == .delete else {
-            return
-        }
+        guard editingStyle == .delete else { return }
         
         viewModel.updateFavoritesCallback = { [weak self] message in
             guard let self = self else { return }
             guard let message = message else {
-                self.favorites.remove(at: indexPath.row)
+                self.viewModel.favorites.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .left)
                 return
             }
@@ -107,9 +101,9 @@ extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
             self.presentFGAlertOnMainThread(title: "Unable to remove", message: message, buttonTilte: "Ok")
         }
         
-        viewModel.updateFavoriteList(favorite: favorites[indexPath.row])
+        viewModel.updateFavoriteList(favorite: viewModel.favorites[indexPath.row])
         
-        if favorites.isEmpty {
+        if viewModel.favorites.isEmpty {
             self.showEmptySatteView(with: "No favorites", in: self.view)
         }
     }

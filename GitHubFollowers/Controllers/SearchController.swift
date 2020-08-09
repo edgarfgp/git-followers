@@ -77,7 +77,7 @@ class SearchController: UIViewController {
     private func configureUserNameTextFiled() {
         userNameTextFiled.translatesAutoresizingMaskIntoConstraints = false
         userNameTextFiled.delegate = self
-        
+                
         NSLayoutConstraint.activate([
             userNameTextFiled.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 50),
             userNameTextFiled.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
@@ -88,7 +88,6 @@ class SearchController: UIViewController {
     
     private func configureCallToActionButton() {
         callToActionButton.addTarget(self, action: #selector(pushFolowerListVc), for: .touchUpInside)
-        
         NSLayoutConstraint.activate([
             callToActionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             callToActionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
@@ -103,4 +102,6 @@ extension SearchController : UITextFieldDelegate {
         pushFolowerListVc()
         return true
     }
+    
+    
 }
