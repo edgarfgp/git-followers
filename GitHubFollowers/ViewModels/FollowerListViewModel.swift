@@ -10,16 +10,21 @@ import Foundation
 
 class FollowerListViewModel {
     
+    lazy var followers: [Follower] = []
+    lazy var filteredFolowers : [Follower] = []
+    
     var gitHubService : GitHubService
     var persistenceService : PersistenceService
     
     typealias FetchFollowerInfoCallback = (_ follower : Follower?, _ error : FGError?) -> Void
     typealias FetchFollowersCallback = (_ follower : [Follower]?, _ error : FGError?) -> Void
     typealias UpdatePersistenceServiceCallback = (_ error : FGError?) -> Void
+    typealias FilterFollowersCallBack = (_ filteredFollowers : [Follower]) -> Void
     
     var fetchFollowerInfoCallback : FetchFollowerInfoCallback?
     var fetchFollowersCallback : FetchFollowersCallback?
     var updatePersistenceServiceCallback : UpdatePersistenceServiceCallback?
+    var filterFollowersCallBack : FilterFollowersCallBack?
     
     init(gitHubService : GitHubService, persistenceService : PersistenceService) {
         self.gitHubService = gitHubService
@@ -31,6 +36,7 @@ class FollowerListViewModel {
             guard let self = self else { return }
             switch result {
             case .success(let followers) :
+                self.followers.append(contentsOf: followers)
                 self.fetchFollowersCallback?(followers, nil)
                 
             case .failure(let error) :
@@ -52,6 +58,11 @@ class FollowerListViewModel {
         }
     }
     
+    func filterFollowers(for filter: String){
+        filteredFolowers = followers.filter { $0.login.lowercased().contains(filter.lowercased()) }
+        filterFollowersCallBack?(filteredFolowers)
+
+    }
     private func updatePersistenceService(follower: Follower){
         self.persistenceService.update(favorite: follower, actionType: PersistenceActionType.adding) { [weak self] error in
             guard let self = self else { return }

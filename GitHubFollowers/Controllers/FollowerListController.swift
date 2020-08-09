@@ -17,10 +17,7 @@ class FollowerListController: UICollectionViewController {
     private lazy var isSearching = false
     private lazy var isLoadingMoreFollowers = false
     lazy var userName : String = ""
-    
-    private lazy var followers: [Follower] = []
-    private lazy var filteredFolowers : [Follower] = []
-    
+        
     private var viewModel = FollowerListViewModel(gitHubService: GitHubService.shared, persistenceService: PersistenceService.shared)
     
     private lazy var dataSource : UICollectionViewDiffableDataSource<Section, Follower> = {
@@ -75,7 +72,7 @@ class FollowerListController: UICollectionViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let activeArray = isSearching ? filteredFolowers : followers
+        let activeArray = isSearching ? self.viewModel.filteredFolowers : self.viewModel.followers
         let follower = activeArray[indexPath.item]
         
         let destinationController = UserInfoController()
@@ -88,8 +85,8 @@ class FollowerListController: UICollectionViewController {
             self.userName = name
             self.title = self.userName
             self.page = 1
-            self.followers.removeAll()
-            self.filteredFolowers.removeAll()
+            self.viewModel.followers.removeAll()
+            self.viewModel.filteredFolowers.removeAll()
             self.collectionView.setContentOffset(.zero, animated: true)
             self.getFollowers(userName: self.userName, page: self.page)
 
@@ -164,7 +161,6 @@ class FollowerListController: UICollectionViewController {
             guard let error = error else {
                 guard let followers = followers else { return }
                 if followers.count > 100 { self.hasMoreFollowers = false }
-                self.followers.append(contentsOf: followers)
                 
                 if followers.isEmpty {
                     let message = "This users does not have follower 🥺. Go follow them 😀"
@@ -194,16 +190,19 @@ extension FollowerListController : UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
         guard let filter  = searchController.searchBar.text, !filter.isEmpty else {
-            filteredFolowers.removeAll()
-            updateData(on: followers)
+            self.viewModel.filteredFolowers.removeAll()
+            updateData(on: self.viewModel.followers)
             isSearching = false
             return
         }
         
         isSearching = true
+                
+        self.viewModel.filterFollowersCallBack = { [weak self] newFollowers in
+            guard let self = self else { return }
+            self.updateData(on: newFollowers)
+        }
         
-        filteredFolowers = followers.filter { $0.login.lowercased().contains(filter.lowercased()) }
-        
-        updateData(on: filteredFolowers)
+        self.viewModel.filterFollowers(for: filter)
     }
 }
