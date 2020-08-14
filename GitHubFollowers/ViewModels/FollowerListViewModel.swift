@@ -7,9 +7,14 @@
 //
 
 import Foundation
+import Combine
 
 class FollowerListViewModel {
     
+    lazy var page : Int = 1
+    lazy var hasMoreFollowers = false
+    lazy var isSearching = false
+    lazy var isLoadingMoreFollowers = false
     lazy var followers: [Follower] = []
     lazy var filteredFolowers : [Follower] = []
     
@@ -17,14 +22,14 @@ class FollowerListViewModel {
     var persistenceService : PersistenceService
     
     typealias FetchFollowerInfoCallback = (_ follower : Follower?, _ error : FGError?) -> Void
-    typealias FetchFollowersCallback = (_ follower : [Follower]?, _ error : FGError?) -> Void
     typealias UpdatePersistenceServiceCallback = (_ error : FGError?) -> Void
     typealias FilterFollowersCallBack = (_ filteredFollowers : [Follower]) -> Void
     
     var fetchFollowerInfoCallback : FetchFollowerInfoCallback?
-    var fetchFollowersCallback : FetchFollowersCallback?
     var updatePersistenceServiceCallback : UpdatePersistenceServiceCallback?
     var filterFollowersCallBack : FilterFollowersCallBack?
+    
+    var followerSubject = PassthroughSubject<[Follower], FGError>()
     
     init(gitHubService : GitHubService, persistenceService : PersistenceService) {
         self.gitHubService = gitHubService
@@ -32,15 +37,14 @@ class FollowerListViewModel {
     }
     
     func fetchUserFollowers(username: String, page: Int){
-        gitHubService.getFollowers(for: username, page: page) { [weak self] result in
+        gitHubService.fetchFollowers(userName: username, page: page) { [weak self] result in
             guard let self = self else { return }
             switch result {
-            case .success(let followers) :
+            case .success(let followers):
+                self.followerSubject.send(followers)
                 self.followers.append(contentsOf: followers)
-                self.fetchFollowersCallback?(followers, nil)
-                
             case .failure(let error) :
-                self.fetchFollowersCallback?(nil, error)
+                self.followerSubject.send(completion: .failure(error))
             }
         }
     }

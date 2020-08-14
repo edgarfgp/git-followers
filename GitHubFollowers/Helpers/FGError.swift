@@ -17,3 +17,9 @@ enum FGError : String, Error {
     case unableToFavorite = "There was an error favouriting this user. Please try again"
     case alreadyInfavorites = "You already favotited this user"
 }
+
+enum HTTPError: LocalizedError {
+    case statusCode
+}
+
+

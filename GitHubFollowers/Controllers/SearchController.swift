@@ -41,7 +41,8 @@ class SearchController: UIViewController {
     
     @objc private func pushFolowerListVc() {
         guard let userName = self.userNameTextFiled.text else { return }
-        viewModel.validationCallBack = { (status, message) in
+
+        viewModel.validateUserName(for: userName) { status, message in
             if status {
                 self.userNameTextFiled.resignFirstResponder()
                 let foloowerListVC = FollowerListController()
@@ -56,8 +57,6 @@ class SearchController: UIViewController {
                 buttonTilte: "Ok")
             }
         }
-        
-        viewModel.validateUserName(for: userName)
     }
     
     private func configureLogiImageView() {

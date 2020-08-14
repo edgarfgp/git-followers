@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import Combine
 class UserInfoController: UIViewController {
     
     private let padding : CGFloat = 20
@@ -19,6 +19,7 @@ class UserInfoController: UIViewController {
     private let itemViewTwo = UIView()
     private let datelabel = FGBodyLabel()
     var viewModel = UserInfoViewModel(GitHubService.shared)
+    private var cancelables = Set<AnyCancellable>()
     
     lazy var username: String = {
         return ""
@@ -54,23 +55,23 @@ class UserInfoController: UIViewController {
     }
     
     private func getUserInfo() {
-        
-        viewModel.fetchUserInfoCallback = { [weak self] (user, error) in
-            guard let self = self else { return }
-            guard let user = user else {
-                guard let error = error else { return }
-                self.presentFGAlertOnMainThread(title: "Error trying to get Userinfo", message: error.rawValue, buttonTilte: "Ok")
-                return
-            }
-            DispatchQueue.main.async { self.configureElements(with: user) }
-        }
-        
         viewModel.fetchUserInfoData(username: username)
+        viewModel.userSubject.sink(receiveCompletion: { [weak self]result in
+            guard let self = self else { return }
+            switch result {
+            case .failure(let error) :
+                self.presentFGAlertOnMainThread(title: "Error trying to get Userinfo", message: error.rawValue, buttonTilte: "Ok")
+            case .finished : break
+            }
+        }, receiveValue: { user in
+            DispatchQueue.main.async { self.configureElements(with: user) }
+        })
+        .store(in: &cancelables)
     }
     
     private func configureElements(with user: User){
         
-        self.add(childVC: FGUserInfoHeaderVC(user: user), to: self.headerView)
+        self.add(childVC: FGUserInfoHeaderVC(user: user, gitHubService: GitHubService.shared), to: self.headerView)
         
         let reposItemsController = FGReposItemInfoVC(user: user)
         

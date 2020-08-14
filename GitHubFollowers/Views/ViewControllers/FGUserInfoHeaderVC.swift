@@ -18,9 +18,11 @@ class FGUserInfoHeaderVC: UIViewController {
     private lazy var bioLabel = FGBodyLabel(textAligment: .left, numberOfLines: 3)
     
     private let user : User
-    
-    init(user: User) {
+    private var gitHubService : GitHubService
+
+    init(user: User, gitHubService : GitHubService) {
         self.user = user
+        self.gitHubService = gitHubService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -43,7 +45,7 @@ extension FGUserInfoHeaderVC {
     }
     
     private func configureUIElements() {
-        GitHubService.shared.downloadImage(from: user.avatarUrl) { [weak self] image in
+        gitHubService.fetchImage(from: user.avatarUrl) { [weak self] image in
             DispatchQueue.main.async {
                 self?.avatarImageView.image = image
             }

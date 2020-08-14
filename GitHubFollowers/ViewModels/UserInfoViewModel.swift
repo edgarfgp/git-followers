@@ -7,25 +7,23 @@
 //
 
 import Foundation
+import Combine
 
 class UserInfoViewModel {
+    public var userSubject = PassthroughSubject<User, FGError>()
     public var gitHubService : GitHubService
-    
     init(_ gitHubService : GitHubService) {
         self.gitHubService = gitHubService
     }
-    
-    typealias FetchUserInfoCallback =  (_ user : User?, _ error: FGError?) -> Void
-    var fetchUserInfoCallback : FetchUserInfoCallback?
             
     func fetchUserInfoData(username : String){
-        gitHubService.getUserInfo(for: username) { [weak self] result in
+        gitHubService.fetchUserInfo(for: username) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let user):
-                self.fetchUserInfoCallback?(user, nil)
+                self.userSubject.send(user)
             case .failure(let error):
-                self.fetchUserInfoCallback?(nil, error)
+                self.userSubject.send(completion: .failure(error))
             }
         }
     }

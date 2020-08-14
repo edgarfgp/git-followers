@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Combine
 
 class GitHubService {
     
@@ -16,7 +17,106 @@ class GitHubService {
     
     let cache = NSCache<NSString, UIImage>()
     
-    private init(){}
+    private var  cancellables = Set<AnyCancellable>()
+    
+    func fetchFollowers(userName: String, page: Int, completed: @escaping  (Result<[Follower], FGError>) -> Void) {
+        let userName = baseURL + "\(userName)/followers?per_page=100&page=\(page)"
+        guard let url = URL(string: userName) else {
+            completed(.failure(.invalidUserName))
+            return
+        }
+        
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        URLSession.shared.dataTaskPublisher(for: url)
+            .tryMap { request in
+                guard let data = request.data as Data? else { completed(.failure(.invalidData))}
+                guard let response = request.response as? HTTPURLResponse, response.statusCode == 200 else {
+                    completed(.failure(.invalidResponse))
+                    throw HTTPError.statusCode
+                }
+                return data
+        }
+        .decode(type:[Follower].self, decoder: decoder)
+        .sink(receiveCompletion: { result in
+            switch result {
+            case .failure(let error):
+                if let _ = error as Error? {
+                    completed(.failure(.unableToComplte))
+                    return
+                }
+            case .finished : break
+            }
+            
+        }, receiveValue: { followers in
+            completed(.success(followers))
+        })
+            .store(in: &cancellables)
+    }
+    
+    func fetchUserInfo(for userName: String, completed: @escaping  (Result<User, FGError>) -> Void) {
+        let urlString = baseURL + "\(userName)"
+        guard let url = URL(string: urlString) else {
+            completed(.failure(.invalidUserName))
+            return
+        }
+        
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        decoder.dateDecodingStrategy = .iso8601
+        URLSession.shared.dataTaskPublisher(for: url)
+            .tryMap { request   in
+                guard let data = request.data as Data? else { completed(.failure(.invalidData))}
+                guard let response = request.response as? HTTPURLResponse, response.statusCode == 200 else {
+                    completed(.failure(.invalidResponse))
+                    throw HTTPError.statusCode
+                }
+                
+                return data
+        }.decode(type: User.self, decoder: decoder)
+            .sink(receiveCompletion: { result in
+                switch result {
+                case .failure(let error):
+                    if let _ = error as Error? {
+                        completed(.failure(.unableToComplte))
+                        return
+                    }
+                case .finished : break
+                }
+                
+            }, receiveValue: { user in
+                completed(.success(user))
+            })
+            .store(in: &cancellables)
+    }
+    
+    func fetchImage(from urlString: String, completed: @escaping(UIImage?) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completed(nil)
+            return
+        }
+        
+        URLSession.shared.dataTaskPublisher(for: url)
+            .map { $0.data}
+            .sink(receiveCompletion: { result in
+                switch result {
+                case .failure(_):
+                    completed(nil)
+                case .finished : break
+                }
+                
+            }) { data in
+                guard let image = UIImage(data: data) else {
+                    completed(nil)
+                    return
+                }
+                completed(image)
+        }.store(in: &cancellables)
+    }
+}
+
+
+extension GitHubService {
     
     func getFollowers(for userName: String, page: Int, completed: @escaping  (Result<[Follower], FGError>) -> Void) {
         let userName = baseURL + "\(userName)/followers?per_page=100&page=\(page)"
@@ -57,7 +157,6 @@ class GitHubService {
         }.resume()
         
     }
-    
     
     func getUserInfo(for userName: String, completed: @escaping  (Result<User, FGError>) -> Void) {
         let userName = baseURL + "\(userName)"
@@ -144,4 +243,5 @@ class GitHubService {
         
         task.resume()
     }
+    
 }

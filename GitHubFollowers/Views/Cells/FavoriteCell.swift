@@ -46,7 +46,7 @@ class FavoriteCell: UITableViewCell {
     
     func setFavorite(favorite: Follower){
         userNameLabel.text = favorite.login
-        GitHubService.shared.downloadImage(from: favorite.avatarUrl) { [weak self] image in
+        GitHubService.shared.fetchImage(from: favorite.avatarUrl) { [weak self] image in
             DispatchQueue.main.async {
                 self?.avatarImageView.image = image
             }

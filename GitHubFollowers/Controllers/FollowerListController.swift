@@ -7,24 +7,20 @@
 //
 
 import UIKit
+import Combine
 
 enum Section { case main }
 
 class FollowerListController: UICollectionViewController {
-    
-    private lazy var page : Int = 1
-    private lazy var hasMoreFollowers = true
-    private lazy var isSearching = false
-    private lazy var isLoadingMoreFollowers = false
     lazy var userName : String = ""
-        
+    var cancellables = Set<AnyCancellable>()
+    
     private var viewModel = FollowerListViewModel(gitHubService: GitHubService.shared, persistenceService: PersistenceService.shared)
     
     private lazy var dataSource : UICollectionViewDiffableDataSource<Section, Follower> = {
         
         let dataSource = UICollectionViewDiffableDataSource<Section, Follower>(collectionView: collectionView, cellProvider: {
             (collectionView, indexPath, follower) -> UICollectionViewCell? in
-            
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FollowerCell.reuseID, for: indexPath) as! FollowerCell
             cell.setFollower(follower: follower)
             return cell
@@ -35,7 +31,7 @@ class FollowerListController: UICollectionViewController {
     
     init() {
         super.init(collectionViewLayout : UICollectionViewFlowLayout())
-       
+        
     }
     
     required init?(coder: NSCoder) {
@@ -49,7 +45,7 @@ class FollowerListController: UICollectionViewController {
         
         configureViewController()
         configureCollectionView()
-        getFollowers(userName: userName, page: page)
+        getFollowers(userName: userName, page: viewModel.page)
         configureSearchController()
     }
     
@@ -65,31 +61,30 @@ class FollowerListController: UICollectionViewController {
         let height = scrollView.frame.size.height
         
         if offsetY > contentHeight - height {
-            guard hasMoreFollowers, !isLoadingMoreFollowers else { return }
-            page += 1
-            getFollowers(userName: userName, page: page)
+            viewModel.page += 1
+            getFollowers(userName: userName, page: viewModel.page)
         }
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let activeArray = isSearching ? self.viewModel.filteredFolowers : self.viewModel.followers
+        let activeArray = self.viewModel.isSearching ? self.viewModel.filteredFolowers : self.viewModel.followers
         let follower = activeArray[indexPath.item]
         
         let destinationController = UserInfoController()
         destinationController.username = follower.login
         
         destinationController.didRequestFollowers = { [weak self] name in
-
+            
             guard let self = self else { return }
-
+            
             self.userName = name
             self.title = self.userName
-            self.page = 1
+            self.viewModel.page = 1
             self.viewModel.followers.removeAll()
             self.viewModel.filteredFolowers.removeAll()
             self.collectionView.setContentOffset(.zero, animated: true)
-            self.getFollowers(userName: self.userName, page: self.page)
-
+            self.getFollowers(userName: self.userName, page: self.viewModel.page)
+            
         }
         
         let navControler = UINavigationController(rootViewController: destinationController)
@@ -148,41 +143,35 @@ class FollowerListController: UICollectionViewController {
     }
     
     private func getFollowers(userName: String , page: Int){
-        
         showLoadingView()
+        viewModel.isLoadingMoreFollowers = true
+        viewModel.fetchUserFollowers(username: userName, page: page)
         
-        isLoadingMoreFollowers = true
-        
-        viewModel.fetchFollowersCallback = { [weak self](followers, error) in
+        viewModel.followerSubject.sink(receiveCompletion: { [weak self]resultCompletion in
             guard let self = self else { return }
-            
+            switch resultCompletion {
+            case .failure(let error):
+                self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTilte: "Ok")
+                self.viewModel.isLoadingMoreFollowers = false
+            case .finished : break
+            }})
+        { [weak self] followers in
+            guard let self = self else { return }
             self.dissmissLoadingView()
-            
-            guard let error = error else {
-                guard let followers = followers else { return }
-                if followers.count > 100 { self.hasMoreFollowers = false }
-                
-                if followers.isEmpty {
-                    let message = "This users does not have follower 🥺. Go follow them 😀"
-                        DispatchQueue.main.async {
-                            self.showEmptySatteView(with: message, in: self.view)
-                            return
-                        }
+            if followers.count > 100 { self.viewModel.hasMoreFollowers = true }
+            if followers.isEmpty {
+                let message = "This users does not have follower 🥺. Go follow them 😀"
+                DispatchQueue.main.async {
+                    self.showEmptySatteView(with: message, in: self.view)
+                    return
                 }
-                
-                self.updateData(on: followers)
-                
-                self.isLoadingMoreFollowers = false
-    
-                return
             }
             
-            self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTilte: "Ok")
+            self.updateData(on: followers)
             
-            self.isLoadingMoreFollowers = false
-        }
+            self.viewModel.isLoadingMoreFollowers = false
+        }.store(in: &cancellables)
         
-        viewModel.fetchUserFollowers(username: userName, page: page)
     }
 }
 
@@ -192,12 +181,12 @@ extension FollowerListController : UISearchResultsUpdating {
         guard let filter  = searchController.searchBar.text, !filter.isEmpty else {
             self.viewModel.filteredFolowers.removeAll()
             updateData(on: self.viewModel.followers)
-            isSearching = false
+            self.viewModel.isSearching = false
             return
         }
         
-        isSearching = true
-                
+        self.viewModel.isSearching = true
+        
         self.viewModel.filterFollowersCallBack = { [weak self] newFollowers in
             guard let self = self else { return }
             self.updateData(on: newFollowers)
