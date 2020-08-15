@@ -16,6 +16,7 @@ enum FGError : String, Error {
     case invalidData = "The data recieved from the server is invalid. Please try again"
     case unableToFavorite = "There was an error favouriting this user. Please try again"
     case alreadyInfavorites = "You already favotited this user"
+    case emptyUserNameError = "Please enter a username . We need to know who to look for 😀"
 }
 
 enum HTTPError: LocalizedError {

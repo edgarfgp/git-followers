@@ -7,16 +7,18 @@
 //
 
 import UIKit
+import Combine
 
 class SearchController: UIViewController {
     
+    
+    private let notificationCenter = NotificationCenter.default
     private lazy var logoImageView = UIImageView()
-    
     private lazy var userNameTextFiled = UITextField(placeholder: "Enter a valid User")
-    
-    private lazy var callToActionButton = FGButton(backgroundColor: .systemGreen, text: "Get Followers")
+    private lazy var callToActionButton = FGButton(backgroundColor: .systemGray, text: "Get Followers")
     
     private var viewModel = SearchViewModel()
+    private var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,12 +28,29 @@ class SearchController: UIViewController {
         configureUserNameTextFiled()
         configureCallToActionButton()
         createDissmissTapRecognizer()
+        observesTextField()
+    }
+    
+    private func observesTextField() {
+        notificationCenter.publisher(for: UITextField.textDidChangeNotification, object: userNameTextFiled)
+            .sink(receiveValue: { [weak self]value in
+                    guard let self = self else { return }
+                    guard let tetxField = value.object as? UITextField else { return }
+                    guard let text = tetxField.text else { return }
+                
+                DispatchQueue.main.async {
+                    self.callToActionButton.isEnabled = !text.isEmpty
+                    self.callToActionButton.backgroundColor =  !text.isEmpty ? .systemGreen : .systemGray
+                }
+            }).store(in: &cancellables)
     }
     
     override func viewWillAppear(_ animated: Bool){
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
         userNameTextFiled.text = ""
+        callToActionButton.isEnabled = false
+        callToActionButton.backgroundColor = .systemGray
     }
     
     func createDissmissTapRecognizer(){
@@ -76,7 +95,7 @@ class SearchController: UIViewController {
     private func configureUserNameTextFiled() {
         userNameTextFiled.translatesAutoresizingMaskIntoConstraints = false
         userNameTextFiled.delegate = self
-                
+                        
         NSLayoutConstraint.activate([
             userNameTextFiled.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 50),
             userNameTextFiled.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
@@ -87,6 +106,8 @@ class SearchController: UIViewController {
     
     private func configureCallToActionButton() {
         callToActionButton.addTarget(self, action: #selector(pushFolowerListVc), for: .touchUpInside)
+        callToActionButton.isEnabled = false
+
         NSLayoutConstraint.activate([
             callToActionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             callToActionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
@@ -101,6 +122,5 @@ extension SearchController : UITextFieldDelegate {
         pushFolowerListVc()
         return true
     }
-    
     
 }

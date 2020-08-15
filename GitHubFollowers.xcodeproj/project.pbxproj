@@ -157,7 +157,6 @@
 		682EDBE923DE0DF300423ACC /* GitHubFollowers */ = {
 			isa = PBXGroup;
 			children = (
-				9E56685724DDF2DB00B64DE3 /* New Group */,
 				6880DDF323E2D08E007B64BC /* Helpers */,
 				68678C1923E237E2009EEA10 /* Services */,
 				68678C1423E22FCC009EEA10 /* Models */,
@@ -300,13 +299,6 @@
 				689598B723EC577800FB4151 /* FGTabBarController.swift */,
 			);
 			path = TabBar;
-			sourceTree = "<group>";
-		};
-		9E56685724DDF2DB00B64DE3 /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "New Group";
 			sourceTree = "<group>";
 		};
 		9E56685824DDF2E400B64DE3 /* ViewModels */ = {
