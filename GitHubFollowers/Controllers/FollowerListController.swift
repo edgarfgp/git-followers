@@ -151,6 +151,7 @@ class FollowerListController: UICollectionViewController {
             guard let self = self else { return }
             switch resultCompletion {
             case .failure(let error):
+                self.dissmissLoadingView()
                 self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTilte: "Ok")
                 self.viewModel.isLoadingMoreFollowers = false
             case .finished : break

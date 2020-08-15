@@ -10,15 +10,7 @@ import Foundation
 
 class SearchViewModel {
     
-    //typealias ValidationCallBack = (_ isvalid: Bool,_ message: String) -> Void
+    @Published var isButtonEnabled : Bool = false
     
-    //var validationCallBack : ValidationCallBack?
-    
-    func validateUserName(for userName: String, completion: (_ isvalid: Bool, _ message: String) -> Void) {
-        if !userName.isEmpty {
-            completion(true, "")
-        } else {
-            completion(false, "Please enter a username . We need to know who to look for 😀")
-        }
-    }
+    @Published var userName : String = ""
 }
