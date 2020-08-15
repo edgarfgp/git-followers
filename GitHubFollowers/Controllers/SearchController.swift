@@ -43,7 +43,7 @@ class SearchController: UIViewController {
     @objc private func pushFolowerListVc() {
         self.userNameTextFiled.resignFirstResponder()
         let foloowerListVC = FollowerListController()
-        foloowerListVC.userName = self.viewModel.userName
+        foloowerListVC.viewModel.userName = self.viewModel.userName
         self.navigationController?.pushViewController(foloowerListVC, animated: true)
         self.userNameTextFiled.resignFirstResponder()
     }
@@ -66,7 +66,7 @@ class SearchController: UIViewController {
         userNameTextFiled.translatesAutoresizingMaskIntoConstraints = false
         userNameTextFiled.delegate = self
         
-        userNameTextFiled.addTarget(self, action: #selector(textDidChange), for: UIControl.Event.editingChanged)
+        userNameTextFiled.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
                         
         NSLayoutConstraint.activate([
             userNameTextFiled.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 50),

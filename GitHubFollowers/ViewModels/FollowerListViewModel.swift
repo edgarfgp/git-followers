@@ -11,6 +11,8 @@ import Combine
 
 class FollowerListViewModel {
     
+    @Published public var userName : String = ""
+    
     lazy var page : Int = 1
     lazy var hasMoreFollowers = false
     lazy var isSearching = false
@@ -25,26 +27,27 @@ class FollowerListViewModel {
     typealias UpdatePersistenceServiceCallback = (_ error : FGError?) -> Void
     typealias FilterFollowersCallBack = (_ filteredFollowers : [Follower]) -> Void
     
-    var fetchFollowerInfoCallback : FetchFollowerInfoCallback?
     var updatePersistenceServiceCallback : UpdatePersistenceServiceCallback?
     var filterFollowersCallBack : FilterFollowersCallBack?
     
-    var followerSubject = PassthroughSubject<[Follower], FGError>()
+    var followersSubject = PassthroughSubject<[Follower], FGError>()
+    var followerSubject = PassthroughSubject<Follower, FGError>()
+    
     
     init(gitHubService : GitHubService, persistenceService : PersistenceService) {
         self.gitHubService = gitHubService
         self.persistenceService = persistenceService
     }
     
-    func fetchUserFollowers(username: String, page: Int){
-        gitHubService.fetchFollowers(userName: username, page: page) { [weak self] result in
+    func fetchUserFollowers(page: Int){
+        gitHubService.fetchFollowers(userName: userName, page: page) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let followers):
-                self.followerSubject.send(followers)
+                self.followersSubject.send(followers)
                 self.followers.append(contentsOf: followers)
             case .failure(let error) :
-                self.followerSubject.send(completion: .failure(error))
+                self.followersSubject.send(completion: .failure(error))
             }
         }
     }
@@ -57,7 +60,7 @@ class FollowerListViewModel {
                 let follower = Follower(login: user.login, avatarUrl: user.avatarUrl)
                 self.updatePersistenceService(follower: follower)
             case .failure(let error):
-                self.fetchFollowerInfoCallback?(nil, error)
+                self.followerSubject.send(completion: .failure(error))
             }
         }
     }
@@ -71,10 +74,10 @@ class FollowerListViewModel {
         self.persistenceService.update(favorite: follower, actionType: PersistenceActionType.adding) { [weak self] error in
             guard let self = self else { return }
             guard let error = error else {
-                self.fetchFollowerInfoCallback?(follower, nil)
+                self.followerSubject.send(follower)
                 return
             }
-            self.fetchFollowerInfoCallback?(nil, error)
+            self.followerSubject.send(completion: .failure(error))
         }
     }
 }

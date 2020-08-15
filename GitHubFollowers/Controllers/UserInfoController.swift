@@ -21,10 +21,6 @@ class UserInfoController: UIViewController {
     var viewModel = UserInfoViewModel(GitHubService.shared)
     private var cancelables = Set<AnyCancellable>()
     
-    lazy var username: String = {
-        return ""
-    }()
-    
     var didRequestFollowers: ((String) -> Void)?
     
     override func viewDidLoad() {
@@ -55,7 +51,7 @@ class UserInfoController: UIViewController {
     }
     
     private func getUserInfo() {
-        viewModel.fetchUserInfoData(username: username)
+        viewModel.fetchUserInfoData()
         viewModel.userSubject.sink(receiveCompletion: { [weak self]result in
             guard let self = self else { return }
             switch result {

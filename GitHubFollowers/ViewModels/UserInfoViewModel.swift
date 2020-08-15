@@ -12,11 +12,12 @@ import Combine
 class UserInfoViewModel {
     public var userSubject = PassthroughSubject<User, FGError>()
     public var gitHubService : GitHubService
+    @Published public var username : String = ""
     init(_ gitHubService : GitHubService) {
         self.gitHubService = gitHubService
     }
             
-    func fetchUserInfoData(username : String){
+    func fetchUserInfoData(){
         gitHubService.fetchUserInfo(for: username) { [weak self] result in
             guard let self = self else { return }
             switch result {

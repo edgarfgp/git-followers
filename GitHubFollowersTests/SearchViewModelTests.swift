@@ -14,10 +14,8 @@ class SearchViewModelTests: XCTestCase {
     func testUserNameIsInitializeToEmty(){
         let viewModel = SearchViewModel()
         
-        viewModel.validationCallBack = { status , message in
-            XCTAssertTrue(status)
-        }
+        viewModel.userName = "edgarfgp"
         
-        viewModel.validateUserName(for: "edgarfgp")
+        XCTAssertFalse(viewModel.isButtonEnabled)
     }
 }

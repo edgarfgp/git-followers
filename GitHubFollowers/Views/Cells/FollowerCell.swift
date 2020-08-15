@@ -16,7 +16,6 @@ class FollowerCell: UICollectionViewCell {
     private lazy var avatarImageView = FGAvatarImageView(frame: .zero)
     private lazy var userNameLabel = FGTitleLabel(textAligment: .center, fontSize: 16)
     
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()

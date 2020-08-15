@@ -11,6 +11,5 @@ import Foundation
 class SearchViewModel {
     
     @Published var isButtonEnabled : Bool = false
-    
     @Published var userName : String = ""
 }

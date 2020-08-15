@@ -12,10 +12,8 @@ import Combine
 enum Section { case main }
 
 class FollowerListController: UICollectionViewController {
-    lazy var userName : String = ""
     var cancellables = Set<AnyCancellable>()
-    
-    private var viewModel = FollowerListViewModel(gitHubService: GitHubService.shared, persistenceService: PersistenceService.shared)
+    var viewModel = FollowerListViewModel(gitHubService: GitHubService.shared, persistenceService: PersistenceService.shared)
     
     private lazy var dataSource : UICollectionViewDiffableDataSource<Section, Follower> = {
         
@@ -31,7 +29,6 @@ class FollowerListController: UICollectionViewController {
     
     init() {
         super.init(collectionViewLayout : UICollectionViewFlowLayout())
-        
     }
     
     required init?(coder: NSCoder) {
@@ -41,11 +38,11 @@ class FollowerListController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = userName
+        self.title = viewModel.userName
         
         configureViewController()
         configureCollectionView()
-        getFollowers(userName: userName, page: viewModel.page)
+        getFollowers(page: viewModel.page)
         configureSearchController()
     }
     
@@ -62,7 +59,7 @@ class FollowerListController: UICollectionViewController {
         
         if offsetY > contentHeight - height {
             viewModel.page += 1
-            getFollowers(userName: userName, page: viewModel.page)
+            getFollowers(page: viewModel.page)
         }
     }
     
@@ -71,19 +68,19 @@ class FollowerListController: UICollectionViewController {
         let follower = activeArray[indexPath.item]
         
         let destinationController = UserInfoController()
-        destinationController.username = follower.login
+        destinationController.viewModel.username = follower.login
         
         destinationController.didRequestFollowers = { [weak self] name in
             
             guard let self = self else { return }
             
-            self.userName = name
-            self.title = self.userName
-            self.viewModel.page = 1
+            self.viewModel.userName = name
+            self.title = self.viewModel.userName
+            self.viewModel.page = self.viewModel.page
             self.viewModel.followers.removeAll()
             self.viewModel.filteredFolowers.removeAll()
             self.collectionView.setContentOffset(.zero, animated: true)
-            self.getFollowers(userName: self.userName, page: self.viewModel.page)
+            self.getFollowers(page: self.viewModel.page)
             
         }
         
@@ -117,21 +114,21 @@ class FollowerListController: UICollectionViewController {
         
         showLoadingView()
         
-        viewModel.fetchFollowerInfoCallback = {  [weak self] (follower, error) in
+        self.dissmissLoadingView()
+        
+        viewModel.fetchFollowerInfo(userName: viewModel.userName)
+        
+        viewModel.followerSubject.sink(receiveCompletion: { [weak self]resultCompletion in
             guard let self = self else { return }
-            self.dissmissLoadingView()
             
-            guard let error = error else {
-                guard let follower = follower else { return }
-                self.presentFGAlertOnMainThread(title: "Success", message: "You have added \(follower.login) as favorite 🎉", buttonTilte: "Ok")
-                return
-                
+            switch resultCompletion {
+            case .failure(let error):
+                self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
+            case .finished : break
             }
-            self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
-        }
-        
-        viewModel.fetchFollowerInfo(userName: userName)
-        
+        }) { follower in
+            self.presentFGAlertOnMainThread(title: "Success", message: "You have added \(follower.login) as favorite 🎉", buttonTilte: "Ok")
+        }.store(in: &cancellables)
     }
     
     private func configureSearchController() {
@@ -142,12 +139,12 @@ class FollowerListController: UICollectionViewController {
         navigationItem.searchController = searchController
     }
     
-    private func getFollowers(userName: String , page: Int){
+    private func getFollowers(page: Int){
         showLoadingView()
         viewModel.isLoadingMoreFollowers = true
-        viewModel.fetchUserFollowers(username: userName, page: page)
+        viewModel.fetchUserFollowers(page: page)
         
-        viewModel.followerSubject.sink(receiveCompletion: { [weak self]resultCompletion in
+        viewModel.followersSubject.sink(receiveCompletion: { [weak self] resultCompletion in
             guard let self = self else { return }
             switch resultCompletion {
             case .failure(let error):
