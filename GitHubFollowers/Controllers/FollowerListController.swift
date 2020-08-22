@@ -31,6 +31,10 @@ class FollowerListController: UICollectionViewController {
         super.init(collectionViewLayout : UICollectionViewFlowLayout())
     }
     
+    lazy var userName : String = {
+        return ""
+    }()
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -38,7 +42,7 @@ class FollowerListController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = viewModel.userName
+        self.title = userName
         
         configureViewController()
         configureCollectionView()
@@ -74,8 +78,7 @@ class FollowerListController: UICollectionViewController {
             
             guard let self = self else { return }
             
-            self.viewModel.userName = name
-            self.title = self.viewModel.userName
+            self.title = self.userName
             self.viewModel.page = self.viewModel.page
             self.viewModel.followers.removeAll()
             self.viewModel.filteredFolowers.removeAll()
@@ -116,7 +119,7 @@ class FollowerListController: UICollectionViewController {
         
         self.dissmissLoadingView()
         
-        viewModel.fetchFollowerInfo(userName: viewModel.userName)
+        viewModel.fetchFollowerInfo(userName: userName)
         
         viewModel.followerSubject.sink(receiveCompletion: { [weak self]resultCompletion in
             guard let self = self else { return }
@@ -141,8 +144,7 @@ class FollowerListController: UICollectionViewController {
     
     private func getFollowers(page: Int){
         showLoadingView()
-        viewModel.isLoadingMoreFollowers = true
-        viewModel.fetchUserFollowers(page: page)
+        viewModel.fetchUserFollowers(userName: userName, page: page)
         
         viewModel.followersSubject.sink(receiveCompletion: { [weak self] resultCompletion in
             guard let self = self else { return }
@@ -150,14 +152,14 @@ class FollowerListController: UICollectionViewController {
             case .failure(let error):
                 self.dissmissLoadingView()
                 self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTilte: "Ok")
-                self.viewModel.isLoadingMoreFollowers = false
             case .finished : break
             }})
         { [weak self] followers in
             guard let self = self else { return }
             self.dissmissLoadingView()
-            if followers.count > 100 { self.viewModel.hasMoreFollowers = true }
-            if followers.isEmpty {
+
+            if followers.isEmpty, self.viewModel.followers.isEmpty {
+                
                 let message = "This users does not have follower 🥺. Go follow them 😀"
                 DispatchQueue.main.async {
                     self.showEmptySatteView(with: message, in: self.view)
@@ -165,9 +167,10 @@ class FollowerListController: UICollectionViewController {
                 }
             }
             
-            self.updateData(on: followers)
+            let newFollowers = followers.isEmpty ? self.viewModel.followers : followers
             
-            self.viewModel.isLoadingMoreFollowers = false
+            self.updateData(on: newFollowers)
+            
         }.store(in: &cancellables)
         
     }

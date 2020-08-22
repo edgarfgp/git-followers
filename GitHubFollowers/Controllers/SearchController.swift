@@ -15,6 +15,8 @@ class SearchController: UIViewController {
     private lazy var userNameTextFiled = UITextField(placeholder: "Enter a valid User")
     private lazy var callToActionButton = FGButton(backgroundColor: .systemGray, text: "Get Followers")
     
+    private var cancellables = Set<AnyCancellable>()
+    
     private var viewModel = SearchViewModel()
      
     override func viewDidLoad() {
@@ -25,14 +27,21 @@ class SearchController: UIViewController {
         configureUserNameTextFiled()
         configureCallToActionButton()
         createDissmissTapRecognizer()
+        
+        viewModel.validUsername
+            .receive(on: RunLoop.main)
+            .sink(receiveCompletion: { _ in },
+                  receiveValue: { [weak self] recievedValue in
+                    guard let self = self else { return }
+                    self.callToActionButton.isEnabled = recievedValue
+                    self.callToActionButton.backgroundColor = recievedValue ? .systemGreen : .systemGray
+            })
+        .store(in: &cancellables)
     }
     
     override func viewWillAppear(_ animated: Bool){
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
-        userNameTextFiled.text = self.viewModel.userName
-        callToActionButton.isEnabled = self.viewModel.isButtonEnabled
-        callToActionButton.backgroundColor =  self.viewModel.isButtonEnabled ? .systemGreen : .systemGray
     }
     
     func createDissmissTapRecognizer(){
@@ -43,7 +52,7 @@ class SearchController: UIViewController {
     @objc private func pushFolowerListVc() {
         self.userNameTextFiled.resignFirstResponder()
         let foloowerListVC = FollowerListController()
-        foloowerListVC.viewModel.userName = self.viewModel.userName
+        foloowerListVC.userName = self.viewModel.userName
         self.navigationController?.pushViewController(foloowerListVC, animated: true)
         self.userNameTextFiled.resignFirstResponder()
     }
@@ -79,16 +88,11 @@ class SearchController: UIViewController {
     @objc func textDidChange(sender : UITextField){
         guard let text = sender.text else { return }
         self.viewModel.userName = text
-        DispatchQueue.main.async {
-            self.viewModel.isButtonEnabled = !self.viewModel.userName.isEmpty
-            self.callToActionButton.backgroundColor =  self.viewModel.isButtonEnabled ? .systemGreen : .systemGray
-        }
     }
 
     private func configureCallToActionButton() {
         callToActionButton.addTarget(self, action: #selector(pushFolowerListVc), for: .touchUpInside)
-        callToActionButton.isEnabled = false
-
+       
         NSLayoutConstraint.activate([
             callToActionButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 50),
             callToActionButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),

@@ -7,9 +7,18 @@
 //
 
 import Foundation
+import Combine
 
 class SearchViewModel {
     
     @Published var isButtonEnabled : Bool = false
     @Published var userName : String = ""
+    
+    var validUsername: AnyPublisher<Bool, Never> {
+        return $userName
+            .debounce(for: 0.2, scheduler: RunLoop.main)
+            .removeDuplicates()
+            .map{!$0.isEmpty}
+            .eraseToAnyPublisher()
+    }
 }

@@ -11,12 +11,8 @@ import Combine
 
 class FollowerListViewModel {
     
-    @Published public var userName : String = ""
-    
     lazy var page : Int = 1
-    lazy var hasMoreFollowers = false
     lazy var isSearching = false
-    lazy var isLoadingMoreFollowers = false
     lazy var followers: [Follower] = []
     lazy var filteredFolowers : [Follower] = []
     
@@ -39,7 +35,7 @@ class FollowerListViewModel {
         self.persistenceService = persistenceService
     }
     
-    func fetchUserFollowers(page: Int){
+    func fetchUserFollowers(userName : String, page: Int){
         gitHubService.fetchFollowers(userName: userName, page: page) { [weak self] result in
             guard let self = self else { return }
             switch result {
