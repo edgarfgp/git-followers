@@ -49,7 +49,7 @@ class FollowerListViewModel {
     }
     
     func fetchFollowerInfo(userName: String) {
-        gitHubService.getUserInfo(for: userName) { [weak self] result in
+        gitHubService.fetchUserInfo(for: userName) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let user):

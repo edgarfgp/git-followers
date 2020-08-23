@@ -11,7 +11,7 @@ import Foundation
 enum FGError : String, Error {
     
     case invalidUserName  = "This username created a invalid request"
-    case unableToComplte =  "Unable to complete your reauest. Plase check your connection"
+    case unableToComplete =  "Unable to complete your reauest. Plase check your connection"
     case invalidResponse =  "Invalid response from the server. Please try again later."
     case invalidData = "The data recieved from the server is invalid. Please try again"
     case unableToFavorite = "There was an error favouriting this user. Please try again"

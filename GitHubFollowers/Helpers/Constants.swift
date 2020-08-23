@@ -24,6 +24,10 @@ enum Images {
     static let emptyStateLogo = UIImage(named: "empty-state-logo")
 }
 
+enum URLConstants {
+    static let baseURL = "https://api.github.com/users/"
+}
+
 enum ScreenSize {
     
     static let width        = UIScreen.main.bounds.size.width

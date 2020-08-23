@@ -13,14 +13,12 @@ class GitHubService {
     
     static let shared = GitHubService()
     
-    private let baseURL = "https://api.github.com/users/"
-    
     let cache = NSCache<NSString, UIImage>()
     
     private var  cancellables = Set<AnyCancellable>()
     
     func fetchFollowers(userName: String, page: Int, completed: @escaping  (Result<[Follower], FGError>) -> Void) {
-        let userName = baseURL + "\(userName)/followers?per_page=100&page=\(page)"
+        let userName = URLConstants.baseURL + "\(userName)/followers?per_page=100&page=\(page)"
         guard let url = URL(string: userName) else {
             completed(.failure(.invalidUserName))
             return
@@ -42,7 +40,7 @@ class GitHubService {
             switch result {
             case .failure(let error):
                 if let _ = error as Error? {
-                    completed(.failure(.unableToComplte))
+                    completed(.failure(.unableToComplete))
                     return
                 }
             case .finished : break
@@ -55,7 +53,7 @@ class GitHubService {
     }
     
     func fetchUserInfo(for userName: String, completed: @escaping  (Result<User, FGError>) -> Void) {
-        let urlString = baseURL + "\(userName)"
+        let urlString = URLConstants.baseURL + "\(userName)"
         guard let url = URL(string: urlString) else {
             completed(.failure(.invalidUserName))
             return
@@ -78,7 +76,7 @@ class GitHubService {
                 switch result {
                 case .failure(let error):
                     if let _ = error as Error? {
-                        completed(.failure(.unableToComplte))
+                        completed(.failure(.unableToComplete))
                         return
                     }
                 case .finished : break
@@ -119,83 +117,14 @@ class GitHubService {
 extension GitHubService {
     
     func getFollowers(for userName: String, page: Int, completed: @escaping  (Result<[Follower], FGError>) -> Void) {
-        let userName = baseURL + "\(userName)/followers?per_page=100&page=\(page)"
-        
-        guard let url = URL(string: userName) else {
-            completed(.failure(.invalidUserName))
-            
-            return
-        }
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            
-            if let _ = error {
-                completed(.failure(.unableToComplte))
-                return
-            }
-            
-            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                completed(.failure(.invalidResponse))
-                return
-            }
-            
-            guard let data = data else {
-                completed(.failure(.invalidData))
-                return
-            }
-            
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                let followers = try decoder.decode([Follower].self, from: data)
-                completed(.success(followers))
-                
-            }catch {
-                completed(.failure(.invalidData))
-            }
-            
-        }.resume()
+        let userName = URLConstants.baseURL + "\(userName)/followers?per_page=100&page=\(page)"
+        fetchData(for: userName, completed: completed)
         
     }
     
     func getUserInfo(for userName: String, completed: @escaping  (Result<User, FGError>) -> Void) {
-        let userName = baseURL + "\(userName)"
-        
-        guard let url = URL(string: userName) else {
-            completed(.failure(.invalidUserName))
-            
-            return
-        }
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            
-            if let _ = error {
-                completed(.failure(.unableToComplte))
-                return
-            }
-            
-            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                completed(.failure(.invalidResponse))
-                return
-            }
-            
-            guard let data = data else {
-                completed(.failure(.invalidData))
-                return
-            }
-            
-            do {
-                let decoder = JSONDecoder()
-                decoder.keyDecodingStrategy = .convertFromSnakeCase
-                decoder.dateDecodingStrategy = .iso8601
-                let user = try decoder.decode(User.self, from: data)
-                completed(.success(user))
-                
-            }catch {
-                completed(.failure(.invalidData))
-            }
-            
-        }.resume()
+        let userName = URLConstants.baseURL + "\(userName)"
+        fetchData(for: userName, completed: completed)
     }
     
     func downloadImage(from urlString: String, completed: @escaping(UIImage?) -> Void) {
@@ -242,6 +171,42 @@ extension GitHubService {
         }
         
         task.resume()
+    }
+    
+    func fetchData<T: Decodable>(for urlString : String, completed: @escaping (Result<T, FGError>) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completed(.failure(.invalidUserName))
+            
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            if let _ = error {
+                completed(.failure(.unableToComplete))
+                return
+            }
+            
+            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                completed(.failure(.invalidResponse))
+                return
+            }
+            
+            guard let data = data else {
+                completed(.failure(.invalidData))
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                decoder.dateDecodingStrategy = .iso8601
+                let result = try decoder.decode(T.self, from: data)
+                completed(.success(result))
+                
+            }catch {
+                completed(.failure(.invalidData))
+            }
+        }.resume()
     }
     
 }
