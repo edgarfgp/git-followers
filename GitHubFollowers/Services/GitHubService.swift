@@ -141,7 +141,7 @@ extension GitHubService {
             return
         }
         
-        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+        let task = URLSession.shared.downloadTask(with: url) { [weak self] location , response, error in
             
             guard let  self = self else {
                 completed(nil)
@@ -155,12 +155,11 @@ extension GitHubService {
                 return
             }
             
-            guard let data = data else {
-                completed(nil)
-                return
-            }
+            guard let location = location else { return }
             
-            guard let image = UIImage(data: data) else {
+            guard let imageData = try? Data(contentsOf: location) else { return }
+                        
+            guard let image = UIImage(data: imageData) else {
                 completed(nil)
                 return
             }
