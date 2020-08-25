@@ -13,7 +13,7 @@ class GitHubService {
     
     static let shared = GitHubService()
     
-    let cache = NSCache<NSString, UIImage>()
+    private let cache = NSCache<NSString, UIImage>()
     
     private var  cancellables = Set<AnyCancellable>()
     
@@ -89,6 +89,14 @@ class GitHubService {
     }
     
     func fetchImage(from urlString: String, completed: @escaping(UIImage?) -> Void) {
+        
+        let cacheKey = NSString(string: urlString)
+        
+        if let image = cache.object(forKey: cacheKey) {
+            completed(image)
+            return
+        }
+        
         guard let url = URL(string: urlString) else {
             completed(nil)
             return
@@ -108,6 +116,9 @@ class GitHubService {
                     completed(nil)
                     return
                 }
+                
+                self.cache.setObject(image, forKey: cacheKey)
+                
                 completed(image)
         }.store(in: &cancellables)
     }
