@@ -8,6 +8,14 @@
 
 import UIKit
 
+extension UserDefaults {
+
+    @objc dynamic var favorites: Int {
+        return integer(forKey: "backgroundColorValue")
+    }
+
+}
+
 enum PersistenceActionType {
     case removing
     case adding

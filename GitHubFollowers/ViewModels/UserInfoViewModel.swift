@@ -12,20 +12,23 @@ import Combine
 class UserInfoViewModel {
     public var userSubject = PassthroughSubject<User, FGError>()
     public var gitHubService : GitHubService
-    @Published public var username : String = ""
-    init(_ gitHubService : GitHubService) {
+    public var username : String = ""
+    private var cancelables = Set<AnyCancellable>()
+    
+    init(gitHubService : GitHubService) {
         self.gitHubService = gitHubService
     }
-            
+    
     func fetchUserInfoData(){
-        gitHubService.fetchUserInfo(for: username) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let user):
+        gitHubService.fetchUserInfo(for: username)
+            .sink(receiveCompletion: { result in
+                switch result {
+                case .failure(let error):
+                    self.userSubject.send(completion: .failure(error))
+                case .finished: break
+                }
+            }) { user in
                 self.userSubject.send(user)
-            case .failure(let error):
-                self.userSubject.send(completion: .failure(error))
-            }
-        }
+        }.store(in: &cancelables)
     }
 }

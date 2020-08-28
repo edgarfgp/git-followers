@@ -9,16 +9,17 @@
 import Foundation
 import Combine
 
-class SearchViewModel {
-    
-    @Published var isButtonEnabled : Bool = false
+class SearchViewModel : ObservableObject {
     @Published var userName : String = ""
     
-    var validUsername: AnyPublisher<Bool, Never> {
-        return $userName
-            .debounce(for: 0.2, scheduler: RunLoop.main)
-            .removeDuplicates()
-            .map{!$0.isEmpty}
-            .eraseToAnyPublisher()
+    private let userNameSubject = CurrentValueSubject<Bool, Never>(false)
+    
+    var isValidUserName: AnyPublisher<Bool, Never> {
+        return userNameSubject.eraseToAnyPublisher()
+    }
+    
+    func validateUserName(userName: String){
+        self.userName = userName
+        userNameSubject.send(!userName.isEmpty)
     }
 }

@@ -18,7 +18,7 @@ class UserInfoController: UIViewController {
     private let itemViewOne = UIView()
     private let itemViewTwo = UIView()
     private let datelabel = FGBodyLabel()
-    var viewModel = UserInfoViewModel(GitHubService.shared)
+    var viewModel = UserInfoViewModel(gitHubService: GitHubService())
     private var cancelables = Set<AnyCancellable>()
     
     var didRequestFollowers: ((String) -> Void)?
@@ -52,7 +52,8 @@ class UserInfoController: UIViewController {
     
     private func getUserInfo() {
         viewModel.fetchUserInfoData()
-        viewModel.userSubject.sink(receiveCompletion: { [weak self]result in
+        viewModel.userSubject
+            .sink(receiveCompletion: { [weak self]result in
             guard let self = self else { return }
             switch result {
             case .failure(let error) :

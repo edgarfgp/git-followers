@@ -9,26 +9,34 @@
 import Foundation
 import Combine
 
-class FollowerListViewModel {
+class FollowerListViewModel : ObservableObject {
     
+    lazy var filteredFolowers : [Follower] = []
+    lazy var followers: [Follower] = []
+    lazy var userName : String = ""
     lazy var page : Int = 1
     lazy var isSearching = false
-    lazy var followers: [Follower] = []
-    lazy var filteredFolowers : [Follower] = []
+    
+    var cancellables = Set<AnyCancellable>()
     
     var gitHubService : GitHubService
     var persistenceService : PersistenceService
     
-    typealias FetchFollowerInfoCallback = (_ follower : Follower?, _ error : FGError?) -> Void
-    typealias UpdatePersistenceServiceCallback = (_ error : FGError?) -> Void
-    typealias FilterFollowersCallBack = (_ filteredFollowers : [Follower]) -> Void
+    private var followersSubject = PassthroughSubject<[Follower], FGError>()
+    private var fiteredFollowersSubject = PassthroughSubject<[Follower], Never>()
+    private var followerSubject = PassthroughSubject<Follower, FGError>()
     
-    var updatePersistenceServiceCallback : UpdatePersistenceServiceCallback?
-    var filterFollowersCallBack : FilterFollowersCallBack?
+    var followersPublisher : AnyPublisher<[Follower], FGError> {
+        return followersSubject.eraseToAnyPublisher()
+    }
     
-    var followersSubject = PassthroughSubject<[Follower], FGError>()
-    var followerSubject = PassthroughSubject<Follower, FGError>()
+    var fiteredFollowersPublisher : AnyPublisher<[Follower], Never> {
+        return fiteredFollowersSubject.eraseToAnyPublisher()
+    }
     
+    var followerPublisher : AnyPublisher<Follower, FGError> {
+        return followerSubject.eraseToAnyPublisher()
+    }
     
     init(gitHubService : GitHubService, persistenceService : PersistenceService) {
         self.gitHubService = gitHubService
@@ -36,35 +44,39 @@ class FollowerListViewModel {
     }
     
     func fetchUserFollowers(userName : String, page: Int){
-        gitHubService.fetchFollowers(userName: userName, page: page) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let followers):
+        self.userName = userName
+        gitHubService.fetchFollowers(userName: userName, page: page)
+            .sink(receiveCompletion: { [weak self] resultCompletion in
+                guard let self = self else { return }
+                switch resultCompletion {
+                case .failure(let error):
+                    self.followersSubject.send(completion: .failure(error))
+                case .finished : break
+                }
+            }) { followers in
                 self.followersSubject.send(followers)
                 self.followers.append(contentsOf: followers)
-            case .failure(let error) :
-                self.followersSubject.send(completion: .failure(error))
-            }
-        }
+        }.store(in: &cancellables)
     }
     
     func fetchFollowerInfo(userName: String) {
-        gitHubService.fetchUserInfo(for: userName) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let user):
+        gitHubService.fetchUserInfo(for: userName)
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .failure(let error) :
+                    self.followerSubject.send(completion: .failure(error))
+                case .finished : break
+                }
+                
+            }) { user in
                 let follower = Follower(login: user.login, avatarUrl: user.avatarUrl)
                 self.updatePersistenceService(follower: follower)
-            case .failure(let error):
-                self.followerSubject.send(completion: .failure(error))
-            }
-        }
+        }.store(in: &cancellables)
     }
     
     func filterFollowers(for filter: String){
         filteredFolowers = followers.filter { $0.login.lowercased().contains(filter.lowercased()) }
-        filterFollowersCallBack?(filteredFolowers)
-
+        fiteredFollowersSubject.send(filteredFolowers)
     }
     private func updatePersistenceService(follower: Follower){
         self.persistenceService.update(favorite: follower, actionType: PersistenceActionType.adding) { [weak self] error in

@@ -12,80 +12,34 @@ import Combine
 class GitHubService {
     
     static let shared = GitHubService()
-    
     private let cache = NSCache<NSString, UIImage>()
-    
     private var  cancellables = Set<AnyCancellable>()
+    private let apiQueue = DispatchQueue(label: "API", qos: .default, attributes: .concurrent)
     
-    func fetchFollowers(userName: String, page: Int, completed: @escaping  (Result<[Follower], FGError>) -> Void) {
+    func fetchFollowers(userName: String, page: Int) -> AnyPublisher<[Follower], FGError> {
         let userName = URLConstants.baseURL + "\(userName)/followers?per_page=100&page=\(page)"
-        guard let url = URL(string: userName) else {
-            completed(.failure(.invalidUserName))
-            return
-        }
-        
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        URLSession.shared.dataTaskPublisher(for: url)
-            .tryMap { request in
-                guard let data = request.data as Data? else { completed(.failure(.invalidData))}
-                guard let response = request.response as? HTTPURLResponse, response.statusCode == 200 else {
-                    completed(.failure(.invalidResponse))
-                    throw HTTPError.statusCode
-                }
-                return data
-        }
-        .decode(type:[Follower].self, decoder: decoder)
-        .sink(receiveCompletion: { result in
-            switch result {
-            case .failure(let error):
-                if let _ = error as Error? {
-                    completed(.failure(.unableToComplete))
-                    return
-                }
-            case .finished : break
-            }
-            
-        }, receiveValue: { followers in
-            completed(.success(followers))
-        })
-            .store(in: &cancellables)
+        return URLSession.shared.dataTaskPublisher(for: URL(string: userName)!)
+            .receive(on: apiQueue)
+            .map{ $0.data }
+            .decode(type:[Follower].self, decoder: decoder)
+            .catch { _ in Empty<[Follower], FGError>() }
+            .eraseToAnyPublisher()
     }
     
-    func fetchUserInfo(for userName: String, completed: @escaping  (Result<User, FGError>) -> Void) {
+    func fetchUserInfo(for userName: String) -> AnyPublisher<User, FGError> {
         let urlString = URLConstants.baseURL + "\(userName)"
-        guard let url = URL(string: urlString) else {
-            completed(.failure(.invalidUserName))
-            return
-        }
-        
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
-        URLSession.shared.dataTaskPublisher(for: url)
-            .tryMap { request   in
-                guard let data = request.data as Data? else { completed(.failure(.invalidData))}
-                guard let response = request.response as? HTTPURLResponse, response.statusCode == 200 else {
-                    completed(.failure(.invalidResponse))
-                    throw HTTPError.statusCode
-                }
-                
-                return data
-        }.decode(type: User.self, decoder: decoder)
-            .sink(receiveCompletion: { result in
-                switch result {
-                case .failure(let error):
-                    if let _ = error as Error? {
-                        completed(.failure(.unableToComplete))
-                        return
-                    }
-                case .finished : break
-                }
-                
-            }, receiveValue: { user in
-                completed(.success(user))
-            })
-            .store(in: &cancellables)
+        return URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
+            .receive(on: apiQueue)
+            .map{ $0.data }
+            .decode(type: User.self, decoder: decoder)
+            .catch { _ in Empty<User, FGError>() }
+            .eraseToAnyPublisher()
+        
     }
     
     func fetchImage(from urlString: String, completed: @escaping(UIImage?) -> Void) {
