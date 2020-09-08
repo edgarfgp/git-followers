@@ -48,7 +48,7 @@ class FollowerListController: UICollectionViewController {
         super.viewDidLoad()
         
         self.title = userName
-
+        
         configureViewController()
         configureCollectionView()
         getFollowers(page: viewModel.page)
@@ -95,7 +95,7 @@ extension FollowerListController {
         let follower = activeArray[indexPath.item]
         
         let destinationController = UserInfoController()
-        destinationController.viewModel.username = follower.login
+        destinationController.username = follower.login
         
         destinationController.didRequestFollowers = { [weak self] name in
             
@@ -121,53 +121,51 @@ extension FollowerListController {
         showLoadingView()
         viewModel.fetchUserFollowers(userName: userName, page: page)
         
-        viewModel.followersPublisher.sink(receiveCompletion: { [weak self] resultCompletion in
-            guard let self = self else { return }
-            switch resultCompletion {
-            case .failure(let error):
+        viewModel.followersPublisher
+            .subscribe(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self] resultCompletion in
+                guard let self = self else { return }
+                switch resultCompletion {
+                case .failure(_):
+                    self.dissmissLoadingView()
+                    self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: "Please try agin Later!", buttonTilte: "Ok")
+                case .finished : break
+                }})
+            { [weak self] followers in
+                guard let self = self else { return }
                 self.dissmissLoadingView()
-                self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTilte: "Ok")
-            case .finished : break
-            }})
-        { [weak self] followers in
-            guard let self = self else { return }
-            self.dissmissLoadingView()
-            
-            if followers.isEmpty, self.viewModel.followers.isEmpty {
                 
-                let message = "This users does not have follower 🥺. Go follow them 😀"
-                DispatchQueue.main.async {
-                    self.showEmptySatteView(with: message, in: self.view)
-                    return
+                if followers.isEmpty, self.viewModel.followers.isEmpty {
+                    
+                    let message = "This users does not have follower 🥺. Go follow them 😀"
+                    DispatchQueue.main.async {
+                        self.showEmptySatteView(with: message, in: self.view)
+                        return
+                    }
+                }else{
+                    let newFollowers = followers.isEmpty ? self.viewModel.followers : followers
+                    
+                    self.updateData(on: newFollowers)
                 }
-            }else{
-                let newFollowers = followers.isEmpty ? self.viewModel.followers : followers
                 
-                self.updateData(on: newFollowers)
-            }
-            
         }.store(in: &cancellables)
         
     }
     
     @objc private func addFavoriteTapped () {
-        
-        showLoadingView()
-        
-        self.dissmissLoadingView()
-        
         viewModel.fetchFollowerInfo(userName: userName)
-        
-        viewModel.followerPublisher.sink(receiveCompletion: { [weak self]resultCompletion in
-            guard let self = self else { return }
-            
-            switch resultCompletion {
-            case .failure(let error):
-                self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
-            case .finished : break
-            }
-        }) { follower in
-            self.presentFGAlertOnMainThread(title: "Success", message: "You have added \(follower.login) as favorite 🎉", buttonTilte: "Ok")
+        viewModel.followerPublisher
+            .subscribe(on: DispatchQueue.main)
+            .sink(receiveCompletion: { [weak self]resultCompletion in
+                guard let self = self else { return }
+                
+                switch resultCompletion {
+                case .failure(let error):
+                    self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
+                case .finished : break
+                }
+            }) { follower in
+                self.presentFGAlertOnMainThread(title: "Success", message: "You have added \(follower.login) as favorite 🎉", buttonTilte: "Ok")
         }.store(in: &cancellables)
     }
     

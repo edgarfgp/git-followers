@@ -7,11 +7,13 @@
 //
 
 import Foundation
+import Combine
 
-class FavoriteListViewModel {
+class FavoriteListViewModel : ObservableObject {
     
-    lazy var favorites : [Follower] = []
+    @Published var followers : [Follower] = []
     
+    //lazy var favorites : [Follower] = []
     var persistenceService : PersistenceService
     
     typealias FetchFollowersCallback = (_ follower : [Follower]?, _ error : FGError?) -> Void
@@ -29,7 +31,7 @@ class FavoriteListViewModel {
             guard let self = self else { return }
             switch result {
             case.success(let favorites):
-                self.favorites = favorites
+                self.followers = favorites
                 self.getFavoritesCallback?(favorites, nil)
             case.failure(let error):
                 self.getFavoritesCallback?(nil, error)

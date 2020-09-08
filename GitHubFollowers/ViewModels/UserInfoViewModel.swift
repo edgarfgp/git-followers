@@ -9,26 +9,22 @@
 import Foundation
 import Combine
 
-class UserInfoViewModel {
-    public var userSubject = PassthroughSubject<User, FGError>()
+class UserInfoViewModel : ObservableObject {
+    @Published var user : User?
     public var gitHubService : GitHubService
-    public var username : String = ""
-    private var cancelables = Set<AnyCancellable>()
     
     init(gitHubService : GitHubService) {
         self.gitHubService = gitHubService
     }
     
-    func fetchUserInfoData(){
-        gitHubService.fetchUserInfo(for: username)
-            .sink(receiveCompletion: { result in
-                switch result {
-                case .failure(let error):
-                    self.userSubject.send(completion: .failure(error))
-                case .finished: break
-                }
-            }) { user in
-                self.userSubject.send(user)
-        }.store(in: &cancelables)
+    func fetchUserInfoData(username: String){
+        self.gitHubService.fetchUserInfo(urlString: username) { [weak self] userInfo in
+            switch userInfo {
+            case .success(let user) :
+                self?.user = user
+                
+            case .failure( _) : break
+            }
+        }
     }
 }

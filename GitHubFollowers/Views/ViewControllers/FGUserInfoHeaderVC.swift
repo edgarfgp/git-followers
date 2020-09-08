@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Combine
 
 class FGUserInfoHeaderVC: UIViewController {
     
@@ -19,7 +20,8 @@ class FGUserInfoHeaderVC: UIViewController {
     
     private let user : User
     private var gitHubService : GitHubService
-
+    private var cancelables = Set<AnyCancellable>()
+    
     init(user: User, gitHubService : GitHubService) {
         self.user = user
         self.gitHubService = gitHubService
@@ -45,11 +47,12 @@ extension FGUserInfoHeaderVC {
     }
     
     private func configureUIElements() {
-        gitHubService.fetchImage(from: user.avatarUrl) { [weak self] image in
-            DispatchQueue.main.async {
+        gitHubService.fetchImage(from: user.avatarUrl)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { _ in }) { [weak self] image in
                 self?.avatarImageView.image = image
-            }
-        }
+        }.store(in: &cancelables)
+
         userNameLabel.text = user.login
         namelabel.text = user.name ?? ""
         locationLabel.text = user.location ?? "Unkwown lcoation"

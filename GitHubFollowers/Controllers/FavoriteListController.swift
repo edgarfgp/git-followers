@@ -7,12 +7,14 @@
 //
 
 import UIKit
+import Combine
 
 class FavoriteListController: UIViewController {
     
     private lazy var tableView = UITableView()
         
     var viewModel = FavoriteListViewModel(persistenceService: PersistenceService.shared)
+    var cancellables = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,45 +43,38 @@ class FavoriteListController: UIViewController {
     }
     
     private func getFavotites () {
-        
-        viewModel.getFavoritesCallback = { [weak self] favorites , error in
-            guard let self = self else { return }
-            
-            guard let error = error else {
-                guard let favorites = favorites else { return }
-                if favorites.isEmpty {
-                    self.showEmptySatteView(with: "No favorites", in: self.view)
-                }else{
-                    DispatchQueue.main.async {
-                        self.tableView.reloadData()
-                        self.view.bringSubviewToFront(self.tableView)
-                    }
-                }
-                return
-            }
-            self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
-            
-        }
-        
         viewModel.getFavorites()
+        viewModel.$followers
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self ] favorites in
+                guard let self = self else { return }
+                
+                if  favorites.isEmpty {
+                    self.showEmptySatteView(with: "No favorites", in: self.view)
+                }else {
+                    self.tableView.reloadData()
+                    self.view.bringSubviewToFront(self.tableView)
+                }
+        }.store(in: &cancellables)
     }
 }
 
+
 extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.favorites.count
+        return viewModel.followers.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FavoriteCell.reuseID) as! FavoriteCell
-        let favorite = viewModel.favorites[indexPath.row]
+        let favorite = viewModel.followers[indexPath.row]
         cell.setFavorite(favorite: favorite)
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let favorite = viewModel.favorites[indexPath.row]
+        let favorite = viewModel.followers[indexPath.row]
         let destinationVC = FollowerListController()
         destinationVC.userName = favorite.login
         
@@ -93,7 +88,7 @@ extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
         viewModel.updateFavoritesCallback = { [weak self] message in
             guard let self = self else { return }
             guard let message = message else {
-                self.viewModel.favorites.remove(at: indexPath.row)
+                self.viewModel.followers.remove(at: indexPath.row)
                 tableView.deleteRows(at: [indexPath], with: .left)
                 return
             }
@@ -101,9 +96,9 @@ extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
             self.presentFGAlertOnMainThread(title: "Unable to remove", message: message, buttonTilte: "Ok")
         }
         
-        viewModel.updateFavoriteList(favorite: viewModel.favorites[indexPath.row])
+        viewModel.updateFavoriteList(favorite: viewModel.followers[indexPath.row])
         
-        if viewModel.favorites.isEmpty {
+        if viewModel.followers.isEmpty {
             self.showEmptySatteView(with: "No favorites", in: self.view)
         }
     }

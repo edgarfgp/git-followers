@@ -27,4 +27,18 @@ extension UIView {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
     }
+    
+    func roundCorners(_ corners: UIRectCorner = .allCorners, radius: CGFloat) {
+        DispatchQueue.main.async { [weak self] in
+            guard let `self` = self else { return }
+            let path = UIBezierPath(
+                roundedRect: self.bounds,
+                byRoundingCorners: corners,
+                cornerRadii: CGSize(width: radius, height: radius)
+            )
+            let mask = CAShapeLayer()
+            mask.path = path.cgPath
+            self.layer.mask = mask
+        }
+    }
 }

@@ -12,14 +12,11 @@ import Combine
 class SearchViewModel : ObservableObject {
     @Published var userName : String = ""
     
-    private let userNameSubject = CurrentValueSubject<Bool, Never>(false)
-    
     var isValidUserName: AnyPublisher<Bool, Never> {
-        return userNameSubject.eraseToAnyPublisher()
-    }
-    
-    func validateUserName(userName: String){
-        self.userName = userName
-        userNameSubject.send(!userName.isEmpty)
+        $userName
+            .delay(for: .milliseconds(250), scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .map { !$0.isEmpty }
+            .eraseToAnyPublisher()
     }
 }

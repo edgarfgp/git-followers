@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Combine
 
 class FollowerCell: UICollectionViewCell {
     
@@ -15,6 +16,7 @@ class FollowerCell: UICollectionViewCell {
     
     private lazy var avatarImageView = FGAvatarImageView(frame: .zero)
     private lazy var userNameLabel = FGTitleLabel(textAligment: .center, fontSize: 16)
+    private var cancelables = Set<AnyCancellable>()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -48,9 +50,11 @@ class FollowerCell: UICollectionViewCell {
     func setFollower(follower: Follower){
         userNameLabel.text = follower.login
         
-        GitHubService.shared.fetchImage(from: follower.avatarUrl) {[weak self] image in
-            guard let self = self else { return }
-            DispatchQueue.main.async { self.avatarImageView.image = image }
-        }
+        GitHubService.shared.fetchImage(from: follower.avatarUrl)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { _ in }) { [weak self] image in
+                guard let self = self else { return }
+                self.avatarImageView.image = image
+        }.store(in: &cancelables)
     }
 }

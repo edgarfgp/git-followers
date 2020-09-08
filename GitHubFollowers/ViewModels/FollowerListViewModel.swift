@@ -45,33 +45,29 @@ class FollowerListViewModel : ObservableObject {
     
     func fetchUserFollowers(userName : String, page: Int){
         self.userName = userName
-        gitHubService.fetchFollowers(userName: userName, page: page)
-            .sink(receiveCompletion: { [weak self] resultCompletion in
-                guard let self = self else { return }
-                switch resultCompletion {
-                case .failure(let error):
-                    self.followersSubject.send(completion: .failure(error))
-                case .finished : break
-                }
-            }) { followers in
-                self.followersSubject.send(followers)
-                self.followers.append(contentsOf: followers)
-        }.store(in: &cancellables)
+        self.gitHubService.fetchFollowers(userName: userName, page: page) { [weak self] result in
+            switch result {
+            case .success(let followers) :
+                self?.followersSubject.send(followers)
+                self?.followers.append(contentsOf: followers)
+                
+            case .failure(let error) :
+                self?.followersSubject.send(completion: .failure(error))
+            }
+        }
     }
     
     func fetchFollowerInfo(userName: String) {
-        gitHubService.fetchUserInfo(for: userName)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .failure(let error) :
-                    self.followerSubject.send(completion: .failure(error))
-                case .finished : break
-                }
-                
-            }) { user in
+        self.gitHubService.fetchUserInfo(urlString: userName) { [weak self] userInfo in
+            switch userInfo {
+            case .success(let user) :
                 let follower = Follower(login: user.login, avatarUrl: user.avatarUrl)
-                self.updatePersistenceService(follower: follower)
-        }.store(in: &cancellables)
+                self?.updatePersistenceService(follower: follower)
+                
+            case .failure(let error) :
+                self?.followerSubject.send(completion: .failure(error))
+            }
+        }
     }
     
     func filterFollowers(for filter: String){

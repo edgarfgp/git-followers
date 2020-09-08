@@ -8,6 +8,7 @@
 //
 
 import UIKit
+import Combine
 
 class FavoriteCell: UITableViewCell {
     
@@ -16,6 +17,7 @@ class FavoriteCell: UITableViewCell {
     
     private lazy var avatarImageView = FGAvatarImageView(frame: .zero)
     private lazy var userNameLabel = FGTitleLabel(textAligment: .left, fontSize: 26)
+    private var cancelables = Set<AnyCancellable>()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -46,10 +48,11 @@ class FavoriteCell: UITableViewCell {
     
     func setFavorite(favorite: Follower){
         userNameLabel.text = favorite.login
-        GitHubService.shared.fetchImage(from: favorite.avatarUrl) { [weak self] image in
-            DispatchQueue.main.async {
-                self?.avatarImageView.image = image
-            }
-        }
+        GitHubService.shared.fetchImage(from: favorite.avatarUrl)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { _ in }) { [weak self] image in
+                guard let self = self else { return }
+                self.avatarImageView.image = image
+        }.store(in: &cancelables)
     }
 }

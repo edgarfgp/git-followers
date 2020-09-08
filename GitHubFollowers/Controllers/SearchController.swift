@@ -35,21 +35,10 @@ class SearchController: UIViewController {
     }
     
     fileprivate func bindViewModel() {
-        let publisher = NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: userNameTextFiled)
-        publisher
-            .map { ($0.object as! UITextField).text }
-            .debounce(for: .milliseconds(100), scheduler: RunLoop.main)
-            .sink { [weak self] str in
-                guard let self = self else { return }
-                guard let text = str else { return }
-                self.viewModel.validateUserName(userName: text)
-                self.viewModel.isValidUserName
-                    .debounce(for: .milliseconds(100), scheduler: RunLoop.main)
-                    .sink { isValid in
-                        self.callToActionButton.isEnabled = isValid
-                        self.callToActionButton.backgroundColor = isValid ? .systemGreen : .systemGray
-                }
-                .store(in: &self.cancellables)
+        viewModel.isValidUserName
+            .sink { isEnabled in
+                self.callToActionButton.isEnabled = isEnabled
+                self.callToActionButton.backgroundColor = isEnabled  ? .systemGreen : .systemGray
         }
         .store(in: &cancellables)
     }
@@ -59,6 +48,11 @@ extension SearchController : UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         pushFolowerListVc()
         return true
+    }
+    
+    @objc func textDidChange(sender : UITextField){
+        guard let text = sender.text else { return }
+        self.viewModel.userName = text
     }
 }
 
@@ -108,6 +102,7 @@ extension SearchController {
     private func configureUserNameTextFiled() {
         userNameTextFiled.translatesAutoresizingMaskIntoConstraints = false
         userNameTextFiled.delegate = self
+        userNameTextFiled.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
         
         NSLayoutConstraint.activate([
             userNameTextFiled.topAnchor.constraint(equalTo: logoImageView.bottomAnchor, constant: 50),

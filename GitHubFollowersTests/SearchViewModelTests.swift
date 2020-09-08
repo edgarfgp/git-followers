@@ -16,6 +16,6 @@ class SearchViewModelTests: XCTestCase {
         
         viewModel.userName = "edgarfgp"
         
-        XCTAssertFalse(viewModel.isButtonEnabled)
+        XCTAssertFalse(viewModel.userName.isEmpty)
     }
 }

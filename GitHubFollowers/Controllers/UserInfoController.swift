@@ -21,6 +21,10 @@ class UserInfoController: UIViewController {
     var viewModel = UserInfoViewModel(gitHubService: GitHubService())
     private var cancelables = Set<AnyCancellable>()
     
+    lazy var username : String = {
+        return ""
+    }()
+    
     var didRequestFollowers: ((String) -> Void)?
     
     override func viewDidLoad() {
@@ -41,7 +45,6 @@ class UserInfoController: UIViewController {
         NSLayoutConstraint.activate([
             contextView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         ])
-        
     }
     
     private func configureViewController() {
@@ -51,19 +54,14 @@ class UserInfoController: UIViewController {
     }
     
     private func getUserInfo() {
-        viewModel.fetchUserInfoData()
-        viewModel.userSubject
-            .sink(receiveCompletion: { [weak self]result in
-            guard let self = self else { return }
-            switch result {
-            case .failure(let error) :
-                self.presentFGAlertOnMainThread(title: "Error trying to get Userinfo", message: error.rawValue, buttonTilte: "Ok")
-            case .finished : break
-            }
-        }, receiveValue: { user in
-            DispatchQueue.main.async { self.configureElements(with: user) }
-        })
-        .store(in: &cancelables)
+        viewModel.fetchUserInfoData(username: username)
+        viewModel.$user
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { user in
+                guard let result = user else { return }
+                self.configureElements(with: result)
+            }) .store(in: &cancelables)
+        
     }
     
     private func configureElements(with user: User){
