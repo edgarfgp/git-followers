@@ -47,14 +47,15 @@ class FollowerCell: UICollectionViewCell {
         ])
     }
     
-    func setFollower(follower: Follower){
+    func setFollower(follower: Follower, service: GitHubService){
         userNameLabel.text = follower.login
-        
-        GitHubService.shared.fetchImage(from: follower.avatarUrl)
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { _ in }) { [weak self] image in
-                guard let self = self else { return }
-                self.avatarImageView.image = image
-        }.store(in: &cancelables)
+        service.fetchImage(from: follower.avatarUrl) { result in
+            switch result {
+            case .success(let image) :
+                 self.avatarImageView.image = image
+            case .failure(_) :
+                break
+            }
+        }
     }
 }

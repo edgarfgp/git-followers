@@ -68,7 +68,7 @@ extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: FavoriteCell.reuseID) as! FavoriteCell
         let favorite = viewModel.followers[indexPath.row]
-        cell.setFavorite(favorite: favorite)
+        cell.setFavorite(favorite: favorite, service: GitHubService())
         
         return cell
     }

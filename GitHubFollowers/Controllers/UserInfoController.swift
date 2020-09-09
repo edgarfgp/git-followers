@@ -66,7 +66,7 @@ class UserInfoController: UIViewController {
     
     private func configureElements(with user: User){
         
-        self.add(childVC: FGUserInfoHeaderVC(user: user, gitHubService: GitHubService.shared), to: self.headerView)
+        self.add(childVC: FGUserInfoHeaderVC(user: user, gitHubService: GitHubService()), to: self.headerView)
         
         let reposItemsController = FGReposItemInfoVC(user: user)
         

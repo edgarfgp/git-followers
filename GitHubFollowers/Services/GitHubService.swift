@@ -11,7 +11,6 @@ import Combine
 
 class GitHubService {
     
-    static let shared = GitHubService()
     private let cache = NSCache<NSString, UIImage>()
     private var  cancellables = Set<AnyCancellable>()
     private let apiQueue = DispatchQueue(label: "API", qos: .default, attributes: .concurrent)
@@ -21,21 +20,21 @@ class GitHubService {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
-        .retry(1)
-        .map(\.data)
-        .decode(type: [Follower].self, decoder: decoder)
-        .catch { _ in Empty<[Follower], FGError>() }
-        .receive(on: apiQueue)
-        .sink(receiveCompletion: { result in
-            switch result {
-            case .failure(let error):
-                completion(.failure(error))
-            case .finished : break
-            }
-        }, receiveValue: { user in
-            completion(.success(user))
-        })
-        .store(in: &cancellables)
+            .retry(1)
+            .map(\.data)
+            .decode(type: [Follower].self, decoder: decoder)
+            .catch { _ in Empty<[Follower], FGError>() }
+            .receive(on: apiQueue)
+            .sink(receiveCompletion: { result in
+                switch result {
+                case .failure(let error):
+                    completion(.failure(error))
+                case .finished : break
+                }
+            }, receiveValue: { user in
+                completion(.success(user))
+            })
+            .store(in: &cancellables)
     }
     
     func fetchUserInfo(urlString : String, completion: @escaping (Result<User, FGError>) -> Void){
@@ -62,7 +61,7 @@ class GitHubService {
             .store(in: &cancellables)
     }
     
-    func fetchImage(from urlString: String) -> AnyPublisher<UIImage?, Error>{
+    func fetchImage(from urlString: String, completion: @escaping (Result<UIImage, FGError>) -> Void) {
         URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
             .tryMap { data, response -> UIImage in
                 
@@ -78,6 +77,17 @@ class GitHubService {
                 self.cache.setObject(image, forKey: cacheKey)
                 return image
         }
-        .eraseToAnyPublisher()
+        .receive(on: DispatchQueue.main)
+        .sink(receiveCompletion: { completionResult in
+            switch completionResult {
+            case .failure(let error):
+                if let error  = error as? FGError {
+                    completion(.failure(error))
+                }
+            case .finished : break
+            }
+        }) { imageResult in
+            completion(.success(imageResult))
+        }.store(in: &cancellables)
     }
 }

@@ -46,13 +46,14 @@ class FavoriteCell: UITableViewCell {
         ])
     }
     
-    func setFavorite(favorite: Follower){
+    func setFavorite(favorite: Follower, service : GitHubService){
         userNameLabel.text = favorite.login
-        GitHubService.shared.fetchImage(from: favorite.avatarUrl)
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { _ in }) { [weak self] image in
-                guard let self = self else { return }
-                self.avatarImageView.image = image
-        }.store(in: &cancelables)
+        service.fetchImage(from: favorite.avatarUrl) {[weak self] result in
+            switch result {
+            case .success(let image):
+                self?.avatarImageView.image = image
+            case .failure(_) : break
+            }
+        }
     }
 }

@@ -47,12 +47,14 @@ extension FGUserInfoHeaderVC {
     }
     
     private func configureUIElements() {
-        gitHubService.fetchImage(from: user.avatarUrl)
-            .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { _ in }) { [weak self] image in
+        gitHubService.fetchImage(from: user.avatarUrl) {[weak self] result in
+            switch result {
+            case .success(let image):
                 self?.avatarImageView.image = image
-        }.store(in: &cancelables)
-
+            case .failure(_) : break
+            }
+        }
+        
         userNameLabel.text = user.login
         namelabel.text = user.name ?? ""
         locationLabel.text = user.location ?? "Unkwown lcoation"

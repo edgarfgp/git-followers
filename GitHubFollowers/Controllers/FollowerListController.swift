@@ -13,14 +13,14 @@ enum Section { case main }
 
 class FollowerListController: UICollectionViewController {
     var cancellables = Set<AnyCancellable>()
-    var viewModel = FollowerListViewModel(gitHubService: GitHubService.shared, persistenceService: PersistenceService.shared)
+    var viewModel = FollowerListViewModel(gitHubService: GitHubService(), persistenceService: PersistenceService.shared)
     
     private lazy var dataSource : UICollectionViewDiffableDataSource<Section, Follower> = {
         
         let dataSource = UICollectionViewDiffableDataSource<Section, Follower>(collectionView: collectionView, cellProvider: {
             (collectionView, indexPath, follower) -> UICollectionViewCell? in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FollowerCell.reuseID, for: indexPath) as! FollowerCell
-            cell.setFollower(follower: follower)
+            cell.setFollower(follower: follower, service: GitHubService())
             return cell
         })
         
