@@ -49,13 +49,9 @@ class FollowerCell: UICollectionViewCell {
     
     func setFollower(follower: Follower, service: GitHubService){
         userNameLabel.text = follower.login
-        service.fetchImage(from: follower.avatarUrl) { result in
-            switch result {
-            case .success(let image) :
-                 self.avatarImageView.image = image
-            case .failure(_) :
-                break
-            }
+        service.fetchImage(from: follower.avatarUrl) { [weak self] result in
+            guard let image = result else { return }
+            self?.avatarImageView.image = image
         }
     }
 }

@@ -61,7 +61,7 @@ class GitHubService {
             .store(in: &cancellables)
     }
     
-    func fetchImage(from urlString: String, completion: @escaping (Result<UIImage, FGError>) -> Void) {
+    func fetchImage(from urlString: String, completion: @escaping (UIImage?) -> Void) {
         URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
             .tryMap { data, response -> UIImage in
                 
@@ -78,16 +78,8 @@ class GitHubService {
                 return image
         }
         .receive(on: DispatchQueue.main)
-        .sink(receiveCompletion: { completionResult in
-            switch completionResult {
-            case .failure(let error):
-                if let error  = error as? FGError {
-                    completion(.failure(error))
-                }
-            case .finished : break
-            }
-        }) { imageResult in
-            completion(.success(imageResult))
+        .sink(receiveCompletion: { _ in }) { imageResult in
+            completion(.some(imageResult))
         }.store(in: &cancellables)
     }
 }

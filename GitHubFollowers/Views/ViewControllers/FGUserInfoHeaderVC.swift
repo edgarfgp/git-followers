@@ -48,11 +48,8 @@ extension FGUserInfoHeaderVC {
     
     private func configureUIElements() {
         gitHubService.fetchImage(from: user.avatarUrl) {[weak self] result in
-            switch result {
-            case .success(let image):
-                self?.avatarImageView.image = image
-            case .failure(_) : break
-            }
+            guard let image = result else { return }
+            self?.avatarImageView.image = image
         }
         
         userNameLabel.text = user.login
