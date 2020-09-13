@@ -51,7 +51,7 @@ class FollowerListController: UICollectionViewController {
         
         configureViewController()
         configureCollectionView()
-        getFollowers(page: viewModel.page)
+        getFollowers(userName: userName ,page: viewModel.page)
         configureSearchController()
     }
 }
@@ -86,7 +86,7 @@ extension FollowerListController {
         
         if offsetY > contentHeight - height {
             viewModel.page += 1
-            getFollowers(page: viewModel.page)
+            getFollowers(userName: userName, page: viewModel.page)
         }
     }
     
@@ -102,11 +102,12 @@ extension FollowerListController {
             guard let self = self else { return }
             
             self.title = self.userName
+            self.userName = name
             self.viewModel.page = self.viewModel.page
             self.viewModel.followers.removeAll()
             self.viewModel.filteredFolowers.removeAll()
             self.collectionView.setContentOffset(.zero, animated: true)
-            self.getFollowers(page: self.viewModel.page)
+            self.getFollowers(userName: self.userName, page: self.viewModel.page)
             
         }
         
@@ -117,12 +118,11 @@ extension FollowerListController {
 
 extension FollowerListController {
     
-    private func getFollowers(page: Int){
+    private func getFollowers(userName: String ,page: Int){
         showLoadingView()
         viewModel.fetchUserFollowers(userName: userName, page: page)
         
         viewModel.followersPublisher
-            .subscribe(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] resultCompletion in
                 guard let self = self else { return }
                 switch resultCompletion {

@@ -48,8 +48,7 @@ extension FGUserInfoHeaderVC {
     
     private func configureUIElements() {
         gitHubService.fetchImage(from: user.avatarUrl) {[weak self] result in
-            guard let image = result else { return }
-            self?.avatarImageView.image = image
+            self?.avatarImageView.image = result
         }
         
         userNameLabel.text = user.login

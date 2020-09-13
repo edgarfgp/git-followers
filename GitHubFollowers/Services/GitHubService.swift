@@ -11,6 +11,7 @@ import Combine
 
 class GitHubService {
     
+    private let numberOfRetries : Int = 1
     private let cache = NSCache<NSString, UIImage>()
     private var  cancellables = Set<AnyCancellable>()
     private let apiQueue = DispatchQueue(label: "API", qos: .default, attributes: .concurrent)
@@ -20,11 +21,11 @@ class GitHubService {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
-            .retry(1)
+            .retry(numberOfRetries)
             .map(\.data)
             .decode(type: [Follower].self, decoder: decoder)
             .catch { _ in Empty<[Follower], FGError>() }
-            .receive(on: apiQueue)
+            .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { result in
                 switch result {
                 case .failure(let error):
@@ -43,7 +44,7 @@ class GitHubService {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
         URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
-            .retry(1)
+            .retry(numberOfRetries)
             .map(\.data)
             .decode(type: User.self, decoder: decoder)
             .catch { _ in Empty<User, FGError>() }
@@ -61,8 +62,9 @@ class GitHubService {
             .store(in: &cancellables)
     }
     
-    func fetchImage(from urlString: String, completion: @escaping (UIImage?) -> Void) {
+    func fetchImage(from urlString: String, completion: @escaping (UIImage) -> Void) {
         URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
+            .retry(numberOfRetries)
             .tryMap { data, response -> UIImage in
                 
                 let cacheKey = NSString(string: urlString)
@@ -79,7 +81,7 @@ class GitHubService {
         }
         .receive(on: DispatchQueue.main)
         .sink(receiveCompletion: { _ in }) { imageResult in
-            completion(.some(imageResult))
+            completion(imageResult)
         }.store(in: &cancellables)
     }
 }

@@ -49,8 +49,7 @@ class FavoriteCell: UITableViewCell {
     func setFavorite(favorite: Follower, service : GitHubService){
         userNameLabel.text = favorite.login
         service.fetchImage(from: favorite.avatarUrl) {[weak self] result in
-            guard let image = result else { return }
-            self?.avatarImageView.image = image
+            self?.avatarImageView.image = result
         }
     }
 }

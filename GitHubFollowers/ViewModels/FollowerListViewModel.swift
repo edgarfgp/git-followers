@@ -13,7 +13,6 @@ class FollowerListViewModel : ObservableObject {
     
     lazy var filteredFolowers : [Follower] = []
     lazy var followers: [Follower] = []
-    lazy var userName : String = ""
     lazy var page : Int = 1
     lazy var isSearching = false
     
@@ -44,7 +43,6 @@ class FollowerListViewModel : ObservableObject {
     }
     
     func fetchUserFollowers(userName : String, page: Int){
-        self.userName = userName
         self.gitHubService.fetchFollowers(userName: userName, page: page) { [weak self] result in
             switch result {
             case .success(let followers) :
