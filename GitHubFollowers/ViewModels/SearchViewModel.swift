@@ -14,9 +14,9 @@ class SearchViewModel : ObservableObject {
     
     var isValidUserName: AnyPublisher<Bool, Never> {
         $userName
-            .delay(for: .milliseconds(250), scheduler: DispatchQueue.main)
             .removeDuplicates()
             .map { !$0.isEmpty }
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }

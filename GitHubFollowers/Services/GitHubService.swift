@@ -10,56 +10,37 @@ import UIKit
 import Combine
 
 class GitHubService {
-    
+
     private let numberOfRetries : Int = 1
     private let cache = NSCache<NSString, UIImage>()
     private var  cancellables = Set<AnyCancellable>()
     private let apiQueue = DispatchQueue(label: "API", qos: .default, attributes: .concurrent)
     
-    func fetchFollowers(userName: String, page: Int, completion: @escaping (Result<[Follower], FGError>) -> Void){
+    func fetchFollowers(userName: String, page: Int) -> AnyPublisher<[Follower], FGError>{
         let urlString = URLConstants.baseURL + "\(userName)/followers?per_page=100&page=\(page)"
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
+        return URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
             .retry(numberOfRetries)
             .map(\.data)
             .decode(type: [Follower].self, decoder: decoder)
             .catch { _ in Empty<[Follower], FGError>() }
             .receive(on: DispatchQueue.main)
-            .sink(receiveCompletion: { result in
-                switch result {
-                case .failure(let error):
-                    completion(.failure(error))
-                case .finished : break
-                }
-            }, receiveValue: { user in
-                completion(.success(user))
-            })
-            .store(in: &cancellables)
+            .eraseToAnyPublisher()
     }
     
-    func fetchUserInfo(urlString : String, completion: @escaping (Result<User, FGError>) -> Void){
+    func fetchUserInfo(urlString : String) -> AnyPublisher<User, FGError>{
         let urlString = URLConstants.baseURL + "\(urlString)"
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
-        URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
+        return URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
             .retry(numberOfRetries)
             .map(\.data)
             .decode(type: User.self, decoder: decoder)
             .catch { _ in Empty<User, FGError>() }
             .receive(on: apiQueue)
-            .sink(receiveCompletion: { result in
-                switch result {
-                case .failure(let error):
-                    completion(.failure(error))
-                case .finished : break
-                }
-                
-            }, receiveValue: { user in
-                completion(.success(user))
-            })
-            .store(in: &cancellables)
+            .eraseToAnyPublisher()
     }
     
     func fetchImage(from urlString: String, completion: @escaping (UIImage) -> Void) {

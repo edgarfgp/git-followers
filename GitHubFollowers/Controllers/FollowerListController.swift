@@ -120,19 +120,12 @@ extension FollowerListController {
     
     private func getFollowers(userName: String ,page: Int){
         showLoadingView()
-        viewModel.fetchUserFollowers(userName: userName, page: page)
-        
-        viewModel.followersPublisher
-            .sink(receiveCompletion: { [weak self] resultCompletion in
-                guard let self = self else { return }
-                switch resultCompletion {
-                case .failure(_):
-                    self.dissmissLoadingView()
-                    self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: "Please try agin Later!", buttonTilte: "Ok")
-                case .finished : break
-                }})
-            { [weak self] followers in
-                guard let self = self else { return }
+        viewModel.fetchUserFollowers(userName: userName, page: page) { result in
+            switch result {
+            case .failure(let error) :
+                self.dissmissLoadingView()
+                self.presentFGAlertOnMainThread(title: "Bad stuff happened", message: error.rawValue, buttonTilte: "Ok")
+            case .success(let followers) :
                 self.dissmissLoadingView()
                 
                 if followers.isEmpty, self.viewModel.followers.isEmpty {
@@ -147,26 +140,19 @@ extension FollowerListController {
                     
                     self.updateData(on: newFollowers)
                 }
-                
-        }.store(in: &cancellables)
-        
+            }
+        }
     }
     
     @objc private func addFavoriteTapped () {
-        viewModel.fetchFollowerInfo(userName: userName)
-        viewModel.followerPublisher
-            .subscribe(on: DispatchQueue.main)
-            .sink(receiveCompletion: { [weak self]resultCompletion in
-                guard let self = self else { return }
-                
-                switch resultCompletion {
-                case .failure(let error):
-                    self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
-                case .finished : break
-                }
-            }) { follower in
+        viewModel.saveUserTofavorites(userName: userName) { result in
+            switch result {
+            case .failure(let error) :
+                self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
+            case .success(let follower):
                 self.presentFGAlertOnMainThread(title: "Success", message: "You have added \(follower.login) as favorite 🎉", buttonTilte: "Ok")
-        }.store(in: &cancellables)
+            }
+        }
     }
     
     private func updateData(on followers: [Follower]) {

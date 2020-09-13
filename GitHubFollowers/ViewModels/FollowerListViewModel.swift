@@ -21,13 +21,8 @@ class FollowerListViewModel : ObservableObject {
     var gitHubService : GitHubService
     var persistenceService : PersistenceService
     
-    private var followersSubject = PassthroughSubject<[Follower], FGError>()
     private var fiteredFollowersSubject = PassthroughSubject<[Follower], Never>()
     private var followerSubject = PassthroughSubject<Follower, FGError>()
-    
-    var followersPublisher : AnyPublisher<[Follower], FGError> {
-        return followersSubject.eraseToAnyPublisher()
-    }
     
     var fiteredFollowersPublisher : AnyPublisher<[Follower], Never> {
         return fiteredFollowersSubject.eraseToAnyPublisher()
@@ -42,36 +37,40 @@ class FollowerListViewModel : ObservableObject {
         self.persistenceService = persistenceService
     }
     
-    func fetchUserFollowers(userName : String, page: Int){
-        self.gitHubService.fetchFollowers(userName: userName, page: page) { [weak self] result in
-            switch result {
-            case .success(let followers) :
-                self?.followersSubject.send(followers)
-                self?.followers.append(contentsOf: followers)
-                
-            case .failure(let error) :
-                self?.followersSubject.send(completion: .failure(error))
-            }
-        }
+    func fetchUserFollowers(userName : String, page: Int, completion: @escaping (Result<[Follower], FGError>) -> Void) {
+        self.gitHubService.fetchFollowers(userName: userName, page: page)
+            .sink(receiveCompletion: { completionResult in
+                switch completionResult {
+                case .failure(let error):
+                    completion(.failure(error))
+                case .finished : break
+                }
+            }) { result in
+                completion(.success(result))
+                self.followers.append(contentsOf: result)
+        }.store(in: &cancellables)
     }
     
-    func fetchFollowerInfo(userName: String) {
-        self.gitHubService.fetchUserInfo(urlString: userName) { [weak self] userInfo in
-            switch userInfo {
-            case .success(let user) :
+    func saveUserTofavorites(userName: String, completion: @escaping (Result<User, FGError>) -> Void) {
+        self.gitHubService.fetchUserInfo(urlString: userName)
+            .sink(receiveCompletion: { completionResult in
+                switch completionResult {
+                case .failure(let error):
+                    completion(.failure(error))
+                case .finished : break
+                }
+            }) { user in
                 let follower = Follower(login: user.login, avatarUrl: user.avatarUrl)
-                self?.updatePersistenceService(follower: follower)
-                
-            case .failure(let error) :
-                self?.followerSubject.send(completion: .failure(error))
-            }
-        }
+                self.updatePersistenceService(follower: follower)
+                completion(.success(user))
+        }.store(in: &cancellables)
     }
     
     func filterFollowers(for filter: String){
         filteredFolowers = followers.filter { $0.login.lowercased().contains(filter.lowercased()) }
         fiteredFollowersSubject.send(filteredFolowers)
     }
+    
     private func updatePersistenceService(follower: Follower){
         self.persistenceService.update(favorite: follower, actionType: PersistenceActionType.adding) { [weak self] error in
             guard let self = self else { return }

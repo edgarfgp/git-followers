@@ -47,7 +47,7 @@ class UserInfoController: UIViewController {
             contextView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         ])
     }
-    
+        
     private func configureViewController() {
         view.backgroundColor = .systemBackground
         let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissVC))
@@ -55,13 +55,13 @@ class UserInfoController: UIViewController {
     }
     
     private func getUserInfo() {
-        viewModel.fetchUserInfoData(username: username)
-        viewModel.$user
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { user in
-                guard let result = user else { return }
-                self.configureElements(with: result)
-            }) .store(in: &cancelables)
+        viewModel.fetchUserInfoData(username: username) { result in
+            switch result {
+            case .failure(_) : break
+            case .success(let user):
+                self.configureElements(with: user)
+            }
+        }
         
     }
     

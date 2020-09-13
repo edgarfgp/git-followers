@@ -10,21 +10,24 @@ import Foundation
 import Combine
 
 class UserInfoViewModel : ObservableObject {
-    @Published var user : User?
     public var gitHubService : GitHubService
+    var cancellables = Set<AnyCancellable>()
     
     init(gitHubService : GitHubService) {
         self.gitHubService = gitHubService
     }
     
-    func fetchUserInfoData(username: String){
-        self.gitHubService.fetchUserInfo(urlString: username) { [weak self] userInfo in
-            switch userInfo {
-            case .success(let user) :
-                self?.user = user
-                
-            case .failure( _) : break
-            }
-        }
+    func fetchUserInfoData(username: String, completion : @escaping (Result<User, FGError>) -> Void){
+        self.gitHubService.fetchUserInfo(urlString: username)
+            .receive(on: DispatchQueue.main)
+            .sink(receiveCompletion: { completionResult in
+                switch completionResult {
+                case .failure(let error) :
+                    completion(.failure(error))
+                case .finished : break
+                }
+        }) { result in
+            completion(.success(result))
+        }.store(in: &cancellables)
     }
 }
