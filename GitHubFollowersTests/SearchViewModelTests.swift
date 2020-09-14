@@ -11,6 +11,7 @@ import Combine
 @testable import GitHubFollowers
 
 class SearchViewModelTests: XCTestCase {
+    let viewModel = SearchViewModel()
     
     private var subscriptions = Set<AnyCancellable>()
     
@@ -19,7 +20,6 @@ class SearchViewModelTests: XCTestCase {
     }
     
     func test_WithEmptyUserName_AlwaysReturnsIsValidUserNameFalse(){
-        let viewModel = SearchViewModel()
         
         viewModel.userName = ""
         
@@ -29,7 +29,6 @@ class SearchViewModelTests: XCTestCase {
     }
     
     func test_WithValidUserName_AlwaysReturnsIsValidUserNameTrue(){
-        let viewModel = SearchViewModel()
         
         viewModel.userName = "edgarfgp"
         
