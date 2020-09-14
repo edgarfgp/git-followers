@@ -21,17 +21,6 @@ class FollowerListViewModel : ObservableObject {
     var gitHubService : GitHubService
     var persistenceService : PersistenceService
     
-    private var fiteredFollowersSubject = PassthroughSubject<[Follower], Never>()
-    private var followerSubject = PassthroughSubject<Follower, FGError>()
-    
-    var fiteredFollowersPublisher : AnyPublisher<[Follower], Never> {
-        return fiteredFollowersSubject.eraseToAnyPublisher()
-    }
-    
-    var followerPublisher : AnyPublisher<Follower, FGError> {
-        return followerSubject.eraseToAnyPublisher()
-    }
-    
     init(gitHubService : GitHubService, persistenceService : PersistenceService) {
         self.gitHubService = gitHubService
         self.persistenceService = persistenceService
@@ -61,24 +50,19 @@ class FollowerListViewModel : ObservableObject {
                 }
             }) { user in
                 let follower = Follower(login: user.login, avatarUrl: user.avatarUrl)
-                self.updatePersistenceService(follower: follower)
-                completion(.success(user))
+                self.persistenceService.update(favorite: follower, actionType: PersistenceActionType.adding) { error in
+                    guard let error = error else {
+                        completion(.success(user))
+                        return
+                    }
+                    completion(.failure(error))
+                }
+                
         }.store(in: &cancellables)
     }
     
-    func filterFollowers(for filter: String){
+    func filterFollowers(for filter: String, completion: @escaping ([Follower]) -> Void){
         filteredFolowers = followers.filter { $0.login.lowercased().contains(filter.lowercased()) }
-        fiteredFollowersSubject.send(filteredFolowers)
-    }
-    
-    private func updatePersistenceService(follower: Follower){
-        self.persistenceService.update(favorite: follower, actionType: PersistenceActionType.adding) { [weak self] error in
-            guard let self = self else { return }
-            guard let error = error else {
-                self.followerSubject.send(follower)
-                return
-            }
-            self.followerSubject.send(completion: .failure(error))
-        }
+        completion(filteredFolowers)
     }
 }

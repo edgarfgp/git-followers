@@ -11,43 +11,34 @@ import Combine
 
 class FavoriteListViewModel : ObservableObject {
     
-    @Published var followers : [Follower] = []
     
-    //lazy var favorites : [Follower] = []
+    lazy var favorites : [Follower] = []
     var persistenceService : PersistenceService
-    
-    typealias FetchFollowersCallback = (_ follower : [Follower]?, _ error : FGError?) -> Void
-    typealias UpdateFavorireCallback = (_ message : String?) -> Void
-    
-    var getFavoritesCallback : FetchFollowersCallback?
-    var updateFavoritesCallback : UpdateFavorireCallback?
     
     init(persistenceService: PersistenceService) {
         self.persistenceService = persistenceService
     }
     
-    public func getFavorites(){
+    public func getFavorites(completion: @escaping (Result<[Follower], FGError>)-> Void){
         persistenceService.retrieveFavorites { [weak self] result in
             guard let self = self else { return }
             switch result {
             case.success(let favorites):
-                self.followers = favorites
-                self.getFavoritesCallback?(favorites, nil)
+                self.favorites = favorites
+                completion(.success(favorites))
             case.failure(let error):
-                self.getFavoritesCallback?(nil, error)
+                completion(.failure(error))
             }
         }
     }
     
-    func updateFavoriteList(favorite: Follower) {
-        persistenceService.update(favorite: favorite, actionType: .removing) { [weak self] error in
-            guard let self = self else { return }
+    func updateFavoriteList(favorite: Follower, completion: @escaping (String?) -> Void) {
+        persistenceService.update(favorite: favorite, actionType: .removing) { error in
             guard let error = error else  {
-                self.updateFavoritesCallback?(nil)
+                completion(nil)
                 return
             }
-
-            self.updateFavoritesCallback?(error.rawValue)
+             completion(error.rawValue)
         }
     }
 }

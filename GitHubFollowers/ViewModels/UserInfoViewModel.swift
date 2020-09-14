@@ -26,8 +26,8 @@ class UserInfoViewModel : ObservableObject {
                     completion(.failure(error))
                 case .finished : break
                 }
-        }) { result in
-            completion(.success(result))
+            }) { result in
+                completion(.success(result))
         }.store(in: &cancellables)
     }
 }

@@ -12,7 +12,6 @@ import Combine
 enum Section { case main }
 
 class FollowerListController: UICollectionViewController {
-    var cancellables = Set<AnyCancellable>()
     var viewModel = FollowerListViewModel(gitHubService: GitHubService(), persistenceService: PersistenceService.shared)
     
     private lazy var dataSource : UICollectionViewDiffableDataSource<Section, Follower> = {
@@ -67,11 +66,9 @@ extension FollowerListController : UISearchResultsUpdating {
         }
         
         self.viewModel.isSearching = true
-        self.viewModel.filterFollowers(for: filter)
-        self.viewModel.fiteredFollowersPublisher
-            .sink(receiveValue: { newFollowers in
-                self.updateData(on: newFollowers)
-            }).store(in: &cancellables)
+        self.viewModel.filterFollowers(for: filter, completion: { newFollowers in
+             self.updateData(on: newFollowers)
+        })
     }
 }
 
