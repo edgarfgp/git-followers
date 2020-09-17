@@ -9,8 +9,14 @@
 import UIKit
 import Combine
 
-class GitHubService {
+protocol IGitHubService {
+    func fetchFollowers(userName: String, page: Int) -> AnyPublisher<[Follower], FGError>
+    func fetchUserInfo(urlString : String) -> AnyPublisher<User, FGError>
+    func fetchImage(from urlString: String) -> AnyPublisher<UIImage, FGError>
+}
 
+class GitHubService : IGitHubService {
+    
     private let numberOfRetries : Int = 1
     private let cache = NSCache<NSString, UIImage>()
     private var  cancellables = Set<AnyCancellable>()
@@ -43,7 +49,7 @@ class GitHubService {
             .eraseToAnyPublisher()
     }
     
-    func fetchImage(from urlString: String, completion: @escaping (UIImage) -> Void) {
+    func fetchImage(from urlString: String) -> AnyPublisher<UIImage, FGError>{
         URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
             .retry(numberOfRetries)
             .tryMap { data, response -> UIImage in
@@ -59,10 +65,9 @@ class GitHubService {
                 }
                 self.cache.setObject(image, forKey: cacheKey)
                 return image
-        }
-        .receive(on: DispatchQueue.main)
-        .sink(receiveCompletion: { _ in }) { imageResult in
-            completion(imageResult)
-        }.store(in: &cancellables)
+            }
+            .catch { _ in Empty<UIImage, FGError>() }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
 }

@@ -44,10 +44,13 @@
 		68B8B56E23E389F100FBA782 /* UIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68B8B56D23E389F100FBA782 /* UIHelper.swift */; };
 		68D0578623E4E8BB00C28FA4 /* FGEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68D0578523E4E8BB00C28FA4 /* FGEmptyView.swift */; };
 		9E56685A24DDF31500B64DE3 /* SearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E56685924DDF31500B64DE3 /* SearchViewModel.swift */; };
+		9E598E802511286E002A936A /* GitHubServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E598E7F2511286E002A936A /* GitHubServicesTests.swift */; };
+		9E598E82251135D8002A936A /* XCTestCase+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E598E81251135D8002A936A /* XCTestCase+Ext.swift */; };
 		9E8AF96B24DE96E700023536 /* SearchViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8AF96A24DE96E700023536 /* SearchViewModelTests.swift */; };
 		9E8AF97324DEA14E00023536 /* UserInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8AF97224DEA14E00023536 /* UserInfoViewModel.swift */; };
 		9E8AF97524DEADC400023536 /* FollowerListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8AF97424DEADC400023536 /* FollowerListViewModel.swift */; };
 		9E8AF97724DECAC900023536 /* FavoriteListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8AF97624DECAC900023536 /* FavoriteListViewModel.swift */; };
+		9EBE40D6250FFAEA00B3BF17 /* FollowerListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBE40D5250FFAEA00B3BF17 /* FollowerListViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -100,12 +103,15 @@
 		68B8B56D23E389F100FBA782 /* UIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHelper.swift; sourceTree = "<group>"; };
 		68D0578523E4E8BB00C28FA4 /* FGEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FGEmptyView.swift; sourceTree = "<group>"; };
 		9E56685924DDF31500B64DE3 /* SearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModel.swift; sourceTree = "<group>"; };
+		9E598E7F2511286E002A936A /* GitHubServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubServicesTests.swift; sourceTree = "<group>"; };
+		9E598E81251135D8002A936A /* XCTestCase+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Ext.swift"; sourceTree = "<group>"; };
 		9E8AF96824DE96E700023536 /* GitHubFollowersTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GitHubFollowersTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9E8AF96A24DE96E700023536 /* SearchViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewModelTests.swift; sourceTree = "<group>"; };
 		9E8AF96C24DE96E700023536 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9E8AF97224DEA14E00023536 /* UserInfoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfoViewModel.swift; sourceTree = "<group>"; };
 		9E8AF97424DEADC400023536 /* FollowerListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerListViewModel.swift; sourceTree = "<group>"; };
 		9E8AF97624DECAC900023536 /* FavoriteListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteListViewModel.swift; sourceTree = "<group>"; };
+		9EBE40D5250FFAEA00B3BF17 /* FollowerListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerListViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -312,13 +318,32 @@
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
+		9E598E7E25112855002A936A /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				9E598E7F2511286E002A936A /* GitHubServicesTests.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		9E8AF96924DE96E700023536 /* GitHubFollowersTests */ = {
 			isa = PBXGroup;
 			children = (
-				9E8AF96A24DE96E700023536 /* SearchViewModelTests.swift */,
+				9E598E7E25112855002A936A /* Services */,
+				9EBE40D4250FFA8000B3BF17 /* ViewModels */,
 				9E8AF96C24DE96E700023536 /* Info.plist */,
+				9E598E81251135D8002A936A /* XCTestCase+Ext.swift */,
 			);
 			path = GitHubFollowersTests;
+			sourceTree = "<group>";
+		};
+		9EBE40D4250FFA8000B3BF17 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				9E8AF96A24DE96E700023536 /* SearchViewModelTests.swift */,
+				9EBE40D5250FFAEA00B3BF17 /* FollowerListViewModelTests.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -366,7 +391,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1160;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Edgar Gonzalez Pena";
 				TargetAttributes = {
 					682EDBE623DE0DF300423ACC = {
@@ -466,7 +491,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9EBE40D6250FFAEA00B3BF17 /* FollowerListViewModelTests.swift in Sources */,
 				9E8AF96B24DE96E700023536 /* SearchViewModelTests.swift in Sources */,
+				9E598E82251135D8002A936A /* XCTestCase+Ext.swift in Sources */,
+				9E598E802511286E002A936A /* GitHubServicesTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -518,6 +546,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -578,6 +607,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;

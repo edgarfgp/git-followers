@@ -22,7 +22,7 @@ class FollowerCell: UICollectionViewCell {
         super.init(frame: frame)
         configure()
     }
-
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -47,10 +47,17 @@ class FollowerCell: UICollectionViewCell {
         ])
     }
     
-    func setFollower(follower: Follower, service: GitHubService){
+    func setFollower(follower: Follower, service : IGitHubService){
         userNameLabel.text = follower.login
-        service.fetchImage(from: follower.avatarUrl) { [weak self] result in
-            self?.avatarImageView.image = result
-        }
+        service.fetchImage(from: follower.avatarUrl)
+            .sink { completionResult in
+                switch completionResult {
+                case .failure(_) :
+                    self.avatarImageView.image = Images.placeholder
+                case .finished : break
+                }
+            } receiveValue: { image in
+                self.avatarImageView.image = image
+            }.store(in: &cancelables)
     }
 }

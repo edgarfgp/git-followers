@@ -19,12 +19,12 @@ class FGUserInfoHeaderVC: UIViewController {
     private lazy var bioLabel = FGBodyLabel(textAligment: .left, numberOfLines: 3)
     
     private let user : User
-    private var gitHubService : GitHubService
+    private var service : IGitHubService
     private var cancelables = Set<AnyCancellable>()
     
-    init(user: User, gitHubService : GitHubService) {
+    init(user: User, gitHubService: IGitHubService) {
         self.user = user
-        self.gitHubService = gitHubService
+        self.service = gitHubService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -47,9 +47,16 @@ extension FGUserInfoHeaderVC {
     }
     
     private func configureUIElements() {
-        gitHubService.fetchImage(from: user.avatarUrl) {[weak self] result in
-            self?.avatarImageView.image = result
-        }
+        service.fetchImage(from: user.avatarUrl)
+            .sink { completionResult in
+                switch completionResult {
+                case .failure(_) :
+                    self.avatarImageView.image = Images.placeholder
+                case .finished : break
+                }
+            } receiveValue: { image in
+                self.avatarImageView.image = image
+            }.store(in: &cancelables)
         
         userNameLabel.text = user.login
         namelabel.text = user.name ?? ""
