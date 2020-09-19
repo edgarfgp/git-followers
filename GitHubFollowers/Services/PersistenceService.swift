@@ -7,13 +7,14 @@
 //
 
 import UIKit
+import CoreData
 
 extension UserDefaults {
-
+    
     @objc dynamic var favorites: Int {
         return integer(forKey: "backgroundColorValue")
     }
-
+    
 }
 
 enum PersistenceActionType {
@@ -37,11 +38,11 @@ class PersistenceService {
         retrieveFavorites { result in
             
             switch result {
-                
+            
             case .success(var retriecedFavorites):
                 
                 switch actionType {
-                    
+                
                 case .adding:
                     guard !retriecedFavorites.contains(favorite) else {
                         completed(.alreadyInfavorites)
@@ -72,7 +73,7 @@ class PersistenceService {
             let decoder = JSONDecoder()
             let favorites = try decoder.decode([Follower].self, from: favoritesData)
             completed(.success(favorites))
-        }catch{
+        } catch {
             completed(.failure(.unableToFavorite))
         }
     }
@@ -90,11 +91,34 @@ class PersistenceService {
         }
     }
     
-    func SaveFavorite(login: String, imageUrl: String) {
+    func SaveFavorite(login: String, imageUrl: String, completed: @escaping (FGError?) -> Void) {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        
         let context = appDelegate.persistenceContainer.viewContext
+        let favorite = Favorite(context: context)
+        favorite.login = login
+        favorite.avatarUrl = imageUrl
+        
+        do {
+            try context.save()
+            completed(nil)
+        } catch {
+            completed(.unableToFavorite)
+        }
     }
     
+    func basicFetchRequest(completion: @escaping (Result<[NSManagedObject], FGError>) -> Void) {
+        guard let appDelegate =  UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let managedContext = appDelegate.persistenceContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Favorite")
+    
+        do {
+            let favorites = try managedContext.fetch(fetchRequest)
+            completion(.success(favorites))
+        } catch {
+            completion(.failure(.unableToFavorite))
+        }
+    }
     
 }

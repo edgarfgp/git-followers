@@ -151,13 +151,19 @@ extension FollowerListController {
             case .failure(let error) :
                 self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
             case .success(let user):
-                self.viewModel.saveUserTofavorites(follower: Follower(login: user.login, avatarUrl: user.avatarUrl)) { error  in
+                self.viewModel.saveUserfavorites(follower: Follower(login: user.login, avatarUrl: user.avatarUrl)) { error in
                     guard let error = error else {
                         self.presentFGAlertOnMainThread(title: "Success", message: "You have added \(user.login) as favorite 🎉", buttonTilte: "Ok")
                         return
                     }
                     self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
                 }
+            //                self.viewModel.saveUserTofavorites(follower: Follower(login: user.login, avatarUrl: user.avatarUrl)) { error  in
+            //                    guard let error = error else {
+            //                        self.presentFGAlertOnMainThread(title: "Success", message: "You have added \(user.login) as favorite 🎉", buttonTilte: "Ok")
+            //                        return
+            //                    }
+            //                    self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
             }
         }
     }
