@@ -12,7 +12,7 @@ import Combine
 class FollowerListViewModel : ObservableObject {
     
     lazy var filteredFolowers : [Follower] = []
-    lazy var followers: [Follower] = []
+    @Published var followers: [Follower] = []
     lazy var page : Int = 1
     lazy var isSearching = false
     
@@ -37,10 +37,10 @@ class FollowerListViewModel : ObservableObject {
             }) { result in
                 completion(.success(result))
                 self.followers.append(contentsOf: result)
-        }.store(in: &cancellables)
+            }.store(in: &cancellables)
     }
     
-    func saveUserTofavorites(userName: String, completion: @escaping (Result<User, FGError>) -> Void) {
+    func fetchUserInfo(userName : String, completion: @escaping (Result<User, FGError>) -> Void) {
         self.gitHubService.fetchUserInfo(urlString: userName)
             .sink(receiveCompletion: { completionResult in
                 switch completionResult {
@@ -49,20 +49,22 @@ class FollowerListViewModel : ObservableObject {
                 case .finished : break
                 }
             }) { user in
-                let follower = Follower(login: user.login, avatarUrl: user.avatarUrl)
-                self.persistenceService.update(favorite: follower, actionType: PersistenceActionType.adding) { error in
-                    guard let error = error else {
-                        completion(.success(user))
-                        return
-                    }
-                    completion(.failure(error))
-                }
+                completion(.success(user))
                 
-        }.store(in: &cancellables)
+            }.store(in: &cancellables)
     }
     
-    func filterFollowers(for filter: String, completion: @escaping ([Follower]) -> Void){
-        filteredFolowers = followers.filter { $0.login.lowercased().contains(filter.lowercased()) }
-        completion(filteredFolowers)
+    func saveUserTofavorites(follower: Follower, completion: @escaping (FGError?) -> Void) {
+        self.persistenceService.update(favorite: follower, actionType: PersistenceActionType.adding) { error in
+            completion(error)
+        }
+    }
+    
+    func filterFollowers(for filter: String) -> AnyPublisher<[Follower], Never>{
+        return self.$followers
+            .delay(for: .milliseconds(500), scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .map{ $0.filter{ $0.login.lowercased().contains(filter.lowercased()) } }
+            .eraseToAnyPublisher()
     }
 }

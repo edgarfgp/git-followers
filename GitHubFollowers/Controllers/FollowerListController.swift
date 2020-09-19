@@ -12,6 +12,7 @@ import Combine
 enum Section { case main }
 
 class FollowerListController: UICollectionViewController {
+    var cancelables = Set<AnyCancellable>()
     var viewModel = FollowerListViewModel(gitHubService: GitHubService(), persistenceService: PersistenceService.shared)
     
     private lazy var dataSource : UICollectionViewDiffableDataSource<Section, Follower> = {
@@ -66,9 +67,12 @@ extension FollowerListController : UISearchResultsUpdating {
         }
         
         self.viewModel.isSearching = true
-        self.viewModel.filterFollowers(for: filter, completion: { newFollowers in
-             self.updateData(on: newFollowers)
-        })
+        self.viewModel.filterFollowers(for: filter)
+            .sink { followers in
+                print(followers)
+                self.updateData(on: followers)
+            }
+            .store(in: &cancelables)
     }
 }
 
@@ -93,7 +97,7 @@ extension FollowerListController {
         
         let destinationController = UserInfoController()
         destinationController.username = follower.login
-        
+                
         destinationController.didRequestFollowers = { [weak self] name in
             
             guard let self = self else { return }
@@ -142,12 +146,18 @@ extension FollowerListController {
     }
     
     @objc private func addFavoriteTapped () {
-        viewModel.saveUserTofavorites(userName: userName) { result in
+        viewModel.fetchUserInfo(userName: userName) { result in
             switch result {
             case .failure(let error) :
                 self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
-            case .success(let follower):
-                self.presentFGAlertOnMainThread(title: "Success", message: "You have added \(follower.login) as favorite 🎉", buttonTilte: "Ok")
+            case .success(let user):
+                self.viewModel.saveUserTofavorites(follower: Follower(login: user.login, avatarUrl: user.avatarUrl)) { error  in
+                    guard let error = error else {
+                        self.presentFGAlertOnMainThread(title: "Success", message: "You have added \(user.login) as favorite 🎉", buttonTilte: "Ok")
+                        return
+                    }
+                    self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
+                }
             }
         }
     }

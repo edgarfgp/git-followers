@@ -89,4 +89,12 @@ class PersistenceService {
             return FGError.unableToFavorite
         }
     }
+    
+    func SaveFavorite(login: String, imageUrl: String) {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        
+        let context = appDelegate.persistenceContainer.viewContext
+    }
+    
+    
 }

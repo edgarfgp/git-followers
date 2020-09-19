@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import CoreData
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -27,5 +29,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
+    
+    lazy var persistenceContainer : NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "Favorites")
+        container.loadPersistentStores { (_, error) in
+            guard let error = error as NSError? else { return }
+            fatalError("Unresolves error : \(error.userInfo)")
+        }
+        return container
+    }()
 }
 
