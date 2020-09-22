@@ -15,32 +15,16 @@ class FavoriteListViewModel : ObservableObject {
     lazy var favorites : [Follower] = []
     var persistenceService : PersistenceService
     
-    init(persistenceService: PersistenceService) {
+    init(persistenceService: PersistenceService = PersistenceService()) {
         self.persistenceService = persistenceService
     }
     
-//    public func getFavorites(completion: @escaping (Result<[Follower], FGError>)-> Void){
-//        persistenceService.retrieveFavorites { [weak self] result in
-//            guard let self = self else { return }
-//            switch result {
-//            case.success(let favorites):
-//                self.favorites = favorites
-//                completion(.success(favorites))
-//            case.failure(let error):
-//                completion(.failure(error))
-//            }
-//        }
-//    }
-    
     public func getFavorites(completion: @escaping (Result<[Follower], FGError>)-> Void){
-        persistenceService.basicFetchRequest { favorites in
+        persistenceService.getFavorites { favorites in
             switch favorites {
-            case .success(let manageObjects) :
-                _ = manageObjects.map {
-                    let follower = Follower(login: ($0.value(forKey: "login") as? String)!, avatarUrl: ($0.value(forKey: "avatarUrl") as? String)!)
-                    self.favorites.append(follower)
-                }
-                completion(.success(self.favorites))
+            case .success(let favorites) :
+                self.favorites = favorites
+                completion(.success(favorites))
             case .failure(let error) :
                 completion(.failure(error))
             }

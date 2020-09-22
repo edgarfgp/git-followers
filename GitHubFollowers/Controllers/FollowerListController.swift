@@ -13,7 +13,7 @@ enum Section { case main }
 
 class FollowerListController: UICollectionViewController {
     var cancelables = Set<AnyCancellable>()
-    var viewModel = FollowerListViewModel(gitHubService: GitHubService(), persistenceService: PersistenceService.shared)
+    var viewModel = FollowerListViewModel(gitHubService: GitHubService(), persistenceService: PersistenceService())
     
     private lazy var dataSource : UICollectionViewDiffableDataSource<Section, Follower> = {
         
@@ -151,19 +151,13 @@ extension FollowerListController {
             case .failure(let error) :
                 self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
             case .success(let user):
-                self.viewModel.saveUserfavorites(follower: Follower(login: user.login, avatarUrl: user.avatarUrl)) { error in
+                self.viewModel.saveUserTofavorites(follower: Follower(login: user.login, avatarUrl: user.avatarUrl)) { error in
                     guard let error = error else {
                         self.presentFGAlertOnMainThread(title: "Success", message: "You have added \(user.login) as favorite 🎉", buttonTilte: "Ok")
                         return
                     }
                     self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
                 }
-            //                self.viewModel.saveUserTofavorites(follower: Follower(login: user.login, avatarUrl: user.avatarUrl)) { error  in
-            //                    guard let error = error else {
-            //                        self.presentFGAlertOnMainThread(title: "Success", message: "You have added \(user.login) as favorite 🎉", buttonTilte: "Ok")
-            //                        return
-            //                    }
-            //                    self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")
             }
         }
     }

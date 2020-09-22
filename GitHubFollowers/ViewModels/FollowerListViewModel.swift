@@ -60,12 +60,6 @@ class FollowerListViewModel : ObservableObject {
         }
     }
     
-    func saveUserfavorites(follower: Follower, completion: @escaping (FGError?) -> Void) {
-        self.persistenceService.SaveFavorite(login: follower.login, imageUrl: follower.avatarUrl) { error in
-            completion(error)
-        }
-    }
-    
     func filterFollowers(for filter: String) -> AnyPublisher<[Follower], Never>{
         return self.$followers
             .delay(for: .milliseconds(500), scheduler: DispatchQueue.main)

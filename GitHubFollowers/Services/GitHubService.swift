@@ -19,7 +19,7 @@ class GitHubService : IGitHubService {
     
     private let numberOfRetries : Int = 1
     private let cache = NSCache<NSString, UIImage>()
-    private var  cancellables = Set<AnyCancellable>()
+    private var cancellables = Set<AnyCancellable>()
     private let apiQueue = DispatchQueue(label: "API", qos: .default, attributes: .concurrent)
     
     func fetchFollowers(userName: String, page: Int) -> AnyPublisher<[Follower], FGError>{
