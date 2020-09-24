@@ -38,6 +38,16 @@
                ReferencedContainer = "container:GitHubFollowers.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "9E8DE10A251CFBE700CFF46B"
+               BuildableName = "GitHubFollowersUITests.xctest"
+               BlueprintName = "GitHubFollowersUITests"
+               ReferencedContainer = "container:GitHubFollowers.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

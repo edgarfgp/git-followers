@@ -102,6 +102,7 @@ extension SearchController {
     private func configureUserNameTextFiled() {
         userNameTextFiled.translatesAutoresizingMaskIntoConstraints = false
         userNameTextFiled.delegate = self
+        userNameTextFiled.accessibilityIdentifier = "userNameTextFiled"
         userNameTextFiled.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
         
         NSLayoutConstraint.activate([
