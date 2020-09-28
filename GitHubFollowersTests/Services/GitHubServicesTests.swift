@@ -12,14 +12,47 @@ import Combine
 
 class GitHubServicesTests: XCTestCase {
     
+    var cancellables = Set<AnyCancellable>()
+    
+    override func tearDown() {
+      cancellables = []
+    }
+
     func test_fetchFollowers_always_returnsFollowers() {
         let mockService = GitHubService()
-        let result = expectValue(of: mockService.fetchFollowers(userName: "", page: 0),
-                                 equals: [[Follower(login: "Edgar", avatarUrl: "Avatar1")]])
+        
+        var result : [Follower]?
+        
+        mockService.fetchFollowers(userName: "", page: 0)
+            .sink { _  in
+            } receiveValue: { followers in
+                result = followers
+            }.store(in: &cancellables)
+
+        let expected = [Follower(login: "Edgar", avatarUrl: "Avatar1")]
                 
         mockService.fetchFollowersSub.send([Follower(login: "Edgar", avatarUrl: "Avatar1")])
         
-        wait(for: [result.expectation], timeout: 1)
+        XCTAssertEqual(expected, result)
+    }
+    
+    func test_fetchFollowersWithError_always_returnsCorrectError() {
+        let mockService = GitHubService()
+        var expectedResult : FGError?
+
+        mockService.fetchFollowers(userName: "", page: 1)
+            .sink { completionResult in
+                switch completionResult {
+                case .failure(let error) :
+                    expectedResult = error
+                case .finished : break
+                }
+            } receiveValue: { _ in }
+            .store(in: &cancellables)
+
+        mockService.fetchFollowersSub.send(completion: .failure(FGError.invalidResponse))
+        
+        XCTAssertEqual(FGError.invalidResponse, expectedResult)
     }
 }
 

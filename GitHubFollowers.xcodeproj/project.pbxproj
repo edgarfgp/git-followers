@@ -54,6 +54,7 @@
 		9E8AF97524DEADC400023536 /* FollowerListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8AF97424DEADC400023536 /* FollowerListViewModel.swift */; };
 		9E8AF97724DECAC900023536 /* FavoriteListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8AF97624DECAC900023536 /* FavoriteListViewModel.swift */; };
 		9E8DE10E251CFBE700CFF46B /* GitHubFollowersUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8DE10D251CFBE700CFF46B /* GitHubFollowersUITests.swift */; };
+		9E9BACA725212C220084804F /* OAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E9BACA625212C220084804F /* OAuthService.swift */; };
 		9EBE40D6250FFAEA00B3BF17 /* FollowerListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBE40D5250FFAEA00B3BF17 /* FollowerListViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -129,6 +130,7 @@
 		9E8DE10B251CFBE700CFF46B /* GitHubFollowersUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GitHubFollowersUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9E8DE10D251CFBE700CFF46B /* GitHubFollowersUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubFollowersUITests.swift; sourceTree = "<group>"; };
 		9E8DE10F251CFBE700CFF46B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9E9BACA625212C220084804F /* OAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthService.swift; sourceTree = "<group>"; };
 		9EBE40D5250FFAEA00B3BF17 /* FollowerListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerListViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -260,6 +262,7 @@
 			children = (
 				68678C1A23E237FD009EEA10 /* GitHubService.swift */,
 				683054D523EB4FDC009F1FA2 /* PersistenceService.swift */,
+				9E9BACA625212C220084804F /* OAuthService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -549,6 +552,7 @@
 				689598B823EC577800FB4151 /* FGTabBarController.swift in Sources */,
 				68678C1B23E237FD009EEA10 /* GitHubService.swift in Sources */,
 				68011B7623E62EBF006DA806 /* Date+Ext.swift in Sources */,
+				9E9BACA725212C220084804F /* OAuthService.swift in Sources */,
 				9E8AF97324DEA14E00023536 /* UserInfoViewModel.swift in Sources */,
 				689D65A023E0CF87007F32E1 /* FGBodyLabel.swift in Sources */,
 				68011B7323E615A9006DA806 /* FGFollowersItemInfoVC.swift in Sources */,

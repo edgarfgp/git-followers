@@ -27,13 +27,12 @@ class FollowerListController: UICollectionViewController {
         return dataSource
     }()
     
-    init() {
+    private var userName : String
+    
+    init(username: String){
+        self.userName = username
         super.init(collectionViewLayout : UICollectionViewFlowLayout())
     }
-    
-    lazy var userName : String = {
-        return ""
-    }()
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

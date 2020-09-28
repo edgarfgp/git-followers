@@ -23,6 +23,32 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = FGTabBarViewController()
         window?.makeKeyAndVisible()
         UINavigationBar.appearance().tintColor = .systemGreen
+        
+        self.scene(scene, openURLContexts: connectionOptions.urlContexts) 
+    }
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        
+        if let url = URLContexts.first?.url {
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+            
+            // Comprobamos si alguno de los parámetros de URL es el código
+            // para solicitar un token de acceso.
+            if let code = components?.queryItems?.filter({ $0.name == "code" }).first?.value
+            {
+                // Es un código. Vamos a canjearlo por un token
+                OAuthService.shared.exchange(code: code) { (authenticated: Bool, error: TraktError?) -> Void in
+                    if authenticated
+                    {
+                        // ¡Estupendo! Tenemos un token de acceso y de refresco.
+                        DispatchQueue.main.async
+                        {
+                            self.window?.rootViewController?.dismiss(animated: true)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     

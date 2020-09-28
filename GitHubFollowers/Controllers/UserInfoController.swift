@@ -11,8 +11,6 @@ import Combine
 class UserInfoController: UIViewController {
     
     private let padding : CGFloat = 20
-    
-    
     private let scrollView = UIScrollView()
     private let contextView = UIView()
     private let headerView = UIView()
@@ -62,7 +60,6 @@ class UserInfoController: UIViewController {
                 self.configureElements(with: user)
             }
         }
-        
     }
     
     private func configureElements(with user: User){

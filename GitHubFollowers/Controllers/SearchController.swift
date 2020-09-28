@@ -64,9 +64,9 @@ extension SearchController {
     
     @objc private func pushFolowerListVc() {
         self.userNameTextFiled.resignFirstResponder()
-        let foloowerListVC = FollowerListController()
+        let foloowerListVC = FollowerListController(username: self.viewModel.userName)
         
-        foloowerListVC.userName = self.viewModel.userName
+        
         self.navigationController?.pushViewController(foloowerListVC, animated: true)
         self.userNameTextFiled.resignFirstResponder()
     }
