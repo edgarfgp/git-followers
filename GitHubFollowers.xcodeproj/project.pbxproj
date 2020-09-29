@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -54,8 +54,15 @@
 		9E8AF97524DEADC400023536 /* FollowerListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8AF97424DEADC400023536 /* FollowerListViewModel.swift */; };
 		9E8AF97724DECAC900023536 /* FavoriteListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8AF97624DECAC900023536 /* FavoriteListViewModel.swift */; };
 		9E8DE10E251CFBE700CFF46B /* GitHubFollowersUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8DE10D251CFBE700CFF46B /* GitHubFollowersUITests.swift */; };
-		9E9BACA725212C220084804F /* OAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E9BACA625212C220084804F /* OAuthService.swift */; };
+		9E9BACCB25224F610084804F /* OAuthSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9E9BACCA25224F610084804F /* OAuthSwift */; };
+		9E9BACD025224FE20084804F /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E9BACCF25224FE20084804F /* WebViewController.swift */; };
+		9EB0A4232523D615007989A6 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB0A4222523D615007989A6 /* AppConfig.swift */; };
+		9EB0A4282523D66F007989A6 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB0A4272523D66F007989A6 /* WelcomeViewController.swift */; };
+		9EB0A42D2523D6A1007989A6 /* WelcomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EB0A42C2523D6A1007989A6 /* WelcomeViewModel.swift */; };
 		9EBE40D6250FFAEA00B3BF17 /* FollowerListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EBE40D5250FFAEA00B3BF17 /* FollowerListViewModelTests.swift */; };
+		9EC7641D25251C2400037A16 /* Repo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EC7641C25251C2400037A16 /* Repo.swift */; };
+		9EC764252525271A00037A16 /* JSON+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9EC764242525271A00037A16 /* JSON+Extensions.swift */; };
+		9EC7642B252527F300037A16 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9EC7642A252527F300037A16 /* KeychainSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -130,8 +137,13 @@
 		9E8DE10B251CFBE700CFF46B /* GitHubFollowersUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GitHubFollowersUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9E8DE10D251CFBE700CFF46B /* GitHubFollowersUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitHubFollowersUITests.swift; sourceTree = "<group>"; };
 		9E8DE10F251CFBE700CFF46B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9E9BACA625212C220084804F /* OAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthService.swift; sourceTree = "<group>"; };
+		9E9BACCF25224FE20084804F /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		9EB0A4222523D615007989A6 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		9EB0A4272523D66F007989A6 /* WelcomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
+		9EB0A42C2523D6A1007989A6 /* WelcomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeViewModel.swift; sourceTree = "<group>"; };
 		9EBE40D5250FFAEA00B3BF17 /* FollowerListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FollowerListViewModelTests.swift; sourceTree = "<group>"; };
+		9EC7641C25251C2400037A16 /* Repo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repo.swift; sourceTree = "<group>"; };
+		9EC764242525271A00037A16 /* JSON+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSON+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +151,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9EC7642B252527F300037A16 /* KeychainSwift in Frameworks */,
+				9E9BACCB25224F610084804F /* OAuthSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,6 +242,8 @@
 				68336CB923DF188F00D69E64 /* FavoriteListController.swift */,
 				6851923B23DF80E90015B2FA /* FollowerListController.swift */,
 				6894919623E5A176008E293B /* UserInfoController.swift */,
+				9E9BACCF25224FE20084804F /* WebViewController.swift */,
+				9EB0A4272523D66F007989A6 /* WelcomeViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -253,6 +269,7 @@
 				68678C1723E23073009EEA10 /* User.swift */,
 				9E0757722513F36D007390FD /* Favorite.swift */,
 				9E0757762513F401007390FD /* Favorite+CoreDataProperties.swift */,
+				9EC7641C25251C2400037A16 /* Repo.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -262,7 +279,6 @@
 			children = (
 				68678C1A23E237FD009EEA10 /* GitHubService.swift */,
 				683054D523EB4FDC009F1FA2 /* PersistenceService.swift */,
-				9E9BACA625212C220084804F /* OAuthService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -273,6 +289,8 @@
 				6880DDF423E2D0AA007B64BC /* FGError.swift */,
 				68B8B56D23E389F100FBA782 /* UIHelper.swift */,
 				689491A523E5D49F008E293B /* Constants.swift */,
+				9EB0A4222523D615007989A6 /* AppConfig.swift */,
+				9EC764242525271A00037A16 /* JSON+Extensions.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -348,6 +366,7 @@
 				9E8AF97224DEA14E00023536 /* UserInfoViewModel.swift */,
 				9E8AF97424DEADC400023536 /* FollowerListViewModel.swift */,
 				9E8AF97624DECAC900023536 /* FavoriteListViewModel.swift */,
+				9EB0A42C2523D6A1007989A6 /* WelcomeViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -405,6 +424,10 @@
 			dependencies = (
 			);
 			name = GitHubFollowers;
+			packageProductDependencies = (
+				9E9BACCA25224F610084804F /* OAuthSwift */,
+				9EC7642A252527F300037A16 /* KeychainSwift */,
+			);
 			productName = GitHubFollowers;
 			productReference = 682EDBE723DE0DF300423ACC /* GitHubFollowers.app */;
 			productType = "com.apple.product-type.application";
@@ -477,6 +500,10 @@
 				Base,
 			);
 			mainGroup = 682EDBDE23DE0DF300423ACC;
+			packageReferences = (
+				9E9BACC925224F610084804F /* XCRemoteSwiftPackageReference "OAuthSwift" */,
+				9EC76429252527F300037A16 /* XCRemoteSwiftPackageReference "keychain-swift" */,
+			);
 			productRefGroup = 682EDBE823DE0DF300423ACC /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -520,9 +547,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				68678C1823E23073009EEA10 /* User.swift in Sources */,
+				9EB0A42D2523D6A1007989A6 /* WelcomeViewModel.swift in Sources */,
 				9E56685A24DDF31500B64DE3 /* SearchViewModel.swift in Sources */,
 				68336CBA23DF188F00D69E64 /* FavoriteListController.swift in Sources */,
 				689598BA23EC6D6300FB4151 /* FGAlertContainerView.swift in Sources */,
+				9EB0A4232523D615007989A6 /* AppConfig.swift in Sources */,
 				6851923823DF69C50015B2FA /* FGButton.swift in Sources */,
 				68011B6D23E6016B006DA806 /* FGItemInfoView.swift in Sources */,
 				6894919923E5C607008E293B /* FGUserInfoHeaderVC.swift in Sources */,
@@ -531,6 +560,7 @@
 				68B8B56E23E389F100FBA782 /* UIHelper.swift in Sources */,
 				9E8AF97724DECAC900023536 /* FavoriteListViewModel.swift in Sources */,
 				689491A423E5CB44008E293B /* UIView+Ext.swift in Sources */,
+				9EB0A4282523D66F007989A6 /* WelcomeViewController.swift in Sources */,
 				681C0A8A23ECC9D600DA7631 /* UITableView+Ext.swift in Sources */,
 				68011B6F23E609E1006DA806 /* ItemInfoVC.swift in Sources */,
 				689D65A223E0D092007F32E1 /* FGAlertVC.swift in Sources */,
@@ -544,15 +574,17 @@
 				6880DDF523E2D0AA007B64BC /* FGError.swift in Sources */,
 				68678C1623E2301A009EEA10 /* Follower.swift in Sources */,
 				6894919723E5A176008E293B /* UserInfoController.swift in Sources */,
+				9E9BACD025224FE20084804F /* WebViewController.swift in Sources */,
 				9E0757732513F36D007390FD /* Favorite.swift in Sources */,
 				6880DDF923E31261007B64BC /* FGAvatarImageView.swift in Sources */,
 				9E8AF97524DEADC400023536 /* FollowerListViewModel.swift in Sources */,
 				68D0578623E4E8BB00C28FA4 /* FGEmptyView.swift in Sources */,
+				9EC7641D25251C2400037A16 /* Repo.swift in Sources */,
 				68336CB823DF185300D69E64 /* SearchController.swift in Sources */,
 				689598B823EC577800FB4151 /* FGTabBarController.swift in Sources */,
 				68678C1B23E237FD009EEA10 /* GitHubService.swift in Sources */,
+				9EC764252525271A00037A16 /* JSON+Extensions.swift in Sources */,
 				68011B7623E62EBF006DA806 /* Date+Ext.swift in Sources */,
-				9E9BACA725212C220084804F /* OAuthService.swift in Sources */,
 				9E8AF97324DEA14E00023536 /* UserInfoViewModel.swift in Sources */,
 				689D65A023E0CF87007F32E1 /* FGBodyLabel.swift in Sources */,
 				68011B7323E615A9006DA806 /* FGFollowersItemInfoVC.swift in Sources */,
@@ -886,6 +918,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9E9BACC925224F610084804F /* XCRemoteSwiftPackageReference "OAuthSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/OAuthSwift/OAuthSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.2;
+			};
+		};
+		9EC76429252527F300037A16 /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 19.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9E9BACCA25224F610084804F /* OAuthSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E9BACC925224F610084804F /* XCRemoteSwiftPackageReference "OAuthSwift" */;
+			productName = OAuthSwift;
+		};
+		9EC7642A252527F300037A16 /* KeychainSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9EC76429252527F300037A16 /* XCRemoteSwiftPackageReference "keychain-swift" */;
+			productName = KeychainSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		9E07576B2513EBDC007390FD /* Favorites.xcdatamodeld */ = {

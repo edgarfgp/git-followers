@@ -8,12 +8,14 @@
 
 import UIKit
 import Combine
+import OAuthSwift
 
 class SearchController: UIViewController {
     
     private lazy var logoImageView = UIImageView()
     private lazy var userNameTextFiled = UITextField(placeholder: "Enter a valid User")
     private lazy var callToActionButton = FGButton(backgroundColor: .systemGray, text: "Get Followers")
+    private var oauthswift: OAuth2Swift?
     
     private var cancellables = Set<AnyCancellable>()
     private var viewModel = SearchViewModel()
@@ -65,8 +67,6 @@ extension SearchController {
     @objc private func pushFolowerListVc() {
         self.userNameTextFiled.resignFirstResponder()
         let foloowerListVC = FollowerListController(username: self.viewModel.userName)
-        
-        
         self.navigationController?.pushViewController(foloowerListVC, animated: true)
         self.userNameTextFiled.resignFirstResponder()
     }

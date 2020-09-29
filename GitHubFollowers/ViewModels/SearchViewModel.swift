@@ -19,4 +19,5 @@ class SearchViewModel : ObservableObject {
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
+    
 }

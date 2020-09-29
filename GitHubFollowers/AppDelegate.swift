@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import OAuthSwift
 
 
 @UIApplicationMain
@@ -38,5 +39,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         return container
     }()
+    
+    static var sharedInstance: AppDelegate = {
+        return UIApplication.shared.delegate as! AppDelegate
+    }()
+}
+
+extension AppDelegate {
+    
+    func applicationHandle(url: URL) {
+        if (url.host == "oauth-callback") {
+            OAuthSwift.handle(url: url)
+        }
+    }
 }
 

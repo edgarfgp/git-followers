@@ -8,6 +8,7 @@
 
 import UIKit
 import Combine
+import OAuthSwift
 
 protocol IGitHubService {
     func fetchFollowers(userName: String, page: Int) -> AnyPublisher<[Follower], FGError>
@@ -21,6 +22,17 @@ class GitHubService : IGitHubService {
     private let cache = NSCache<NSString, UIImage>()
     private var cancellables = Set<AnyCancellable>()
     private let apiQueue = DispatchQueue(label: "API", qos: .default, attributes: .concurrent)
+    private var oauthswift: OAuth2Swift?
+    
+    private lazy var oauthConfiguration : OAuth2Swift? = {
+        return OAuth2Swift(
+            consumerKey:    AppConfig.consumerKey,
+            consumerSecret: AppConfig.consumerSecret,
+            authorizeUrl:   AppConfig.authorizeURL,
+            accessTokenUrl: AppConfig.accessTokenUrl,
+            responseType:   AppConfig.responseType)
+    }()
+    
     
     func fetchFollowers(userName: String, page: Int) -> AnyPublisher<[Follower], FGError>{
         let urlString = URLConstants.baseURL + "\(userName)/followers?per_page=100&page=\(page)"
@@ -69,5 +81,19 @@ class GitHubService : IGitHubService {
             .catch { _ in Empty<UIImage, FGError>() }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
+    }
+    
+    func authenticateUser(completion: @escaping (Result<OAuthSwiftCredential, FGError>) -> Void) {
+        self.oauthswift = oauthConfiguration
+        self.oauthswift?.authorizeURLHandler = WebViewController();
+        _ = self.oauthswift?.authorize(withCallbackURL: URL(string: AppConfig.callBackURL)!, scope:AppConfig.scope, state: AppConfig.state, completionHandler: { result in
+            switch result {
+            case .success(let (credential, _, _)):
+                completion(.success(credential))
+            case .failure(let error):
+                print("GitHub OAuth Error \(error.localizedDescription)")
+                completion(.failure(.unableToAutheticateUser))
+            }
+        })
     }
 }
