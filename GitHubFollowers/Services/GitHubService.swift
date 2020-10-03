@@ -61,40 +61,19 @@ class GitHubService : IGitHubService {
             .eraseToAnyPublisher()
     }
     
-    public func fetchAuthRepos(credential:String) {
+    public func fetchAuthRepos(credential:String) -> AnyPublisher<[Repo], FGError> {
         let url = URL(string: URLConstants.baseURL + "/user/repos")!
         let authRequest = addAtuhHeaders(url: url, token: credential)
-        
-        URLSession.shared.dataTask(with: authRequest) { (data, response, error) in
-                    
-                    if let _ = error {
-                        return
-                    }
-                    
-                    guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                        return
-                    }
-                    
-                    guard let data = data else {
-                        return
-                    }
-            
-                    let json = String(data: data, encoding: .utf8) ?? "Invalid JSON"
-                    
-                    do {
-                        let object = try JSON(string: json)
-
-                        for item in object {
-                            if let repo = item.created_at.optionalString {
-                                print(repo)
-                            }
-                        }
-                        
-                    }catch (let ex) {
-                        print(ex.localizedDescription)
-                    }
-                    
-                }.resume()
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        decoder.dateDecodingStrategy = .iso8601
+        return URLSession.shared.dataTaskPublisher(for: authRequest)
+            .retry(numberOfRetries)
+            .map(\.data).decode(type: [Repo].self, decoder: decoder)
+            .print("Debug -->")
+            .catch { _ in Empty<[Repo], FGError>() }
+            .receive(on: apiQueue)
+            .eraseToAnyPublisher()
     }
     
     func fetchImage(from urlString: String) -> AnyPublisher<UIImage, FGError>{
@@ -163,7 +142,7 @@ class GitHubService : IGitHubService {
                   let result = try decoder.decode(T.self, from: data)
                   completed(.success(result))
                   
-              }catch {
+              }catch{
                   completed(.failure(.invalidData))
               }
           }.resume()

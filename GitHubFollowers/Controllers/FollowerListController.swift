@@ -20,7 +20,7 @@ class FollowerListController: UICollectionViewController {
         let dataSource = UICollectionViewDiffableDataSource<Section, Follower>(collectionView: collectionView, cellProvider: {
             (collectionView, indexPath, follower) -> UICollectionViewCell? in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FollowerCell.reuseID, for: indexPath) as! FollowerCell
-            cell.setFollower(follower: follower, service: GitHubService())
+            cell.setFollower(follower: follower)
             return cell
         })
         
@@ -47,7 +47,7 @@ class FollowerListController: UICollectionViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = userName
+        title = userName
         configureViewController()
         configureCollectionView()
         getFollowers(userName: userName ,page: viewModel.page)
@@ -59,16 +59,16 @@ extension FollowerListController : UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
         guard let filter  = searchController.searchBar.text, !filter.isEmpty else {
-            self.viewModel.filteredFolowers.removeAll()
-            updateData(on: self.viewModel.followers)
-            self.viewModel.isSearching = false
+            viewModel.filteredFolowers.removeAll()
+            updateData(on: viewModel.followers)
+            viewModel.isSearching = false
             return
         }
         
-        self.viewModel.isSearching = true
-        self.viewModel.filterFollowers(for: filter)
-            .sink { followers in
-                print(followers)
+        viewModel.isSearching = true
+        viewModel.filterFollowers(for: filter)
+            .sink { [weak self] followers in
+                guard let self = self else { return }
                 self.updateData(on: followers)
             }
             .store(in: &cancelables)
@@ -91,16 +91,14 @@ extension FollowerListController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let activeArray = self.viewModel.isSearching ? self.viewModel.filteredFolowers : self.viewModel.followers
+        let activeArray = viewModel.isSearching ? viewModel.filteredFolowers : viewModel.followers
         let follower = activeArray[indexPath.item]
         
         let destinationController = UserInfoController()
         destinationController.username = follower.login
-                
+        
         destinationController.didRequestFollowers = { [weak self] name in
-            
             guard let self = self else { return }
-            
             self.title = self.userName
             self.userName = name
             self.viewModel.page = self.viewModel.page
@@ -108,7 +106,6 @@ extension FollowerListController {
             self.viewModel.filteredFolowers.removeAll()
             self.collectionView.setContentOffset(.zero, animated: true)
             self.getFollowers(userName: self.userName, page: self.viewModel.page)
-            
         }
         
         let navControler = UINavigationController(rootViewController: destinationController)
@@ -120,7 +117,8 @@ extension FollowerListController {
     
     private func getFollowers(userName: String ,page: Int){
         showLoadingView()
-        viewModel.fetchUserFollowers(userName: userName, page: page) { result in
+        viewModel.fetchUserFollowers(userName: userName, page: page) {[weak self] result in
+            guard let self = self else { return }
             switch result {
             case .failure(let error) :
                 self.dissmissLoadingView()
@@ -145,7 +143,8 @@ extension FollowerListController {
     }
     
     @objc private func addFavoriteTapped () {
-        viewModel.fetchUserInfo(userName: userName) { result in
+        viewModel.fetchUserInfo(userName: userName) { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .failure(let error) :
                 self.presentFGAlertOnMainThread(title: "Something went wrong", message: error.rawValue, buttonTilte: "Ok")

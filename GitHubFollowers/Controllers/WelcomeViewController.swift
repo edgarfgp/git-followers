@@ -47,7 +47,9 @@ class WelcomeViewController: UIViewController {
     }
     
     @objc private func performAnonymousAction() {
-        UIApplication.shared.windows.first?.rootViewController = FGTabBarViewController()
+        let tabVC = FGTabBarViewController()
+        tabVC.modalPresentationStyle = .overFullScreen
+        present(tabVC, animated: true, completion: nil)
     }
 }
 

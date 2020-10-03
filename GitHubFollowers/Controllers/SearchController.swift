@@ -30,17 +30,14 @@ class SearchController: UIViewController {
         createDissmissTapRecognizer()
         bindViewModel()
     }
-    
-    override func viewWillAppear(_ animated: Bool){
-        super.viewWillAppear(animated)
-        //navigationController?.setNavigationBarHidden(true, animated: true)
-    }
+
     
     fileprivate func bindViewModel() {
         viewModel.isValidUserName
-            .sink { [self] isEnabled in
-                callToActionButton.isEnabled = isEnabled
-                callToActionButton.backgroundColor = isEnabled  ? .systemGreen : .systemGray
+            .sink { [weak self] isEnabled in
+                guard let self = self else { return }
+                self.callToActionButton.isEnabled = isEnabled
+                self.callToActionButton.backgroundColor = isEnabled  ? .systemGreen : .systemGray
         }
         .store(in: &cancellables)
     }
@@ -54,7 +51,7 @@ extension SearchController : UITextFieldDelegate {
     
     @objc func textDidChange(sender : UITextField){
         guard let text = sender.text else { return }
-        self.viewModel.userName = text
+        viewModel.userName = text
     }
 }
 
@@ -114,8 +111,7 @@ extension SearchController {
         ])
     }
     
-    
     @objc func navigateToWelcomeCV(){
-        UIApplication.shared.windows.first?.rootViewController = WelcomeViewController()
+       dismiss(animated: true, completion: nil)
     }
 }

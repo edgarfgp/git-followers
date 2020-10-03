@@ -14,10 +14,12 @@ class FavoriteCell: UITableViewCell {
     
     static let reuseID = "FavoriteCell"
     private lazy var padding: CGFloat = 12
-    
+    private lazy var service = GitHubService()
     private lazy var avatarImageView = FGAvatarImageView(frame: .zero)
     private lazy var userNameLabel = FGTitleLabel(textAligment: .left, fontSize: 26)
     private var cancelables = Set<AnyCancellable>()
+    
+    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -46,16 +48,18 @@ class FavoriteCell: UITableViewCell {
         ])
     }
     
-    func setFavorite(favorite: Follower, service: IGitHubService){
+    func setFavorite(favorite: Follower){
         userNameLabel.text = favorite.login
         service.fetchImage(from: favorite.avatarUrl)
-            .sink { completionResult in
+            .sink { [weak self] completionResult in
+                guard let self = self else { return }
                 switch completionResult {
                 case .failure(_) :
                     self.avatarImageView.image = Images.placeholder
                 case .finished : break
                 }
-            } receiveValue: { image in
+            } receiveValue: { [weak self] image in
+                guard let self = self else { return }
                 self.avatarImageView.image = image
             }.store(in: &cancelables)
     }

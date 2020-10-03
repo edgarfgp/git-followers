@@ -25,7 +25,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
         UINavigationBar.appearance().tintColor = .systemGreen
         self.scene(scene, openURLContexts: connectionOptions.urlContexts)
-        
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {

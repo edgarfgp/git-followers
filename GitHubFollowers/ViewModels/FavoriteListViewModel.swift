@@ -20,11 +20,12 @@ class FavoriteListViewModel : ObservableObject {
     }
     
     public func getFavorites(completion: @escaping (Result<[Follower], FGError>)-> Void){
-        persistenceService.getFavorites { favorites in
-            switch favorites {
-            case .success(let favorites) :
-                self.favorites = favorites
-                completion(.success(favorites))
+        persistenceService.getFavorites { [weak self] resultFavorites in
+            guard let self = self else { return }
+            switch resultFavorites {
+            case .success(let result) :
+                self.favorites = result
+                completion(.success(result))
             case .failure(let error) :
                 completion(.failure(error))
             }
@@ -37,7 +38,7 @@ class FavoriteListViewModel : ObservableObject {
                 completion(nil)
                 return
             }
-             completion(error.rawValue)
+            completion(error.rawValue)
         }
     }
 }

@@ -53,7 +53,8 @@ class UserInfoController: UIViewController {
     }
     
     private func getUserInfo() {
-        viewModel.fetchUserInfoData(username: username) { result in
+        viewModel.fetchUserInfoData(username: username) { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .failure(_) : break
             case .success(let user):
@@ -64,7 +65,7 @@ class UserInfoController: UIViewController {
     
     private func configureElements(with user: User){
         
-        self.add(childVC: FGUserInfoHeaderVC(user: user, gitHubService: GitHubService()), to: self.headerView)
+        add(childVC: FGUserInfoHeaderVC(user: user, gitHubService: GitHubService()), to: headerView)
         
         let reposItemsController = FGReposItemInfoVC(user: user)
         
@@ -82,21 +83,18 @@ class UserInfoController: UIViewController {
         
         followersItemInfoController.didtapFollowers = { [weak self] user in
             guard let self = self else { return }
-            
             guard user.followers != 0 else {
                 self.presentFGAlertOnMainThread(title: "No folowers", message: "This user does not have followers.", buttonTilte: "OK")
                 return
             }
-            
+
             self.didRequestFollowers?(user.login)
-            
             self.dismissVC()
-            
         }
         
-        self.add(childVC: reposItemsController, to: self.itemViewOne)
-        self.add(childVC: followersItemInfoController, to: self.itemViewTwo)
-        self.datelabel.text = "Github Since \(user.createdAt.convertToMonthYearFormat())"
+        add(childVC: reposItemsController, to: self.itemViewOne)
+        add(childVC: followersItemInfoController, to: self.itemViewTwo)
+        datelabel.text = "Github Since \(user.createdAt.convertToMonthYearFormat())"
     }
     
     private func layoutUI(){

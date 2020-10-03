@@ -42,7 +42,8 @@ class FavoriteListController: UIViewController {
     }
     
     private func getFavotites () {
-        viewModel.getFavorites { result in
+        viewModel.getFavorites {  [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .failure(_) : break
             case .success(let favorites):
@@ -82,11 +83,11 @@ extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
         
         guard editingStyle == .delete else { return }
         
-        viewModel.updateFavoriteList(favorite: viewModel.favorites[indexPath.row]) {[weak self] message in
+        viewModel.updateFavoriteList(favorite: viewModel.favorites[indexPath.row]) { [weak self] message in
             guard let self = self else { return }
             guard let message = message else {
                 self.viewModel.favorites.remove(at: indexPath.row)
-                tableView.deleteRows(at: [indexPath], with: .left)
+                self.tableView.deleteRows(at: [indexPath], with: .left)
                 return
             }
             
@@ -94,7 +95,7 @@ extension FavoriteListController : UITableViewDataSource, UITableViewDelegate {
         }
         
         if viewModel.favorites.isEmpty {
-            self.showEmptySatteView(with: "No favorites", in: self.view)
+            showEmptySatteView(with: "No favorites", in: self.view)
         }
     }
 }

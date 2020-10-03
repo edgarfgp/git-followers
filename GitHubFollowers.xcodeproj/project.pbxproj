@@ -206,7 +206,6 @@
 		682EDBE923DE0DF300423ACC /* GitHubFollowers */ = {
 			isa = PBXGroup;
 			children = (
-				9E50403E251BE5610067FB03 /* GitHubFollowers.entitlements */,
 				6880DDF323E2D08E007B64BC /* Helpers */,
 				68678C1923E237E2009EEA10 /* Services */,
 				68678C1423E22FCC009EEA10 /* Models */,
@@ -219,6 +218,7 @@
 				682EDBEC23DE0DF300423ACC /* SceneDelegate.swift */,
 				682EDBF523DE0DF400423ACC /* LaunchScreen.storyboard */,
 				682EDBF823DE0DF400423ACC /* Info.plist */,
+				9E50403E251BE5610067FB03 /* GitHubFollowers.entitlements */,
 			);
 			path = GitHubFollowers;
 			sourceTree = "<group>";

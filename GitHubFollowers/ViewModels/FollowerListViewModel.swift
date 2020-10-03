@@ -27,21 +27,22 @@ class FollowerListViewModel : ObservableObject {
     }
     
     func fetchUserFollowers(userName : String, page: Int, completion: @escaping (Result<[Follower], FGError>) -> Void) {
-        self.gitHubService.fetchFollowers(userName: userName, page: page)
+        gitHubService.fetchFollowers(userName: userName, page: page)
             .sink(receiveCompletion: { completionResult in
                 switch completionResult {
                 case .failure(let error):
                     completion(.failure(error))
                 case .finished : break
                 }
-            }) { result in
+            }) { [weak self] result in
+                guard let self = self else { return }
                 completion(.success(result))
                 self.followers.append(contentsOf: result)
             }.store(in: &cancellables)
     }
     
     func fetchUserInfo(userName : String, completion: @escaping (Result<User, FGError>) -> Void) {
-        self.gitHubService.fetchUserInfo(urlString: userName)
+        gitHubService.fetchUserInfo(urlString: userName)
             .sink(receiveCompletion: { completionResult in
                 switch completionResult {
                 case .failure(let error):
@@ -55,13 +56,13 @@ class FollowerListViewModel : ObservableObject {
     }
     
     func saveUserTofavorites(follower: Follower, completion: @escaping (FGError?) -> Void) {
-        self.persistenceService.update(favorite: follower, actionType: PersistenceActionType.adding) { error in
+        persistenceService.update(favorite: follower, actionType: PersistenceActionType.adding) { error in
             completion(error)
         }
     }
     
     func filterFollowers(for filter: String) -> AnyPublisher<[Follower], Never>{
-        return self.$followers
+        return $followers
             .delay(for: .milliseconds(500), scheduler: DispatchQueue.main)
             .removeDuplicates()
             .map{ $0.filter{ $0.login.lowercased().contains(filter.lowercased()) } }

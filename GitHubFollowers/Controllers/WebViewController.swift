@@ -17,20 +17,14 @@ class WebViewController: OAuthWebViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        webView.frame = UIScreen.main.bounds
-        self.webView.frame = self.view.bounds
-        self.webView.navigationDelegate = self
-        self.webView.translatesAutoresizingMaskIntoConstraints = false
-        self.view.addSubview(self.webView)
-        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "|-0-[view]-0-|", options: [], metrics: nil, views: ["view":self.webView]))
-        self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-0-[view]-0-|", options: [], metrics: nil, views: ["view":self.webView]))
+        configureWebView()
         loadAddressURL()
     }
     
     override func handle(_ url: URL) {
         targetURL = url
         super.handle(url)
-        self.loadAddressURL()
+        loadAddressURL()
     }
     
     func loadAddressURL() {
@@ -42,18 +36,32 @@ class WebViewController: OAuthWebViewController {
             self.webView.load(req)
         }
     }
+    
+    fileprivate func configureWebView() {
+        webView.frame = UIScreen.main.bounds
+        webView.frame = view.bounds
+        webView.navigationDelegate = self
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(webView)
+        
+        NSLayoutConstraint.activate([
+            webView.topAnchor.constraint(equalTo: view.topAnchor),
+            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
 }
 
 extension WebViewController: WKNavigationDelegate {
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         
-        // here we handle internally the callback url and call method that call handleOpenURL (not app scheme used)
-        if let url = navigationAction.request.url , url.scheme == "oauth-github-followers" {
+        if let url = navigationAction.request.url , url.scheme == AppConfig.callbackUrlString  {
             AppDelegate.sharedInstance.applicationHandle(url: url)
             decisionHandler(.cancel)
             
-            self.dismissWebViewController()
+            dismissWebViewController()
             return
         }
         
@@ -61,9 +69,7 @@ extension WebViewController: WKNavigationDelegate {
     }
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-        print("\(error)")
-        self.dismissWebViewController()
-        // maybe cancel request...
+        dismissWebViewController()
     }
 }
 
