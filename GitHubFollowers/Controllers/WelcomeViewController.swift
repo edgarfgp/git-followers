@@ -10,50 +10,84 @@ import UIKit
 
 class WelcomeViewController: UIViewController {
     
-    private lazy var logoImageView = UIImageView()
-    private var gitHubActionButton = FGButton(backgroundColor: .green, text: "GitHub")
-    private var anonymusActionButton = FGButton(backgroundColor: .gray, text: "Anonymus")
+    private let buttonHeight: CGFloat = 50
+    private let logoImageHeight: CGFloat = 200
+    private let defaultPadding: CGFloat = 16
     
+    private lazy var logoImageView = FGAvatarImageView(frame: .zero)
+    private lazy var loginActionButton = FGButton(backgroundColor: .systemBlue , text: "Login")
+    private lazy var anonymousActionButton = FGButton(backgroundColor: .systemBlue, text: "Anonymous")
+    private let containerStackView = UIStackView()
+
     private var viewModel : WelcomeViewModel = WelcomeViewModel(githubService: GitHubService())
     
-    let containerView = UIStackView()
-
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        hidesBottomBarWhenPushed = true
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = .systemBackground
+        view.backgroundColor = .systemBackground
+        navigationController?.navigationBar.isHidden = true
         
-        self.gitHubActionButton.translatesAutoresizingMaskIntoConstraints = false
-        self.anonymusActionButton.translatesAutoresizingMaskIntoConstraints = false
-        self.containerView.translatesAutoresizingMaskIntoConstraints = false
-        logoImageView.translatesAutoresizingMaskIntoConstraints = false
-        logoImageView.image = Images.ghLogo
-        logoImageView.contentMode = .scaleToFill
-        
-        containerView.axis = .vertical
-        containerView.spacing = 24
-        containerView.backgroundColor = .clear
-        
-        containerView.addArrangedSubview(logoImageView)
-        containerView.addArrangedSubview(gitHubActionButton)
-        containerView.addArrangedSubview(anonymusActionButton)
-        
-        self.view.addSubview(containerView)
-        
-        containerView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor, constant: 16).isActive = true
-        containerView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -16).isActive = true
-        containerView.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor).isActive = true
-        
-        gitHubActionButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        anonymusActionButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        logoImageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
-        
-        gitHubActionButton.addTarget(self, action: #selector(performAuthentication), for: .touchUpInside)
+        configureLogoImageAvatar()
+        configureLoginActionButton()
+        configureAnonymousActionButton()
+        configureContainerStackView()
     }
     
     @objc private func performAuthentication(){
         viewModel.authenticateWithGitHub()
     }
+    
+    @objc private func performAnonymousAction() {
+        UIApplication.shared.windows.first?.rootViewController = FGTabBarViewController()
+    }
+}
 
+extension WelcomeViewController {
+    
+    private func configureLogoImageAvatar(){
+        logoImageView.translatesAutoresizingMaskIntoConstraints = false
+        containerStackView.addArrangedSubview(logoImageView)
+
+        logoImageView.image = Images.ghLogo
+        logoImageView.contentMode = .scaleAspectFit
+        logoImageView.heightAnchor.constraint(equalToConstant: logoImageHeight).isActive = true
+    }
+    
+    private func configureLoginActionButton(){
+        loginActionButton.translatesAutoresizingMaskIntoConstraints = false
+        containerStackView.addArrangedSubview(loginActionButton)
+        
+        loginActionButton.addTarget(self, action: #selector(performAuthentication), for: .touchUpInside)
+        loginActionButton.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
+    }
+    
+    private func configureAnonymousActionButton(){
+        anonymousActionButton.translatesAutoresizingMaskIntoConstraints = false
+        containerStackView.addArrangedSubview(anonymousActionButton)
+        
+        anonymousActionButton.heightAnchor.constraint(equalToConstant: buttonHeight).isActive = true
+        anonymousActionButton.addTarget(self, action: #selector(performAnonymousAction), for: .touchUpInside)
+    }
+    
+    private func configureContainerStackView(){
+        containerStackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(containerStackView)
+
+        
+        containerStackView.axis = .vertical
+        containerStackView.spacing = 24
+        containerStackView.backgroundColor = .clear
+        containerStackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: defaultPadding).isActive = true
+        containerStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -defaultPadding).isActive = true
+        containerStackView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor).isActive = true
+    }
 }

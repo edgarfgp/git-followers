@@ -35,7 +35,7 @@ class GitHubService : IGitHubService {
     
     
     func fetchFollowers(userName: String, page: Int) -> AnyPublisher<[Follower], FGError>{
-        let urlString = URLConstants.baseURL + "\(userName)/followers?per_page=100&page=\(page)"
+        let urlString = URLConstants.baseURL + "/users/\(userName)/followers?per_page=100&page=\(page)"
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         return URLSession.shared.dataTaskPublisher(for: URL(string: urlString)!)
@@ -48,7 +48,7 @@ class GitHubService : IGitHubService {
     }
     
     func fetchUserInfo(urlString : String) -> AnyPublisher<User, FGError>{
-        let urlString = URLConstants.baseURL + "\(urlString)"
+        let urlString = URLConstants.baseURL + "/users/\(urlString)"
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
@@ -59,6 +59,42 @@ class GitHubService : IGitHubService {
             .catch { _ in Empty<User, FGError>() }
             .receive(on: apiQueue)
             .eraseToAnyPublisher()
+    }
+    
+    public func fetchAuthRepos(credential:String) {
+        let url = URL(string: URLConstants.baseURL + "/user/repos")!
+        let authRequest = addAtuhHeaders(url: url, token: credential)
+        
+        URLSession.shared.dataTask(with: authRequest) { (data, response, error) in
+                    
+                    if let _ = error {
+                        return
+                    }
+                    
+                    guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                        return
+                    }
+                    
+                    guard let data = data else {
+                        return
+                    }
+            
+                    let json = String(data: data, encoding: .utf8) ?? "Invalid JSON"
+                    
+                    do {
+                        let object = try JSON(string: json)
+
+                        for item in object {
+                            if let repo = item.created_at.optionalString {
+                                print(repo)
+                            }
+                        }
+                        
+                    }catch (let ex) {
+                        print(ex.localizedDescription)
+                    }
+                    
+                }.resume()
     }
     
     func fetchImage(from urlString: String) -> AnyPublisher<UIImage, FGError>{
@@ -96,4 +132,63 @@ class GitHubService : IGitHubService {
             }
         })
     }
+    
+    func fetchData<T: Decodable>(for urlString : String, completed: @escaping (Result<T, FGError>) -> Void) {
+          guard let url = URL(string: urlString) else {
+              completed(.failure(.invalidUserName))
+              
+              return
+          }
+          
+          URLSession.shared.dataTask(with: url) { (data, response, error) in
+              if let _ = error {
+                  completed(.failure(.unableToComplete))
+                  return
+              }
+              
+              guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                  completed(.failure(.invalidResponse))
+                  return
+              }
+              
+              guard let data = data else {
+                  completed(.failure(.invalidData))
+                  return
+              }
+              
+              do {
+                  let decoder = JSONDecoder()
+                  decoder.keyDecodingStrategy = .convertFromSnakeCase
+                  decoder.dateDecodingStrategy = .iso8601
+                  let result = try decoder.decode(T.self, from: data)
+                  completed(.success(result))
+                  
+              }catch {
+                  completed(.failure(.invalidData))
+              }
+          }.resume()
+      }
 }
+
+extension GitHubService {
+    
+    private func addAtuhHeaders(url : URL, token: String) -> URLRequest {
+        var request = URLRequest(url: url)
+        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("application/vnd.github.v3+json", forHTTPHeaderField: "Accept")
+        request.httpMethod = "GET"
+        return request
+    }
+    
+}
+
+//.tryMap { request   in
+//    guard let data = request.data as Data? else { throw FGError.invalidData}
+//    guard let response = request.response as? HTTPURLResponse, response.statusCode == 200 else {
+//        throw FGError.invalidResponse
+//    }
+//    guard let json = String(data: data, encoding: .utf8) else { throw FGError.unableToDeserialize }
+//    let result = try JSON(string: json)
+//    return User(login: result.login.string, avatarUrl: result.avatar_url.string, name: result.name.string, location:result.location.string, bio: result.bio.string, publicRepos: result.public_repos.int, publicGists: result.public_gists.int, htmlUrl:result.html_url.string, following: result.following.int, followers: result.followers.int, createdAt: Date())
+//}

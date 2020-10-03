@@ -8,14 +8,12 @@
 
 import UIKit
 import Combine
-import OAuthSwift
 
 class SearchController: UIViewController {
     
     private lazy var logoImageView = UIImageView()
     private lazy var userNameTextFiled = UITextField(placeholder: "Enter a valid User")
     private lazy var callToActionButton = FGButton(backgroundColor: .systemGray, text: "Get Followers")
-    private var oauthswift: OAuth2Swift?
     
     private var cancellables = Set<AnyCancellable>()
     private var viewModel = SearchViewModel()
@@ -24,6 +22,8 @@ class SearchController: UIViewController {
         super.viewDidLoad()
         view.addSubviews(logoImageView, userNameTextFiled, callToActionButton)
         view.backgroundColor = .systemBackground
+        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(navigateToWelcomeCV))
         configureLogiImageView()
         configureUserNameTextFiled()
         configureCallToActionButton()
@@ -33,14 +33,14 @@ class SearchController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool){
         super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: true)
+        //navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
     fileprivate func bindViewModel() {
         viewModel.isValidUserName
-            .sink { isEnabled in
-                self.callToActionButton.isEnabled = isEnabled
-                self.callToActionButton.backgroundColor = isEnabled  ? .systemGreen : .systemGray
+            .sink { [self] isEnabled in
+                callToActionButton.isEnabled = isEnabled
+                callToActionButton.backgroundColor = isEnabled  ? .systemGreen : .systemGray
         }
         .store(in: &cancellables)
     }
@@ -65,10 +65,11 @@ extension SearchController {
     }
     
     @objc private func pushFolowerListVc() {
-        self.userNameTextFiled.resignFirstResponder()
-        let foloowerListVC = FollowerListController(username: self.viewModel.userName)
-        self.navigationController?.pushViewController(foloowerListVC, animated: true)
-        self.userNameTextFiled.resignFirstResponder()
+        userNameTextFiled.resignFirstResponder()
+        let foloowerListVC = FollowerListController()
+        foloowerListVC.userName = viewModel.userName
+        navigationController?.pushViewController(foloowerListVC, animated: true)
+        userNameTextFiled.resignFirstResponder()
     }
 }
 
@@ -111,5 +112,10 @@ extension SearchController {
             userNameTextFiled.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -50),
             userNameTextFiled.heightAnchor.constraint(equalToConstant: 50)
         ])
+    }
+    
+    
+    @objc func navigateToWelcomeCV(){
+        UIApplication.shared.windows.first?.rootViewController = WelcomeViewController()
     }
 }

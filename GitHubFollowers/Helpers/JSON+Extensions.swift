@@ -24,6 +24,10 @@ extension Dictionary where Key == String {
     func string(for key: String) -> String? {
         self[key] as? String
     }
+    
+    func date(for key: String) -> Date? {
+        self[key] as? Date
+    }
 }
 
 @dynamicMemberLookup
@@ -56,6 +60,10 @@ struct JSON: RandomAccessCollection {
     var optionalString: String? {
         value as? String
     }
+    
+    var optionalDate: Date? {
+        value as? Date
+    }
 
     var bool: Bool {
         optionalBool ?? false
@@ -71,6 +79,10 @@ struct JSON: RandomAccessCollection {
 
     var string: String {
         optionalString ?? ""
+    }
+    
+    var date: Date {
+        optionalDate ?? Date()
     }
 
     var optionalArray: [JSON]? {

@@ -25,7 +25,7 @@ enum Images {
 }
 
 enum URLConstants {
-    static let baseURL = "https://api.github.com/users/"
+    static let baseURL = "https://api.github.com"
 }
 
 enum ScreenSize {
@@ -55,5 +55,16 @@ enum DeviceTypes {
     static func isiPhoneXAspectRatio() -> Bool {
         return isiPhoneX || isiPhoneXsMaxAndXr
     }
+}
+
+enum PersistenceActionType {
+    case removing
+    case adding
+}
+
+enum Keys {
+    static let favorite = "Favorite"
+    static let login = "login"
+    static let avatarUrl = "avatarUrl"
 }
 

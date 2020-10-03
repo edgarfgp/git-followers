@@ -9,17 +9,6 @@
 import UIKit
 import CoreData
 
-enum PersistenceActionType {
-    case removing
-    case adding
-}
-
-enum Keys {
-    static let favorite = "Favorite"
-    static let login = "login"
-    static let avatarUrl = "avatarUrl"
-}
-
 struct PersistenceService {
     
     private var manageObjectContext : NSManagedObjectContext {
