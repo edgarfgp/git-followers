@@ -14,6 +14,8 @@ class FollowerCell: UICollectionViewCell {
     static let reuseID = "FollowerCell"
     private lazy var padding: CGFloat = 8
     
+    private lazy var service = GitHubService()
+    
     private lazy var avatarImageView = FGAvatarImageView(frame: .zero)
     private lazy var userNameLabel = FGTitleLabel(textAligment: .center, fontSize: 16)
     private var cancelables = Set<AnyCancellable>()
@@ -22,7 +24,6 @@ class FollowerCell: UICollectionViewCell {
         super.init(frame: frame)
         configure()
     }
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -47,16 +48,18 @@ class FollowerCell: UICollectionViewCell {
         ])
     }
     
-    func setFollower(follower: Follower, service : IGitHubService){
+    func setFollower(follower: Follower){
         userNameLabel.text = follower.login
         service.fetchImage(from: follower.avatarUrl)
-            .sink { completionResult in
+            .sink { [weak self] completionResult in
+                guard let self = self else { return }
                 switch completionResult {
-                case .failure(_) :
+                case .failure(_):
                     self.avatarImageView.image = Images.placeholder
                 case .finished : break
                 }
-            } receiveValue: { image in
+            } receiveValue: { [weak self] image in
+                guard let self = self else { return }
                 self.avatarImageView.image = image
             }.store(in: &cancelables)
     }

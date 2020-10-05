@@ -8,7 +8,6 @@
 
 import Foundation
 import Combine
-import KeychainSwift
 
 class WelcomeViewModel {
     private var githubService : GitHubService
@@ -23,12 +22,6 @@ class WelcomeViewModel {
             guard let self = self else { return }
             switch authResult {
             case .success(let credential):
-                let keychain = KeychainSwift()
-                if ((keychain.get("oauthToken")?.isEmpty) != nil){
-                    keychain.set(credential.oauthToken, forKey: "oauthToken")
-                }
-                
-                print(keychain.allKeys)
                 self.githubService.fetchAuthRepos(credential: credential.oauthToken)
                     .sink { reveivedCompletion in
                         switch reveivedCompletion {
