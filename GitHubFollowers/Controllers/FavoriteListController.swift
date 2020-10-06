@@ -13,7 +13,7 @@ class FavoriteListController: UIViewController {
     
     private lazy var tableView = UITableView()
         
-    var viewModel = FavoriteListViewModel(persistenceService: PersistenceService())
+    private var viewModel = FavoriteListViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()

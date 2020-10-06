@@ -12,8 +12,8 @@ import Combine
 enum Section { case main }
 
 class FollowerListController: UICollectionViewController {
-    var cancelables = Set<AnyCancellable>()
-    var viewModel = FollowerListViewModel(gitHubService: GitHubService(), persistenceService: PersistenceService())
+    
+    var viewModel = FollowerListViewModel()
     
     private lazy var dataSource : UICollectionViewDiffableDataSource<Section, Follower> = {
         
@@ -59,19 +59,16 @@ extension FollowerListController : UISearchResultsUpdating {
     
     func updateSearchResults(for searchController: UISearchController) {
         guard let filter  = searchController.searchBar.text, !filter.isEmpty else {
-            viewModel.filteredFolowers.removeAll()
             updateData(on: viewModel.followers)
             viewModel.isSearching = false
             return
         }
         
         viewModel.isSearching = true
-        viewModel.filterFollowers(for: filter)
-            .sink { [weak self] followers in
-                guard let self = self else { return }
-                self.updateData(on: followers)
-            }
-            .store(in: &cancelables)
+        viewModel.filterFollowers(for: filter) { [weak self] result in
+            guard let self = self else { return }
+            self.updateData(on: result)
+        }
     }
 }
 
@@ -91,8 +88,7 @@ extension FollowerListController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let activeArray = viewModel.isSearching ? viewModel.filteredFolowers : viewModel.followers
-        let follower = activeArray[indexPath.item]
+        let follower = viewModel.followers[indexPath.item]
         
         let destinationController = UserInfoController()
         destinationController.username = follower.login
@@ -103,7 +99,6 @@ extension FollowerListController {
             self.userName = name
             self.viewModel.page = self.viewModel.page
             self.viewModel.followers.removeAll()
-            self.viewModel.filteredFolowers.removeAll()
             self.collectionView.setContentOffset(.zero, animated: true)
             self.getFollowers(userName: self.userName, page: self.viewModel.page)
         }

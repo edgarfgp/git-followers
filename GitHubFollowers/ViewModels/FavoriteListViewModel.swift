@@ -12,13 +12,9 @@ import CoreData
 
 class FavoriteListViewModel : ObservableObject {
     
-    lazy var favorites : [Follower] = []
-    var persistenceService : PersistenceService
-    
-    init(persistenceService: PersistenceService = PersistenceService()) {
-        self.persistenceService = persistenceService
-    }
-    
+    public lazy var favorites : [Follower] = []
+    private lazy var persistenceService = PersistenceService()
+
     public func getFavorites(completion: @escaping (Result<[Follower], FGError>)-> Void){
         persistenceService.getFavorites { [weak self] resultFavorites in
             guard let self = self else { return }

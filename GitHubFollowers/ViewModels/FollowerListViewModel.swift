@@ -11,20 +11,14 @@ import Combine
 
 class FollowerListViewModel : ObservableObject {
     
-    lazy var filteredFolowers : [Follower] = []
     @Published var followers: [Follower] = []
     lazy var page : Int = 1
     lazy var isSearching = false
     
     var cancellables = Set<AnyCancellable>()
     
-    var gitHubService : GitHubService
-    var persistenceService : PersistenceService
-    
-    init(gitHubService : GitHubService, persistenceService : PersistenceService) {
-        self.gitHubService = gitHubService
-        self.persistenceService = persistenceService
-    }
+    private lazy var gitHubService = GitHubService()
+    private lazy var persistenceService = PersistenceService()
     
     func fetchUserFollowers(userName : String, page: Int, completion: @escaping (Result<[Follower], FGError>) -> Void) {
         gitHubService.fetchFollowers(userName: userName, page: page)
@@ -61,11 +55,13 @@ class FollowerListViewModel : ObservableObject {
         }
     }
     
-    func filterFollowers(for filter: String) -> AnyPublisher<[Follower], Never>{
+    func filterFollowers(for filter: String, completion: @escaping ([Follower]) -> Void){
         return $followers
             .delay(for: .milliseconds(500), scheduler: DispatchQueue.main)
             .removeDuplicates()
             .map{ $0.filter{ $0.login.lowercased().contains(filter.lowercased()) } }
-            .eraseToAnyPublisher()
+            .sink { newFollowers in
+                completion(newFollowers)
+            }.store(in: &cancellables)
     }
 }

@@ -19,7 +19,7 @@ class WelcomeViewController: UIViewController {
     private lazy var anonymousActionButton = FGButton(backgroundColor: .systemBlue, text: "Anonymous")
     private let containerStackView = UIStackView()
 
-    private var viewModel : WelcomeViewModel = WelcomeViewModel(githubService: GitHubService())
+    private var viewModel : WelcomeViewModel = WelcomeViewModel()
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)

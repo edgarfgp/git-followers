@@ -10,12 +10,8 @@ import Foundation
 import Combine
 
 class WelcomeViewModel {
-    private var githubService : GitHubService
+    private lazy var githubService = GitHubService()
     private var cancelables = Set<AnyCancellable>()
-    
-    init(githubService : GitHubService) {
-        self.githubService = githubService
-    }
     
     public func authenticateWithGitHub() {
         githubService.authenticateUser { [weak self] authResult in
@@ -35,8 +31,6 @@ class WelcomeViewModel {
                         print(result)
                     }.store(in: &self.cancelables)
 
-                    
-                
                 break
             case .failure(let error):
                 print(error.rawValue)

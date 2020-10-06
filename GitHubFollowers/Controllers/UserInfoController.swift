@@ -17,7 +17,8 @@ class UserInfoController: UIViewController {
     private let itemViewOne = UIView()
     private let itemViewTwo = UIView()
     private let datelabel = FGBodyLabel()
-    var viewModel = UserInfoViewModel(gitHubService: GitHubService())
+
+    private var viewModel = UserInfoViewModel()
     private var cancelables = Set<AnyCancellable>()
     
     lazy var username : String = {

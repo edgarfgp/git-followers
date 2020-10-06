@@ -10,12 +10,9 @@ import Foundation
 import Combine
 
 class UserInfoViewModel : ObservableObject {
-    public var gitHubService : GitHubService
-    var cancellables = Set<AnyCancellable>()
-    
-    init(gitHubService : GitHubService) {
-        self.gitHubService = gitHubService
-    }
+
+    public lazy var gitHubService = GitHubService()
+    private var cancellables = Set<AnyCancellable>()
     
     func fetchUserInfoData(username: String, completion : @escaping (Result<User, FGError>) -> Void){
         self.gitHubService.fetchUserInfo(urlString: username)
