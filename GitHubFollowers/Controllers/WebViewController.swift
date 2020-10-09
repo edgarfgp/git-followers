@@ -13,7 +13,19 @@ typealias WebView = WKWebView
 
 class WebViewController: OAuthWebViewController {
     var targetURL: URL?
-    let webView: WebView = WebView()
+    
+    private let webView: WebView = {
+        let preferences = WKWebpagePreferences()
+        if #available(iOS 14.0, *) {
+            preferences.allowsContentJavaScript = true
+        }
+
+        let configutation = WKWebViewConfiguration()
+        configutation.defaultWebpagePreferences = preferences
+        let webView = WKWebView(frame: UIScreen.main.bounds, configuration: configutation)
+        webView.translatesAutoresizingMaskIntoConstraints = false
+        return webView
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,9 +40,7 @@ class WebViewController: OAuthWebViewController {
     }
     
     func loadAddressURL() {
-        guard let url = targetURL else {
-            return
-        }
+        guard let url = targetURL else { return }
         let req = URLRequest(url: url)
         DispatchQueue.main.async {
             self.webView.load(req)
@@ -38,18 +48,8 @@ class WebViewController: OAuthWebViewController {
     }
     
     fileprivate func configureWebView() {
-        webView.frame = UIScreen.main.bounds
-        webView.frame = view.bounds
         webView.navigationDelegate = self
-        webView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(webView)
-        
-        NSLayoutConstraint.activate([
-            webView.topAnchor.constraint(equalTo: view.topAnchor),
-            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
     }
 }
 
@@ -72,4 +72,3 @@ extension WebViewController: WKNavigationDelegate {
         dismissWebViewController()
     }
 }
-
